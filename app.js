@@ -58,7 +58,11 @@ function openGate(){
 }
 $('#envelope').addEventListener('click',openGate);
 $('#envelope').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')openGate()});
-if(location.hash && location.hash.length>1){ /* deep link, e.g. #rsvp from WhatsApp */ }
+/* deep links (#rsvp, #gift from WhatsApp) or ?open skip the envelope */
+if((location.hash && location.hash.length>1) || /[?&]open/.test(location.search)){
+  gate.classList.add('open','gone'); gate.style.display='none'; document.body.classList.remove('locked'); lenis&&lenis.start();
+  setTimeout(()=>{ heroIn(); heroVid.play().catch(()=>{}); const t=location.hash&&$(location.hash); if(t) setTimeout(()=>lenis?lenis.scrollTo(t,{immediate:true}):t.scrollIntoView(),300); },100);
+}
 
 /* ---------- hero entrance ---------- */
 const names=$('#heroNames');
