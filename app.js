@@ -169,7 +169,7 @@ if(hasGsap && window.ScrollTrigger && !reduce){
   mm.add('(max-width: 900px)',()=>{
     $$('.chapter').forEach(ch=>{ gsap.from(ch,{opacity:0,y:80,duration:1.1,ease:'power3.out',scrollTrigger:{trigger:ch,start:'top 85%'}}); const im=ch.querySelector('img'); im&&gsap.to(im,{scale:1,ease:'none',scrollTrigger:{trigger:ch,start:'top bottom',end:'bottom top',scrub:true}}); });
   });
-  $$('.colour').forEach((c,i)=>gsap.from(c,{y:120,rotate:i%2?6:-6,opacity:0,duration:1.3,ease:'expo.out',delay:i*.08,scrollTrigger:{trigger:'.colour-row',start:'top 85%'}}));
+  $$('.colour').forEach((c,i)=>gsap.fromTo(c,{y:120,rotate:i%2?6:-6,opacity:0},{y:0,rotate:0,opacity:1,duration:1.3,ease:'expo.out',delay:i*.08,scrollTrigger:{trigger:'.colour-row',start:'top 90%'}}));
   gsap.from('.bank-card',{rotateY:-35,rotateX:12,opacity:0,duration:1.6,ease:'expo.out',scrollTrigger:{trigger:'.bank-card',start:'top 85%'}});
   addEventListener('load',()=>ScrollTrigger.refresh());
 }
