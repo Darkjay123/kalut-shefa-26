@@ -66,7 +66,7 @@ if((location.hash && location.hash.length>1) || /[?&]open/.test(location.search)
 
 /* ---------- hero entrance ---------- */
 const names=$('#heroNames');
-(function split(){ const html=[]; names.childNodes.forEach(n=>{ if(n.nodeType===3){ n.textContent.split('').forEach(ch=>html.push(ch===' '?' ':`<span class="ch">${ch}</span>`)); } else html.push(n.outerHTML); }); names.innerHTML=html.join(''); })();
+(function split(){ const html=[]; names.childNodes.forEach(n=>{ if(n.nodeType===3){ n.textContent.split(/(\s+)/).forEach(w=>{ if(!w.trim()){ if(w) html.push(' '); return; } html.push('<span class="w">'+w.split('').map(ch=>`<span class="ch">${ch}</span>`).join('')+'</span>'); }); } else html.push(n.outerHTML); }); names.innerHTML=html.join(''); })();
 if(hasGsap && !reduce){ gsap.set('#heroEyebrow',{opacity:0,letterSpacing:'1.2em'}); gsap.set('#heroLogo',{opacity:0,scale:.85,filter:'blur(12px)'}); gsap.set('#heroNames .ch, #heroNames .amp',{opacity:0,y:60,rotateX:-80}); gsap.set('#heroDates > *',{opacity:0,y:30}); gsap.set('#heroCta > *',{opacity:0,y:20}); }
 function heroIn(){
   document.getElementById('nav').classList.add('show');

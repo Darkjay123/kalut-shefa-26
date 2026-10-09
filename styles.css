@@ -525,3 +525,15 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9997;op
   .dock-gift{border:1px solid var(--gold);color:var(--gold-l)}
   body.dock-on .to-top{bottom:82px}
 }
+.hero-names .w{white-space:nowrap;display:inline-block}
+.cd-label{font-size:clamp(.68rem,1.6vw,.78rem);letter-spacing:.2em;color:var(--gold-l)}
+@media(max-width:700px){
+  .badge{display:none}
+  .hero-names{font-size:clamp(2.4rem,11.5vw,3.3rem);line-height:1.15}
+  .hero-names .amp{display:inline-block;margin:0 .1em}
+  .cd-grid{gap:8px}
+  .cd-unit{padding:6px}
+  .cd-num{font-size:clamp(1.6rem,7.6vw,2.1rem)}
+  .cd-label{font-size:.6rem;letter-spacing:.12em;margin-top:.35em}
+  .cd-mini b{font-size:1.1rem}
+}
