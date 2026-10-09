@@ -88,7 +88,7 @@ button{font-family:inherit;cursor:pointer}
 .hero .shade{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(28,3,7,.25) 0%,rgba(28,3,7,.75) 70%,rgba(28,3,7,.95) 100%),linear-gradient(180deg,rgba(28,3,7,.5),transparent 30%,transparent 70%,var(--burg-dd))}
 .hero-content{position:relative;z-index:2;padding:0 5vw;display:flex;flex-direction:column;align-items:center}
 .hero-logo{width:min(560px,82vw);filter:drop-shadow(0 10px 40px rgba(0,0,0,.6))}
-.hero-names{font-family:var(--script);font-size:clamp(2.6rem,9vw,6.6rem);color:var(--gold-l);margin-top:.6rem;line-height:1.1}
+.hero-names{font-family:var(--script);font-size:clamp(2.6rem,9vw,6.6rem);color:var(--gold-l);margin-top:1.4rem;line-height:1.1}
 .hero-names .amp{font-family:var(--serif);font-style:italic;color:var(--gold);font-size:.6em;margin:0 .2em;vertical-align:middle}
 .hero-names .ch{display:inline-block}
 .hero-dates{display:flex;gap:clamp(16px,4vw,48px);margin-top:1.4rem;flex-wrap:wrap;justify-content:center}
