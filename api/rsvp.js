@@ -10,7 +10,7 @@ module.exports=async(req,res)=>{
     const row={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),created_at:new Date().toISOString(),full_name:name,phone:clip(b.phone,40),email:clip(b.email,160),
       attending:att,events:att==='yes'?ev:[],guests:att==='yes'?Math.max(1,Math.min(10,parseInt(b.guests)||1)):0,
       side:['groom','bride','both'].includes(b.side)?b.side:null,message:clip(b.message,1000),visitor_id:clip(b.visitor_id,64)};
-    await pipe([['LPUSH','rsvps',JSON.stringify(row)]]);
+    await pipe([['LPUSH','ks26:rsvps',JSON.stringify(row)]]);
     send(res,200,{ok:true});
   }catch(e){ fail(res,e); }
 };

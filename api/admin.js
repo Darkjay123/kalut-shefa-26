@@ -11,11 +11,11 @@ module.exports=async(req,res)=>{
     if(!process.env.ADMIN_PASSWORD) return send(res,503,{ok:false,error:'no_password_set'});
     if(!authed(req)){ await new Promise(r=>setTimeout(r,600)); return send(res,401,{ok:false,error:'wrong_password'}); }
     if(req.method==='GET'){
-      const [v,r,g]=await pipe([['LRANGE','visits','0','-1'],['LRANGE','rsvps','0','-1'],['LRANGE','gifts','0','-1']]);
+      const [v,r,g]=await pipe([['LRANGE','ks26:visits','0','-1'],['LRANGE','ks26:rsvps','0','-1'],['LRANGE','ks26:gifts','0','-1']]);
       return send(res,200,{ok:true,visits:parse(v),rsvps:parse(r),gifts:parse(g)});
     }
     if(req.method==='POST'){ // delete a spam RSVP or gift entry
-      const b=body(req); const kind=b.kind==='gifts'?'gifts':'rsvps';
+      const b=body(req); const kind=b.kind==='gifts'?'ks26:gifts':'ks26:rsvps';
       if(b.action!=='delete'||!b.id) return send(res,400,{ok:false});
       const [all]=await pipe([['LRANGE',kind,'0','-1']]); const hit=(all||[]).find(s=>{try{return JSON.parse(s).id===b.id}catch(e){return false}});
       if(hit) await pipe([['LREM',kind,'1',hit]]); return send(res,200,{ok:true,deleted:!!hit});
