@@ -50,12 +50,14 @@
     <li><a href="#films">Films</a></li>
     <li><a href="#events">Events</a></li>
     <li><a href="#gift">Gifts</a></li>
+    <li><a href="#love">Love jar</a></li>
+    <li><a href="#booth">Photo booth</a></li>
   </ul>
   <a href="#rsvp" class="rsvp-pill magnetic">RSVP</a>
   <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
 </nav>
 <div class="mobile-menu" id="mobileMenu">
-  <a href="#countdown">Countdown</a><a href="#portraits">Portraits</a><a href="#story">Our story</a><a href="#films">Films</a><a href="#events">Events</a><a href="#rsvp">RSVP</a><a href="#gift">Gifts</a>
+  <a href="#countdown">Countdown</a><a href="#portraits">Portraits</a><a href="#story">Our story</a><a href="#films">Films</a><a href="#events">Events</a><a href="#rsvp">RSVP</a><a href="#gift">Gifts</a><a href="#love">Love jar</a><a href="#booth">Photo booth</a>
 </div>
 
 <main id="top">
@@ -179,6 +181,7 @@
       <div class="rsvp-done" id="rsvpDone">
         <div class="h-script">Thank you!</div>
         <p id="rsvpDoneMsg">Your RSVP is in. See you there.</p>
+        <div class="done-actions"><a href="#booth" class="btn btn-burg" id="doneBooth">Make your guest frame 📸</a><a href="#love" class="btn btn-line-dark">Leave a love note</a></div>
       </div>
     </form>
   </div>
@@ -283,6 +286,70 @@
   </div>
 </section>
 
+<!-- ============ LOVE ============ -->
+<section class="section love" id="love">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">Shower them with love</div>
+      <h2>Send a little <span class="gold-text">love</span></h2>
+      <p>Tap the heart as many times as your heart says. Every single tap lands with Elijah and Mary-Ann.</p>
+    </div>
+    <div class="love-tap reveal">
+      <button class="big-heart" id="bigHeart" aria-label="Send a heart to the couple">
+        <span class="bh-ring"></span><span class="bh-ring r2"></span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="bhG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b4283b"/><stop offset="1" stop-color="#6e0f1f"/></linearGradient></defs><path fill="url(#bhG)" stroke="#d8bb8a" stroke-width=".5" d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2.3 4.5 6 4.5c2.1 0 3.5 1.2 4.2 2.4h1.6c.7-1.2 2.1-2.4 4.2-2.4 3.7 0 5.6 3.9 4 7.2C19.5 16.4 12 21 12 21z"/></svg>
+        <span class="bh-label">Tap me</span>
+      </button>
+      <div class="love-count"><b id="loveCount">0</b><span>hearts sent to the couple</span></div>
+      <div class="love-mine" id="loveMine">Go on, tap it. Nobody's counting. (We are.)</div>
+    </div>
+
+    <div class="jar">
+      <div class="jar-head reveal">
+        <h3>The love <em class="gold-text">jar</em></h3>
+        <p>Drop a note, a prayer or your best marriage advice. The couple read every one, and their favourites float up here.</p>
+      </div>
+      <div class="notes-wall" id="notesWall"></div>
+      <form class="note-card reveal" id="noteForm" novalidate>
+        <input class="hp" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="note-tape"></div>
+        <div class="field"><input id="nName" name="name" placeholder=" " maxlength="60" autocomplete="name"><label for="nName">Your name</label></div>
+        <div class="field"><textarea id="nNote" name="note" placeholder=" " maxlength="280"></textarea><label for="nNote">Your note for Elijah &amp; Mary-Ann</label></div>
+        <div class="nf-row"><small id="nCount">0 / 280</small><button type="submit" class="btn btn-burg" id="noteBtn">Drop it in the jar ✦</button></div>
+        <div class="err" id="noteErr"></div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PHOTO BOOTH ============ -->
+<section class="section booth" id="booth">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">Photo booth</div>
+      <h2>Get your <span class="gold-text">guest frame</span></h2>
+      <p>Add your photo, pick your team, and post it on your WhatsApp status. Let everyone know where you'll be on the 21st and 28th.</p>
+    </div>
+    <div class="booth-grid">
+      <div class="booth-stage reveal">
+        <canvas id="boothCanvas" width="1080" height="1350" aria-label="Your Kalut-Shefa photo frame preview"></canvas>
+        <div class="booth-hint" id="boothHint">Drag to move your photo. Pinch or use the slider to zoom.</div>
+      </div>
+      <div class="booth-controls reveal">
+        <label class="btn btn-gold upload-btn" for="boothFile">📸 Add your photo</label>
+        <input type="file" id="boothFile" accept="image/*" hidden>
+        <div class="bc-group"><small>Your line</small>
+          <div class="seg" id="boothLine"><button type="button" data-v="I'll be there" class="on">I'll be there</button><button type="button" data-v="Team Elijah">Team Elijah</button><button type="button" data-v="Team Mary-Ann">Team Mary-Ann</button><button type="button" data-v="Team Both">Team Both</button></div></div>
+        <div class="bc-group"><small>Frame colour</small>
+          <div class="seg swatches" id="boothTheme"><button type="button" data-v="burg" class="on" style="--c:#6e0f1f" aria-label="Burgundy"></button><button type="button" data-v="olive" style="--c:#5f6b34" aria-label="Olive green"></button><button type="button" data-v="gold" style="--c:#d8bb8a" aria-label="Champagne gold"></button><button type="button" data-v="ivory" style="--c:#fbf7f0" aria-label="White"></button></div></div>
+        <div class="bc-group"><small>Zoom</small><input type="range" id="boothZoom" min="1" max="3" step="0.01" value="1"></div>
+        <div class="bc-group"><small>Your name (optional)</small><input id="boothName" class="booth-input" maxlength="28" placeholder="e.g. Aunty Ngozi"></div>
+        <div class="bc-actions"><button type="button" class="btn btn-gold" id="boothShare">Share it</button><button type="button" class="btn btn-line" id="boothSave">Download</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ============ PORTRAITS ============ -->
 <section class="section portraits" id="portraits">
   <div class="container">
@@ -310,6 +377,7 @@
         <div class="eyebrow">How it started</div>
         <h3 class="h-serif intro-h">How he <em class="h-script">asked</em></h3>
         <p class="intro-p">A room full of red, a circle of golden light, and six words waiting on the wall.</p>
+        <p class="dbl-hint">Double-tap any photo to love it ♥</p>
       </div>
       <div class="chapter"><div class="frame"><img src="assets/img/sun-circle.webp" alt="Their hands reaching into a glowing circle that reads Will you marry me" loading="lazy"></div>
         <div class="ch-text"><div class="num">01</div><h3>It started with a <em>glow</em></h3><p>A wall of balloons, a circle of sunset light, and a question in plain sight.</p></div></div>
@@ -406,6 +474,7 @@
   <img src="assets/img/logo.webp" alt="Kalut-Shefa '26" loading="lazy">
   <p class="tag">Elijah &amp; Mary-Ann · 21 &amp; 28 November 2026</p>
   <p class="small">#KalutShefa26 · With love, ease and abundance</p>
+  <p class="made-by">Designed &amp; built with love by <a href="https://john-enechukwu.vercel.app" target="_blank" rel="noopener">John Enechukwu</a><span class="dot">·</span>Powered by <a href="https://x.com/Nextchain1" target="_blank" rel="noopener" class="nc">NextChain</a></p>
 </footer>
 <button class="to-top" id="toTop" aria-label="Back to top">↑</button>
 <div class="toast" id="toast"></div>

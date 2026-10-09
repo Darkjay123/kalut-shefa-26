@@ -19,7 +19,8 @@ $('#pw').addEventListener('keydown',e=>{if(e.key==='Enter')$('#loginBtn').click(
 $('#logout').onclick=()=>{ sessionStorage.removeItem('ks_admin'); location.reload(); };
 $('#refresh').onclick=()=>load().catch(e=>alert('Could not refresh: '+e.message));
 async function showDash(){ await load(); $('#dash').style.display='block'; }
-async function load(){ const d=await api('GET'); data={visits:d.visits||[],rsvps:d.rsvps||[],gifts:d.gifts||[]}; render(); }
+async function load(){ const d=await api('GET'); data={visits:d.visits||[],rsvps:d.rsvps||[],gifts:d.gifts||[],notes:d.notes||[],pending:d.pending||[],hearts:d.hearts||0}; render(); }
+window.ksApprove=async(id)=>{ await api('POST',{action:'approve',id}); await load(); };
 window.ksDelete=async(kind,id)=>{ if(!confirm('Remove this entry for good?')) return; await api('POST',{action:'delete',kind,id}); await load(); };
 function demo(){
   const now=Date.now(), rnd=n=>Math.floor(Math.random()*n); const names=['Tobi Adeyemi','Chioma Okafor','Efe Omoregie','Blessing Eze','Ifeanyi Obi','Ruth Akpan','David Ogbe','Ada Nwosu'];
@@ -51,6 +52,10 @@ function render(){
     charts.d&&charts.d.destroy(); charts.d=new Chart($('#chartDevices'),{type:'doughnut',data:{labels:Object.keys(dev),datasets:[{data:Object.values(dev),backgroundColor:['#6e0f1f','#d8bb8a','#5f6b34','#f1dfbd'],borderColor:'#21060e',borderWidth:3}]},options:{cutout:'68%',plugins:{legend:{position:'bottom',labels:{boxWidth:10}}}}});
   }
   const src={}; visits.forEach(v=>{const h=v.utm_source||host(v.referrer); src[h]=(src[h]||0)+1}); $('#sources').innerHTML=Object.entries(src).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([k,n])=>`<li><span>${esc(k)}</span><b>${n}</b></li>`).join('');
+  $('#kHearts').textContent=(data.hearts||0).toLocaleString(); $('#kNotes').textContent=(data.pending||[]).length+' notes waiting';
+  const nc=(n,live)=>`<div class="note"><p>“${esc(n.note)}”</p><b>${esc(n.name)}</b><small>${when(n.created_at)}</small><div class="acts">${live?'':`<button class="ok" onclick="ksApprove('${esc(n.id)}')">Approve ♥</button>`}<button class="no" onclick="ksDelete('${live?'notes':'pending'}','${esc(n.id)}')">${live?'Take down':'Delete'}</button></div></div>`;
+  $('#pendingNotes').innerHTML=(data.pending||[]).map(n=>nc(n,false)).join('')||'<p class="empty-n">No new notes right now.</p>';
+  $('#liveNotes').innerHTML=(data.notes||[]).map(n=>nc(n,true)).join('')||'<p class="empty-n">Nothing approved yet.</p>';
   table(); $('#giftRows').innerHTML=gifts.map(g=>`<tr><td>${when(g.created_at)}</td><td>${esc(g.name||'Anonymous')}<br><small style="opacity:.6">${esc(g.email)}</small></td><td>${naira(g.amount_kobo)}</td><td class="msg">${esc(g.note)}</td><td><small>${esc(g.reference)}</small></td></tr>`).join('')||'<tr><td colspan="5" style="opacity:.5">No card gifts yet.</td></tr>';
 }
 function filtered(){ const q=$('#q').value.toLowerCase(), a=$('#fAtt').value, e=$('#fEv').value;

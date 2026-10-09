@@ -6,19 +6,22 @@ function authed(req){
   return crypto.timingSafeEqual(a,b);
 }
 const parse=a=>(a||[]).map(s=>{try{return JSON.parse(s)}catch(e){return null}}).filter(Boolean);
+const K={rsvps:'ks26:rsvps',gifts:'ks26:gifts',notes:'ks26:notes',pending:'ks26:notes:pending'};
+async function find(key,id){ const [all]=await pipe([['LRANGE',key,'0','-1']]); return (all||[]).find(s=>{try{return JSON.parse(s).id===id}catch(e){return false}}); }
 module.exports=async(req,res)=>{
   try{
     if(!process.env.ADMIN_PASSWORD) return send(res,503,{ok:false,error:'no_password_set'});
     if(!authed(req)){ await new Promise(r=>setTimeout(r,600)); return send(res,401,{ok:false,error:'wrong_password'}); }
     if(req.method==='GET'){
-      const [v,r,g]=await pipe([['LRANGE','ks26:visits','0','-1'],['LRANGE','ks26:rsvps','0','-1'],['LRANGE','ks26:gifts','0','-1']]);
-      return send(res,200,{ok:true,visits:parse(v),rsvps:parse(r),gifts:parse(g)});
+      const [v,r,g,n,p,h]=await pipe([['LRANGE','ks26:visits','0','-1'],['LRANGE','ks26:rsvps','0','-1'],['LRANGE','ks26:gifts','0','-1'],
+        ['LRANGE','ks26:notes','0','-1'],['LRANGE','ks26:notes:pending','0','-1'],['GET','ks26:hearts']]);
+      return send(res,200,{ok:true,visits:parse(v),rsvps:parse(r),gifts:parse(g),notes:parse(n),pending:parse(p),hearts:+h||0});
     }
-    if(req.method==='POST'){ // delete a spam RSVP or gift entry
-      const b=body(req); const kind=b.kind==='gifts'?'ks26:gifts':'ks26:rsvps';
-      if(b.action!=='delete'||!b.id) return send(res,400,{ok:false});
-      const [all]=await pipe([['LRANGE',kind,'0','-1']]); const hit=(all||[]).find(s=>{try{return JSON.parse(s).id===b.id}catch(e){return false}});
-      if(hit) await pipe([['LREM',kind,'1',hit]]); return send(res,200,{ok:true,deleted:!!hit});
+    if(req.method==='POST'){
+      const b=body(req); if(!b.id) return send(res,400,{ok:false});
+      if(b.action==='approve'){ const hit=await find(K.pending,b.id); if(hit) await pipe([['LREM',K.pending,'1',hit],['LPUSH',K.notes,hit]]); return send(res,200,{ok:true,approved:!!hit}); }
+      if(b.action==='delete'){ const key=K[b.kind]||K.rsvps; const hit=await find(key,b.id); if(hit) await pipe([['LREM',key,'1',hit]]); return send(res,200,{ok:true,deleted:!!hit}); }
+      return send(res,400,{ok:false});
     }
     send(res,405,{ok:false});
   }catch(e){ fail(res,e); }

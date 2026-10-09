@@ -42,6 +42,16 @@ tr:hover td{background:rgba(216,187,138,.04)}
 .login p{font-size:.85rem;color:rgba(251,247,240,.6);margin-top:12px}
 .err{color:#f2a5b0;font-size:.85rem;margin-top:10px;min-height:1em}
 @media(max-width:900px){.grid2{grid-template-columns:1fr}}
+.sub{font-family:'DM Sans';font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin:16px 0 10px}
+.notes{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.note{background:#fbf4e6;color:#3a2a22;border-radius:8px;padding:14px 14px 10px}
+.note p{font-family:'Playfair Display',serif;font-style:italic;margin-bottom:8px;word-wrap:break-word}
+.note b{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:#6e0f1f}
+.note small{display:block;opacity:.6;font-size:.72rem;margin-top:2px}
+.note .acts{display:flex;gap:8px;margin-top:10px}
+.note .acts button{flex:1;border:0;border-radius:20px;padding:7px;font-size:.8rem;cursor:pointer}
+.note .ok{background:#5f6b34;color:#fff}.note .no{background:transparent;border:1px solid #b4283b!important;color:#b4283b}
+.empty-n{opacity:.5;font-size:.85rem}
 </style></head>
 <body>
 <div id="loginView" class="login" style="display:none">
@@ -64,6 +74,7 @@ tr:hover td{background:rgba(216,187,138,.04)}
     <div class="kpi"><small>RSVPs</small><b id="kRsvp">0</b><span id="kRsvpSplit">0 yes · 0 no</span></div>
     <div class="kpi"><small>Guests · Traditional</small><b id="kTrad">0</b><span>incl. plus-ones</span></div>
     <div class="kpi"><small>Guests · White</small><b id="kWhite">0</b><span>incl. plus-ones</span></div>
+    <div class="kpi"><small>Hearts sent</small><b id="kHearts">0</b><span id="kNotes">0 notes waiting</span></div>
     <div class="kpi"><small>Card gifts</small><b id="kGifts">₦0</b><span id="kGiftCount">0 gifts</span></div>
   </div>
   <div class="grid2">
@@ -74,6 +85,9 @@ tr:hover td{background:rgba(216,187,138,.04)}
     <h2>RSVPs <span class="tools"><input id="q" placeholder="Search name, phone…"><select id="fAtt"><option value="">All</option><option value="yes">Attending</option><option value="no">Not attending</option></select><select id="fEv"><option value="">Both events</option><option value="traditional">Traditional</option><option value="white">White</option></select></span></h2>
     <div class="scroll"><table><thead><tr><th>When</th><th>Name</th><th>Contact</th><th>Status</th><th>Events</th><th>Party</th><th>For</th><th>Wish</th><th></th></tr></thead><tbody id="rsvpRows"></tbody></table></div>
   </div>
+  <div class="panel" style="margin-bottom:18px"><h2>Love jar <span style="font-size:.8rem;opacity:.6;font-family:DM Sans">Approve a note and it floats up on the site. Nothing shows publicly until you approve it.</span></h2>
+    <h3 class="sub">Waiting for you</h3><div class="notes" id="pendingNotes"></div>
+    <h3 class="sub">On the site</h3><div class="notes" id="liveNotes"></div></div>
   <div class="panel"><h2>Card gifts</h2><p style="font-size:.8rem;color:rgba(251,247,240,.55);margin-bottom:10px">Logged when a guest completes the Paystack window. Your Paystack dashboard is the final record of what settled.</p>
     <div class="scroll"><table><thead><tr><th>When</th><th>From</th><th>Amount</th><th>Note</th><th>Reference</th></tr></thead><tbody id="giftRows"></tbody></table></div></div>
 </div>
