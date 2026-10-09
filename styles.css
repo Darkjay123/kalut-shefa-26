@@ -680,3 +680,10 @@ footer .made-by .nc{font-weight:600;letter-spacing:.12em;text-transform:uppercas
 .toast{transform:translate(-50%,calc(100% + 60px));visibility:hidden;transition:transform .6s var(--ease),visibility 0s .6s}
 .toast.show{transform:translate(-50%,0);visibility:visible;transition:transform .6s var(--ease),visibility 0s}
 .menu-open .dock{opacity:0;pointer-events:none}
+/* singles button: front and centre */
+.single-btn{margin-top:22px;padding:16px 30px;font-size:1.08rem;font-weight:500;letter-spacing:.01em;color:var(--ivory);border:1.5px solid var(--gold);background:linear-gradient(135deg,rgba(216,187,138,.18),rgba(110,15,31,.35));box-shadow:0 0 0 0 rgba(216,187,138,.45),0 12px 30px rgba(0,0,0,.35);animation:singlePulse 2.6s ease-in-out infinite}
+.single-btn:hover,.single-btn:active{background:linear-gradient(135deg,rgba(216,187,138,.3),rgba(110,15,31,.5));color:var(--gold-l);transform:translateY(-2px) rotate(-1deg)}
+@keyframes singlePulse{0%,100%{box-shadow:0 0 0 0 rgba(216,187,138,.4),0 12px 30px rgba(0,0,0,.35)}50%{box-shadow:0 0 0 12px rgba(216,187,138,0),0 12px 30px rgba(0,0,0,.35)}}
+.single-msg{font-size:1.25rem;margin-top:14px;line-height:1.4;padding:0 10px}
+@media(max-width:700px){.single-btn{font-size:1.02rem;padding:15px 24px;width:min(100%,340px)}.single-msg{font-size:1.15rem}}
+@media(prefers-reduced-motion:reduce){.single-btn{animation:none}}
