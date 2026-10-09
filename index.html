@@ -51,7 +51,6 @@
     <li><a href="#events">Events</a></li>
     <li><a href="#gift">Gifts</a></li>
     <li><a href="#love">Love jar</a></li>
-    <li><a href="#booth">Photo booth</a></li>
   </ul>
   <a href="#rsvp" class="rsvp-pill magnetic">RSVP</a>
   <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
@@ -60,7 +59,7 @@
 <aside class="mobile-menu" id="mobileMenu" aria-hidden="true" aria-label="Menu">
   <div class="mm-head"><img src="assets/img/logo.webp" alt="Kalut-Shefa '26"><button class="mm-close" id="mmClose" aria-label="Close menu">✕</button></div>
   <div class="mm-count" id="mmCount">Counting down to 21 November</div>
-  <nav class="mm-links"><a href="#countdown" style="--i:0"><span class="mm-n">01</span><span class="mm-t"><b>Countdown</b><small>Every heartbeat until I do</small></span><span class="mm-arr">→</span></a><a href="#rsvp" style="--i:1"><span class="mm-n">02</span><span class="mm-t"><b>RSVP</b><small>Save your seat</small></span><span class="mm-arr">→</span></a><a href="#gift" style="--i:2"><span class="mm-n">03</span><span class="mm-t"><b>Gifts</b><small>Bless the couple</small></span><span class="mm-arr">→</span></a><a href="#events" style="--i:3"><span class="mm-n">04</span><span class="mm-t"><b>The celebrations</b><small>21 & 28 November</small></span><span class="mm-arr">→</span></a><a href="#colours" style="--i:4"><span class="mm-n">05</span><span class="mm-t"><b>Colours of the day</b><small>What to wear</small></span><span class="mm-arr">→</span></a><a href="#love" style="--i:5"><span class="mm-n">06</span><span class="mm-t"><b>Love jar</b><small>Hearts and notes</small></span><span class="mm-arr">→</span></a><a href="#booth" style="--i:6"><span class="mm-n">07</span><span class="mm-t"><b>Photo booth</b><small>Your guest frame</small></span><span class="mm-arr">→</span></a><a href="#portraits" style="--i:7"><span class="mm-n">08</span><span class="mm-t"><b>Portraits</b><small>The pre-wedding shoot</small></span><span class="mm-arr">→</span></a><a href="#story" style="--i:8"><span class="mm-n">09</span><span class="mm-t"><b>Our story</b><small>How he asked</small></span><span class="mm-arr">→</span></a><a href="#films" style="--i:9"><span class="mm-n">10</span><span class="mm-t"><b>Films</b><small>The proposal</small></span><span class="mm-arr">→</span></a></nav>
+  <nav class="mm-links"><a href="#countdown" style="--i:0"><span class="mm-n">01</span><span class="mm-t"><b>Countdown</b><small>Every heartbeat until I do</small></span><span class="mm-arr">→</span></a><a href="#rsvp" style="--i:1"><span class="mm-n">02</span><span class="mm-t"><b>RSVP</b><small>Save your seat</small></span><span class="mm-arr">→</span></a><a href="#gift" style="--i:2"><span class="mm-n">03</span><span class="mm-t"><b>Gifts</b><small>Bless the couple</small></span><span class="mm-arr">→</span></a><a href="#events" style="--i:3"><span class="mm-n">04</span><span class="mm-t"><b>The celebrations</b><small>21 & 28 November</small></span><span class="mm-arr">→</span></a><a href="#colours" style="--i:4"><span class="mm-n">05</span><span class="mm-t"><b>Colours of the day</b><small>What to wear</small></span><span class="mm-arr">→</span></a><a href="#love" style="--i:5"><span class="mm-n">06</span><span class="mm-t"><b>Love jar</b><small>Hearts and notes</small></span><span class="mm-arr">→</span></a><a href="#portraits" style="--i:6"><span class="mm-n">07</span><span class="mm-t"><b>Portraits</b><small>The pre-wedding shoot</small></span><span class="mm-arr">→</span></a><a href="#story" style="--i:7"><span class="mm-n">08</span><span class="mm-t"><b>Our story</b><small>How he asked</small></span><span class="mm-arr">→</span></a><a href="#films" style="--i:8"><span class="mm-n">09</span><span class="mm-t"><b>Films</b><small>The proposal</small></span><span class="mm-arr">→</span></a></nav>
   <div class="mm-cta"><a href="#rsvp" class="btn btn-gold">RSVP</a><a href="#gift" class="btn btn-line">Send love ♥</a></div>
   <p class="mm-foot">Elijah &amp; Mary-Ann · #KalutShefa26</p>
 </aside>
@@ -186,7 +185,7 @@
       <div class="rsvp-done" id="rsvpDone">
         <div class="h-script">Thank you!</div>
         <p id="rsvpDoneMsg">Your RSVP is in. See you there.</p>
-        <div class="done-actions"><a href="#booth" class="btn btn-burg" id="doneBooth">Make your guest frame 📸</a><a href="#love" class="btn btn-line-dark">Leave a love note</a></div>
+        <div class="done-actions"><a href="#gift" class="btn btn-burg">Bless the couple ♥</a><a href="#love" class="btn btn-line-dark">Leave a love note</a></div>
       </div>
     </form>
   </div>
@@ -329,33 +328,7 @@
   </div>
 </section>
 
-<!-- ============ PHOTO BOOTH ============ -->
-<section class="section booth" id="booth">
-  <div class="container">
-    <div class="section-head reveal">
-      <div class="eyebrow">Photo booth</div>
-      <h2>Get your <span class="gold-text">guest frame</span></h2>
-      <p>Add your photo, pick your team, and post it on your WhatsApp status. Let everyone know where you'll be on the 21st and 28th.</p>
-    </div>
-    <div class="booth-grid">
-      <div class="booth-stage reveal">
-        <canvas id="boothCanvas" width="1080" height="1350" aria-label="Your Kalut-Shefa photo frame preview"></canvas>
-        <div class="booth-hint" id="boothHint">Drag to move your photo. Pinch or use the slider to zoom.</div>
-      </div>
-      <div class="booth-controls reveal">
-        <label class="btn btn-gold upload-btn" for="boothFile">📸 Add your photo</label>
-        <input type="file" id="boothFile" accept="image/*" hidden>
-        <div class="bc-group"><small>Your line</small>
-          <div class="seg" id="boothLine"><button type="button" data-v="I'll be there" class="on">I'll be there</button><button type="button" data-v="Team Elijah">Team Elijah</button><button type="button" data-v="Team Mary-Ann">Team Mary-Ann</button><button type="button" data-v="Team Both">Team Both</button></div></div>
-        <div class="bc-group"><small>Frame colour</small>
-          <div class="seg swatches" id="boothTheme"><button type="button" data-v="burg" class="on" style="--c:#6e0f1f" aria-label="Burgundy"></button><button type="button" data-v="olive" style="--c:#5f6b34" aria-label="Olive green"></button><button type="button" data-v="gold" style="--c:#d8bb8a" aria-label="Champagne gold"></button><button type="button" data-v="ivory" style="--c:#fbf7f0" aria-label="White"></button></div></div>
-        <div class="bc-group"><small>Zoom</small><input type="range" id="boothZoom" min="1" max="3" step="0.01" value="1"></div>
-        <div class="bc-group"><small>Your name (optional)</small><input id="boothName" class="booth-input" maxlength="28" placeholder="e.g. Aunty Ngozi"></div>
-        <div class="bc-actions"><button type="button" class="btn btn-gold" id="boothShare">Share it</button><button type="button" class="btn btn-line" id="boothSave">Download</button></div>
-      </div>
-    </div>
-  </div>
-</section>
+
 
 <!-- ============ PORTRAITS ============ -->
 <section class="section portraits" id="portraits">
