@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Elijah & Mary-ann · Kalut-Shefa '26</title>
+<meta name="description" content="Elijah Ijabor and Mary-ann Nwakor are getting married. Traditional Wedding 21 November 2026, White Wedding 28 November 2026. RSVP, our story, and gifts.">
+<meta name="theme-color" content="#3d0610">
+<meta property="og:title" content="Elijah & Mary-ann · Kalut-Shefa '26">
+<meta property="og:description" content="Ease and abundance. Join us: 21 & 28 November 2026.">
+<meta property="og:image" content="https://darkjay123.github.io/kalut-shefa-26/assets/img/og.jpg">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💍</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&family=Pinyon+Script&family=Frank+Ruhl+Libre:wght@300&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="assets/img/logo.webp">
+<link rel="stylesheet" href="styles.css">
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body class="locked">
+
+<!-- ============ GATE / ENVELOPE ============ -->
+<div id="gate" aria-label="Open the invitation">
+  <div class="curtain l"></div><div class="curtain r"></div>
+  <div class="gate-inner">
+    <div class="gate-top">You are invited</div>
+    <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="Break the seal">
+      <div class="env-back"></div>
+      <div class="env-letter"><span class="h-script">Elijah &amp; Mary-ann</span><small>Kalut-Shefa '26</small></div>
+      <div class="env-front"></div>
+      <div class="env-flap"></div>
+      <div class="seal">E&amp;M</div>
+    </div>
+    <div class="gate-hint">Tap the seal to open</div>
+  </div>
+</div>
+
+<canvas id="petals"></canvas>
+<canvas id="trail"></canvas>
+<div class="cursor" id="cursor"></div>
+
+<!-- ============ NAV ============ -->
+<nav class="nav" id="nav">
+  <a href="#top" class="brand">E &amp; M</a>
+  <ul>
+    <li><a href="#story">Our story</a></li>
+    <li><a href="#countdown">Countdown</a></li>
+    <li><a href="#films">Films</a></li>
+    <li><a href="#events">Events</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#gift">Gifts</a></li>
+  </ul>
+  <a href="#rsvp" class="rsvp-pill magnetic">RSVP</a>
+  <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#story">Our story</a><a href="#countdown">Countdown</a><a href="#films">Films</a><a href="#events">Events</a><a href="#gallery">Gallery</a><a href="#rsvp">RSVP</a><a href="#gift">Gifts</a>
+</div>
+
+<main id="top">
+<!-- ============ HERO ============ -->
+<section class="hero" id="hero">
+  <img class="hero-poster" src="assets/img/hero-poster.jpg" alt="">
+  <video id="heroVid" muted loop playsinline preload="metadata" poster="assets/img/hero-poster.jpg"><source src="assets/video/hero.mp4" type="video/mp4"></video>
+  <div class="shade"></div>
+  <div class="hero-content">
+    <img class="hero-logo" id="heroLogo" src="assets/img/logo.webp" alt="Kalut-Shefa '26, Ease and Abundance">
+    <h1 class="hero-names" id="heroNames" aria-label="Elijah and Mary-ann">Elijah <span class="amp">&amp;</span> Mary-ann</h1>
+    <div class="hero-dates" id="heroDates">
+      <div><b>21.11.26</b><span>Traditional</span></div>
+      <i></i>
+      <div><b>28.11.26</b><span>White Wedding</span></div>
+    </div>
+  </div>
+  <div class="scroll-cue"><span></span>Scroll</div>
+</section>
+
+<div class="marquee" aria-hidden="true"><div class="track">
+  <span>Kalut · Ease</span><span>Shefa · Abundance</span><span>Elijah &amp; Mary-ann</span><span>21 November · Traditional</span><span>28 November · White Wedding</span><span>#KalutShefa26</span>
+  <span>Kalut · Ease</span><span>Shefa · Abundance</span><span>Elijah &amp; Mary-ann</span><span>21 November · Traditional</span><span>28 November · White Wedding</span><span>#KalutShefa26</span>
+</div></div>
+
+<!-- ============ MEANING ============ -->
+<section class="section meaning" id="meaning">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">The name of the day</div>
+      <h2><span class="gold-text">Kalut-Shefa</span></h2>
+      <div class="divider">✦</div>
+      <p>Two Hebrew words, one promise for the life they are building together.</p>
+    </div>
+    <div class="meaning-grid">
+      <div class="word-card tilt reveal"><div class="glow"></div>
+        <div class="heb">קלות</div>
+        <h3>Kalut <em>ease</em></h3>
+        <p>A love that feels light to carry. Grace in the ordinary days, peace in the hard ones, laughter that comes easily.</p>
+      </div>
+      <div class="word-card olive tilt reveal"><div class="glow"></div>
+        <div class="heb">שפע</div>
+        <h3>Shefa <em>abundance</em></h3>
+        <p>Overflowing joy, open doors, full tables, and more than enough love to share with everyone who walked with them here.</p>
+      </div>
+    </div>
+    <p class="meaning-quote reveal">“Ease and abundance.” That is the wish, the theme, and the whole mood of these two weekends.</p>
+  </div>
+</section>
+
+<!-- ============ COUNTDOWN ============ -->
+<section class="section countdown" id="countdown">
+  <svg width="0" height="0" style="position:absolute"><defs><linearGradient id="goldGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a9874f"/><stop offset=".5" stop-color="#fff3da"/><stop offset="1" stop-color="#d8bb8a"/></linearGradient></defs></svg>
+  <div class="container" style="position:relative">
+    <div class="section-head reveal" style="margin-bottom:30px">
+      <div class="eyebrow">Counting every heartbeat</div>
+      <h2>Until we say <span class="gold-text">I do</span></h2>
+    </div>
+    <div class="cd-tabs-wrap reveal"><div class="cd-tabs" id="cdTabs">
+      <span class="pill" id="cdPill"></span>
+      <button class="active" data-ev="trad">Traditional</button>
+      <button data-ev="white">White Wedding</button>
+    </div></div>
+    <div id="cdBox">
+      <div class="cd-title" id="cdTitle">Traditional Wedding</div>
+      <div class="cd-date" id="cdDate">Saturday, 21 November 2026</div>
+      <div class="today-banner">It's today! 🎉</div>
+      <div class="cd-grid">
+        <div class="cd-unit" data-u="d"><svg viewBox="0 0 100 100"><circle class="track-c" cx="50" cy="50" r="46"/><circle class="prog" cx="50" cy="50" r="46"/></svg><div class="cd-face"><span class="cd-num"><span class="n">00</span></span><div class="cd-label">Days</div></div></div>
+        <div class="cd-unit" data-u="h"><svg viewBox="0 0 100 100"><circle class="track-c" cx="50" cy="50" r="46"/><circle class="prog" cx="50" cy="50" r="46"/></svg><div class="cd-face"><span class="cd-num"><span class="n">00</span></span><div class="cd-label">Hours</div></div></div>
+        <div class="cd-unit" data-u="m"><svg viewBox="0 0 100 100"><circle class="track-c" cx="50" cy="50" r="46"/><circle class="prog" cx="50" cy="50" r="46"/></svg><div class="cd-face"><span class="cd-num"><span class="n">00</span></span><div class="cd-label">Minutes</div></div></div>
+        <div class="cd-unit" data-u="s"><svg viewBox="0 0 100 100"><circle class="track-c" cx="50" cy="50" r="46"/><circle class="prog" cx="50" cy="50" r="46"/></svg><div class="cd-face"><span class="cd-num"><span class="n">00</span></span><div class="cd-label">Seconds</div></div></div>
+      </div>
+    </div>
+    <svg class="cd-heart" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2.3 4.5 6 4.5c2.1 0 3.5 1.2 4.2 2.4h1.6c.7-1.2 2.1-2.4 4.2-2.4 3.7 0 5.6 3.9 4 7.2C19.5 16.4 12 21 12 21z"/></svg>
+    <p class="cd-sub">That's <b id="cdHeartbeats">0</b> more heartbeats of waiting.</p>
+    <div class="cd-mini reveal">
+      <div><small>Traditional</small><b id="miniTrad">–</b></div>
+      <div><small>White Wedding</small><b id="miniWhite">–</b></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STORY ============ -->
+<section class="section story" id="story">
+  <div class="story-pin" id="storyPin">
+    <div class="story-track" id="storyTrack">
+      <div class="chapter intro-ch">
+        <div class="eyebrow">Chapter one</div>
+        <h3 class="h-serif" style="font-size:clamp(3rem,7vw,6rem);margin:.2em 0">How he <em class="h-script" style="color:var(--gold-l)">asked</em></h3>
+        <p style="color:rgba(251,247,240,.75);font-size:1.1rem;max-width:460px">A room full of red, a circle of golden light, and six words waiting on the wall. Scroll through the night it all began.</p>
+      </div>
+      <div class="chapter"><div class="frame"><img src="assets/img/sun-circle.webp" alt="Their hands reaching into a glowing circle that reads Will you marry me" loading="lazy"></div>
+        <div><div class="num">01</div><h3>It started with a <em>glow</em></h3><p>A wall of balloons, a circle of sunset light, and a question projected in plain sight. Two hands reached in to touch it.</p></div></div>
+      <div class="chapter"><div class="frame"><img src="assets/img/will-you.webp" alt="Couple smiling at the Will you marry me wall" loading="lazy"></div>
+        <div><div class="num">02</div><h3>Will you <em>marry me?</em></h3><p>He let the words on the wall do the asking. Her smile did most of the answering.</p></div></div>
+      <div class="chapter"><div class="frame"><img src="assets/img/profile-glow.webp" alt="Mary-ann in profile against the proposal wall" loading="lazy"></div>
+        <div><div class="num">03</div><h3>A moment held <em>still</em></h3><p>Hands stacked, ring catching the light, the whole world quiet for a second.</p></div></div>
+      <div class="chapter"><div class="frame"><img src="assets/img/ring-red.webp" alt="Their hands clasped, engagement ring in red light" loading="lazy"></div>
+        <div><div class="num">04</div><h3>Then came the <em>ring</em></h3><p>Two hands that found each other and decided to stay.</p></div></div>
+      <div class="chapter"><div class="frame wide"><img src="assets/img/she-said-yes.webp" alt="His palm reads She said yes, her ring hand beside it" loading="lazy"></div>
+        <div><div class="num">05</div><h3>Her palm said it <em>first</em></h3><p>“I said YES!!” on hers. “She said yes!!” on his. Written in ink, sealed for life.</p></div></div>
+    </div>
+    <div class="story-progress"><i id="storyBar"></i></div>
+  </div>
+</section>
+
+<!-- ============ SCRATCH ============ -->
+<section class="section scratch-sec" id="answer">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">Interactive</div>
+      <h2>What did she <span class="gold-text">say?</span></h2>
+      <p>Scratch the gold to reveal her answer.</p>
+    </div>
+    <div class="scratch-pair">
+      <div class="reveal">
+        <div class="scratch-wrap" id="scratchWrap"><img src="assets/img/said-yes.webp" alt="Her palm reads I said YES"><canvas id="scratch"></canvas></div>
+        <div class="scratch-note" id="scratchNote">Use your finger or mouse ✨</div>
+      </div>
+      <div class="reply-card reveal">
+        <div class="scratch-wrap"><img src="assets/img/her-smile.webp" alt="Mary-ann smiling at the proposal wall"></div>
+        <div class="reply-cap">And that smile said the rest</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FILMS ============ -->
+<section class="section films" id="films">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">Press play</div>
+      <h2>The <span class="gold-text">films</span></h2>
+      <p>The proposal, as it happened. Turn your sound on.</p>
+    </div>
+    <div class="reels">
+      <div class="phone reveal"><div class="screen vplayer">
+        <video src="assets/video/reel-film.mp4" poster="assets/img/reel-film-poster.jpg" playsinline preload="none"></video>
+        <button class="play" aria-label="Play Mary and Elijah reel"><span><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg></span></button>
+        <div class="cap"><b>Mary &amp; Elijah</b><small>The proposal reel</small></div>
+      </div></div>
+      <div class="phone reveal"><div class="screen vplayer">
+        <video src="assets/video/my-forever.mp4" poster="assets/img/my-forever-poster.jpg" playsinline preload="none"></video>
+        <button class="play" aria-label="Play My forever"><span><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg></span></button>
+        <div class="cap"><b>My forever.</b><small>In black &amp; white</small></div>
+      </div></div>
+    </div>
+    <div class="films-grid">
+      <div class="cinema vplayer reveal">
+        <video src="assets/video/film.mp4" poster="assets/img/film-poster.jpg" playsinline preload="none"></video>
+        <div class="bars"></div>
+        <div class="film-title"><small>The full film</small><b>Kalut-Shefa '26</b></div>
+        <button class="play" aria-label="Play the full proposal film"><span><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg></span></button>
+      </div>
+      <div class="cinema small vplayer reveal">
+        <video src="assets/video/lyric.mp4" poster="assets/img/lyric-poster.jpg" playsinline preload="none"></video>
+        <div class="bars"></div>
+        <div class="film-title"><small>Lyric cut</small><b>I'd risk it all</b></div>
+        <button class="play" aria-label="Play the lyric film"><span><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg></span></button>
+      </div>
+    </div>
+    <p class="credit">Proposal films by GSC Media</p>
+  </div>
+</section>
+
+<!-- ============ EVENTS ============ -->
+<section class="section events" id="events">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">Two weekends · One love</div>
+      <h2>The <span class="gold-text">celebrations</span></h2>
+      <p>Tap a card to flip it for the details.</p>
+    </div>
+    <div class="event-cards">
+      <div class="ev trad reveal" tabindex="0">
+        <div class="ev-face ev-front"><div class="bg" style="background-image:url(assets/img/ring-red.webp)"></div>
+          <span class="tag" style="color:var(--gold-l)">Part one</span>
+          <div><div class="big-date">21<sup>NOV</sup></div><h3>Traditional <em>Wedding</em></h3></div>
+          <div class="flip-hint">Tap for details ⟳</div>
+        </div>
+        <div class="ev-face ev-back">
+          <h4>Traditional Wedding</h4>
+          <dl>
+            <div><dt>Date</dt><dd>Saturday, 21 November 2026</dd></div>
+            <div><dt>Time &amp; venue</dt><dd>To be announced. Check back soon.</dd></div>
+            <div><dt>Wear the colours</dt><dd><div class="swatches"><i style="background:#6e0f1f"></i><i style="background:#d8bb8a"></i><i style="background:#5f6b34"></i><i style="background:#fff"></i></div></dd></div>
+          </dl>
+          <div class="cal-btns"><a class="btn btn-burg" data-cal="trad" href="#">Add to calendar</a></div>
+        </div>
+      </div>
+      <div class="ev white reveal" tabindex="0">
+        <div class="ev-face ev-front"><div class="bg" style="background-image:url(assets/img/she-said-yes.webp)"></div>
+          <span class="tag" style="color:var(--gold-l)">Part two</span>
+          <div><div class="big-date">28<sup>NOV</sup></div><h3>White <em>Wedding</em></h3></div>
+          <div class="flip-hint">Tap for details ⟳</div>
+        </div>
+        <div class="ev-face ev-back">
+          <h4>White Wedding</h4>
+          <dl>
+            <div><dt>Date</dt><dd>Saturday, 28 November 2026</dd></div>
+            <div><dt>Time &amp; venue</dt><dd>To be announced. Check back soon.</dd></div>
+            <div><dt>Wear the colours</dt><dd><div class="swatches"><i style="background:#6e0f1f"></i><i style="background:#d8bb8a"></i><i style="background:#5f6b34"></i><i style="background:#fff"></i></div></dd></div>
+          </dl>
+          <div class="cal-btns"><a class="btn btn-burg" data-cal="white" href="#">Add to calendar</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ COLOURS ============ -->
+<section class="section colours" id="colours">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">Colours of the day</div>
+      <h2>Dress in our <span class="gold-text">palette</span></h2>
+      <p>Tap a colour and watch the room change.</p>
+    </div>
+    <div class="colour-row">
+      <div class="colour c1 reveal" data-bg="#3d0610"><div class="fill"></div><div class="shine"></div><div class="label"><b>Burgundy</b><small>Deep &amp; rich</small></div></div>
+      <div class="colour c2 reveal" data-bg="#4a3a1c"><div class="fill"></div><div class="shine"></div><div class="label"><b>Champagne Gold</b><small>Warm &amp; glowing</small></div></div>
+      <div class="colour c3 reveal" data-bg="#2c3316"><div class="fill"></div><div class="shine"></div><div class="label"><b>Olive Green</b><small>Earthy &amp; calm</small></div></div>
+      <div class="colour c4 reveal" data-bg="#3a3330"><div class="fill"></div><div class="shine"></div><div class="label"><b>White</b><small>Pure &amp; bright</small></div></div>
+    </div>
+    <p class="colour-note reveal">Come dressed in any of the four. Bonus points for wearing two.</p>
+  </div>
+</section>
+
+<!-- ============ GALLERY ============ -->
+<section class="section gallery" id="gallery">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">Moments</div>
+      <h2>The <span class="gold-text">gallery</span></h2>
+    </div>
+    <div class="masonry" id="masonry"></div>
+    <div class="coming reveal">The official pre-wedding shoot lands here soon. Keep this page close.</div>
+  </div>
+</section>
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+  <button class="lb-btn lb-close" aria-label="Close">✕</button>
+  <button class="lb-btn lb-prev" aria-label="Previous">‹</button>
+  <img alt="">
+  <button class="lb-btn lb-next" aria-label="Next">›</button>
+  <div class="lb-count"></div>
+</div>
+
+<!-- ============ RSVP ============ -->
+<section class="section rsvp" id="rsvp">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">Kindly respond</div>
+      <h2>Will you be <span class="gold-text">there?</span></h2>
+      <p>Let Elijah and Mary-ann know you're coming so a seat is waiting for you.</p>
+    </div>
+    <form class="rsvp-card reveal" id="rsvpForm" novalidate>
+      <div class="rsvp-steps"><i class="on"></i><i></i><i></i><i></i></div>
+      <input class="hp" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+      <div class="step active" data-step="1">
+        <h3>First, who are you?</h3>
+        <div class="field"><input id="fName" name="full_name" placeholder=" " autocomplete="name" required><label for="fName">Full name</label></div>
+        <div class="field"><input id="fPhone" name="phone" placeholder=" " inputmode="tel" autocomplete="tel"><label for="fPhone">Phone / WhatsApp</label></div>
+        <div class="field"><input id="fEmail" name="email" placeholder=" " type="email" autocomplete="email"><label for="fEmail">Email (optional)</label></div>
+        <div class="err" data-err="1"></div>
+        <div class="step-nav"><span></span><button type="button" class="btn btn-burg next">Continue →</button></div>
+      </div>
+
+      <div class="step" data-step="2">
+        <h3>Will you celebrate with us?</h3>
+        <div class="choice-row">
+          <label class="choice"><input type="radio" name="attending" value="yes"><span><b>Joyfully, yes</b><small>Wouldn't miss it</small></span></label>
+          <label class="choice"><input type="radio" name="attending" value="no"><span><b>Sadly, no</b><small>Celebrating from afar</small></span></label>
+        </div>
+        <div id="eventsPick">
+          <p style="font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:var(--olive);margin-bottom:10px">Which celebrations?</p>
+          <div class="choice-row">
+            <label class="choice"><input type="checkbox" name="events" value="traditional"><span><b>Traditional</b><small>Sat, 21 Nov</small></span></label>
+            <label class="choice"><input type="checkbox" name="events" value="white"><span><b>White Wedding</b><small>Sat, 28 Nov</small></span></label>
+          </div>
+        </div>
+        <div class="err" data-err="2"></div>
+        <div class="step-nav"><button type="button" class="link-btn back">← Back</button><button type="button" class="btn btn-burg next">Continue →</button></div>
+      </div>
+
+      <div class="step" data-step="3">
+        <h3>How many in your party?</h3>
+        <p style="color:#7d6c55">Including you.</p>
+        <div class="stepper"><button type="button" data-d="-1">−</button><output id="guestOut">1</output><button type="button" data-d="1">+</button></div>
+        <p style="font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:var(--olive);margin-bottom:10px">You're here for</p>
+        <div class="choice-row" style="grid-template-columns:repeat(3,1fr)">
+          <label class="choice"><input type="radio" name="side" value="groom"><span><b>Elijah</b></span></label>
+          <label class="choice"><input type="radio" name="side" value="bride"><span><b>Mary-ann</b></span></label>
+          <label class="choice"><input type="radio" name="side" value="both" checked><span><b>Both!</b></span></label>
+        </div>
+        <div class="step-nav"><button type="button" class="link-btn back">← Back</button><button type="button" class="btn btn-burg next">Continue →</button></div>
+      </div>
+
+      <div class="step" data-step="4">
+        <h3>A wish for the couple?</h3>
+        <div class="field"><textarea id="fMsg" name="message" placeholder=" " maxlength="1000"></textarea><label for="fMsg">Prayers, advice, love notes…</label></div>
+        <div class="err" data-err="4"></div>
+        <div class="step-nav"><button type="button" class="link-btn back">← Back</button><button type="submit" class="btn btn-gold" id="rsvpSubmit">Send my RSVP ✦</button></div>
+      </div>
+
+      <div class="rsvp-done" id="rsvpDone">
+        <div class="h-script">Thank you!</div>
+        <p id="rsvpDoneMsg">Your RSVP is in. See you there.</p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- ============ GIFT ============ -->
+<section class="section gift" id="gift">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">Bless the couple</div>
+      <h2>Gifts &amp; <span class="gold-text">support</span></h2>
+      <p>Your presence is the gift. If you'd love to add a blessing to their new home, here's how.</p>
+    </div>
+    <div class="gift-grid">
+      <div class="reveal">
+        <div class="bank-card tilt" id="bankCard">
+          <div class="top"><div><div class="bank" id="bankName">Fidelity Bank</div><div class="mono">E &amp; M</div></div><div class="chip"></div></div>
+          <div class="acct" id="acctNum">6680 975 235</div>
+          <div class="acct-name" id="acctName">Elijah Oghenerona Ijabor</div>
+        </div>
+        <button class="btn btn-line copy-btn magnetic" id="copyAcct">Copy account number</button>
+      </div>
+      <div class="gift-copy reveal">
+        <h3>Prefer to use a <em class="h-script" style="color:var(--gold-l)">card?</em></h3>
+        <p>Send a gift securely by card, bank transfer or USSD. Pick an amount or enter your own.</p>
+        <div class="amounts" id="amounts">
+          <button data-a="5000">₦5,000</button><button data-a="10000" class="on">₦10,000</button><button data-a="20000">₦20,000</button><button data-a="50000">₦50,000</button><button data-a="100000">₦100,000</button>
+        </div>
+        <div class="gift-form">
+          <input id="gAmount" type="number" min="100" step="100" placeholder="Amount (₦)" value="10000" inputmode="numeric">
+          <input id="gName" placeholder="Your name">
+          <input id="gEmail" type="email" placeholder="Your email (for your receipt)">
+          <input id="gNote" placeholder="A short note (optional)" maxlength="200">
+        </div>
+        <button class="btn btn-gold magnetic" id="payBtn">Send a gift 💛</button>
+        <p class="gift-note" id="payNote">Payments are processed securely by Paystack.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <img src="assets/img/logo.webp" alt="Kalut-Shefa '26" loading="lazy">
+  <p class="tag">Elijah &amp; Mary-ann · 21 &amp; 28 November 2026</p>
+  <p class="small">#KalutShefa26 · With love, ease and abundance</p>
+</footer>
+<button class="to-top" id="toTop" aria-label="Back to top">↑</button>
+<div class="toast" id="toast"></div>
+
+<script src="config.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://js.paystack.co/v2/inline.js" async></script>
+<script src="app.js"></script>
+</body>
+</html>
