@@ -6,6 +6,9 @@
 <title>Elijah & Mary-Ann · Kalut-Shefa '26</title>
 <meta name="description" content="Elijah Ijabor and Mary-Ann Nwakor are getting married. Traditional Wedding 21 November 2026, White Wedding 28 November 2026. RSVP, our story, and gifts.">
 <meta name="theme-color" content="#3d0610">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="E &amp; M '26">
+<meta name="format-detection" content="telephone=no">
 <meta property="og:title" content="Elijah & Mary-Ann · Kalut-Shefa '26">
 <meta property="og:description" content="Ease and abundance. Join us: 21 & 28 November 2026.">
 <meta property="og:image" content="https://kalut-shefa-26.vercel.app/assets/img/og.jpg">
@@ -210,19 +213,20 @@
       </div>
       <div class="gift-copy reveal">
         <span class="soon-pill" id="soonPill">Coming soon</span>
-        <h3>Prefer to use a <em class="h-script" style="color:var(--gold-l)">card?</em></h3>
-        <p>Send a gift securely by card, bank transfer or USSD. Pick an amount or enter your own.</p>
+        <h3>Gift them in <em class="h-script" style="color:var(--gold-l)">one tap</em></h3>
+        <p>Pay the way you like: card, bank transfer, USSD or OPay. It goes straight to the couple.</p>
+        <div class="pay-ways" aria-label="Ways to pay"><span>💳 Card</span><span>🏦 Transfer</span><span>📱 USSD</span><span>🟢 OPay</span></div>
         <div class="amounts" id="amounts">
           <button data-a="5000">₦5,000</button><button data-a="10000" class="on">₦10,000</button><button data-a="20000">₦20,000</button><button data-a="50000">₦50,000</button><button data-a="100000">₦100,000</button>
         </div>
         <div class="gift-form">
           <input id="gAmount" type="number" min="100" step="100" placeholder="Amount (₦)" value="10000" inputmode="numeric">
-          <input id="gName" placeholder="Your name">
-          <input id="gEmail" type="email" placeholder="Your email (for your receipt)">
+          <input id="gName" placeholder="Your name" autocomplete="name">
+          <input id="gEmail" type="email" placeholder="Your email (for your receipt)" autocomplete="email" inputmode="email" autocapitalize="off">
           <input id="gNote" placeholder="A short note (optional)" maxlength="200">
         </div>
         <button class="btn btn-gold magnetic" id="payBtn">Send a gift 💛</button>
-        <p class="gift-note" id="payNote">Payments are processed securely by Paystack.</p>
+        <p class="gift-note" id="payNote">🔒 Secured by Paystack. Your receipt comes by email.</p>
       </div>
     </div>
   </div>

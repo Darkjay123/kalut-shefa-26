@@ -668,3 +668,25 @@ footer .made-by .nc{font-weight:600;letter-spacing:.12em;text-transform:uppercas
 .single-msg{font-size:1.25rem;margin-top:14px;line-height:1.4;padding:0 10px}
 @media(max-width:700px){.single-btn{font-size:1.02rem;padding:15px 24px;width:min(100%,340px)}.single-msg{font-size:1.15rem}}
 @media(prefers-reduced-motion:reduce){.single-btn{animation:none}}
+/* ---- iPhone polish ---- */
+html,body{-webkit-tap-highlight-color:transparent}
+body.locked{height:100vh;height:100dvh}
+.story-pin{height:100vh;height:100svh}
+.chapter .frame{max-height:76svh}
+.lightbox img{max-height:82svh}
+.nav{padding-top:env(safe-area-inset-top)}
+.mobile-menu{padding-top:env(safe-area-inset-top)}
+.pay-ways{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 18px}
+.pay-ways span{font-size:.86rem;padding:7px 13px;border-radius:40px;border:1px solid rgba(216,187,138,.35);background:rgba(216,187,138,.08);color:var(--ivory);white-space:nowrap}
+.gift-note{opacity:.85}
+@media(max-width:700px){
+  .dock{bottom:calc(12px + env(safe-area-inset-bottom))}
+  .toast{bottom:calc(30px + env(safe-area-inset-bottom))}
+  input,textarea,select{font-size:16px}
+  .field input{font-size:1.15rem}.field textarea{font-size:1.1rem}
+  .gift-form input{padding:15px 16px}
+  .btn,.amounts button{min-height:46px}
+  .pay-ways{gap:6px}.pay-ways span{font-size:.8rem;padding:6px 11px}
+  .gift-copy h3{font-size:clamp(1.7rem,7vw,2.1rem)}
+}
+@media(hover:none){.tilt{transform:none!important}}

@@ -294,7 +294,7 @@ $$('#amounts button').forEach(b=>b.onclick=()=>{ $$('#amounts button').forEach(x
 $('#gAmount').oninput=()=>$$('#amounts button').forEach(x=>x.classList.toggle('on',x.dataset.a===$('#gAmount').value));
 const payBtn=$('#payBtn');
 if(C.PAYSTACK_PUBLIC_KEY){ const sp=$('#soonPill'); sp&&sp.remove(); }
-if(!C.PAYSTACK_PUBLIC_KEY){ payBtn.disabled=true; payBtn.classList.add('soon'); payBtn.classList.remove('btn-gold'); payBtn.textContent='Card gifts · coming soon'; $('#payNote').textContent='Card payments switch on shortly. Bank transfer to the account on the left works now.'; }
+if(!C.PAYSTACK_PUBLIC_KEY){ payBtn.disabled=true; payBtn.classList.add('soon'); payBtn.classList.remove('btn-gold'); payBtn.textContent='Card gifts · coming soon'; $('#payNote').textContent='Card, USSD and OPay switch on shortly. Bank transfer to the account above works now.'; }
 payBtn.onclick=()=>{
   const amt=Math.round(+$('#gAmount').value), name=$('#gName').value.trim(), email=$('#gEmail').value.trim(), note=$('#gNote').value.trim();
   if(!(amt>=100)) return toast('Enter an amount of at least ₦100');
