@@ -13,5 +13,10 @@ window.KS_CONFIG = {
     white: { name: "White Wedding",       date: "2026-11-28T00:00:00+01:00", label: "Saturday, 28 November 2026" }
   },
 
+  // Pre-wedding shoot: drop photos in assets/img/shoot/ and list them here. Empty = elegant "coming soon" frames.
+  PORTRAITS: [
+    // "assets/img/shoot/01.webp",
+  ],
+
   BANK: { bank: "Fidelity Bank", number: "6680975235", name: "Elijah Oghenerona Ijabor" }
 };

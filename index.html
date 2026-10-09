@@ -44,18 +44,18 @@
 <nav class="nav" id="nav">
   <a href="#top" class="brand">E &amp; M</a>
   <ul>
-    <li><a href="#story">Our story</a></li>
     <li><a href="#countdown">Countdown</a></li>
+    <li><a href="#portraits">Portraits</a></li>
+    <li><a href="#story">Our story</a></li>
     <li><a href="#films">Films</a></li>
     <li><a href="#events">Events</a></li>
-    <li><a href="#gallery">Gallery</a></li>
     <li><a href="#gift">Gifts</a></li>
   </ul>
   <a href="#rsvp" class="rsvp-pill magnetic">RSVP</a>
   <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
 </nav>
 <div class="mobile-menu" id="mobileMenu">
-  <a href="#story">Our story</a><a href="#countdown">Countdown</a><a href="#films">Films</a><a href="#events">Events</a><a href="#gallery">Gallery</a><a href="#rsvp">RSVP</a><a href="#gift">Gifts</a>
+  <a href="#countdown">Countdown</a><a href="#portraits">Portraits</a><a href="#story">Our story</a><a href="#films">Films</a><a href="#events">Events</a><a href="#rsvp">RSVP</a><a href="#gift">Gifts</a>
 </div>
 
 <main id="top">
@@ -64,7 +64,9 @@
   <img class="hero-poster" src="assets/img/hero-poster.jpg" alt="">
   <video id="heroVid" muted loop playsinline preload="metadata" poster="assets/img/hero-poster.jpg"><source src="assets/video/hero.mp4" type="video/mp4"></video>
   <div class="shade"></div>
+  <div class="hero-frame" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
   <div class="hero-content">
+    <div class="hero-eyebrow" id="heroEyebrow">We're getting married</div>
     <img class="hero-logo" id="heroLogo" src="assets/img/logo.webp" alt="Kalut-Shefa '26, Ease and Abundance">
     <h1 class="hero-names" id="heroNames" aria-label="Elijah and Mary-ann">Elijah <span class="amp">&amp;</span> Mary-ann</h1>
     <div class="hero-dates" id="heroDates">
@@ -72,7 +74,9 @@
       <i></i>
       <div><b>28.11.26</b><span>White Wedding</span></div>
     </div>
+    <div class="hero-cta" id="heroCta"><a href="#rsvp" class="btn btn-gold">RSVP</a><a href="#gift" class="btn btn-line">Send love</a></div>
   </div>
+  <svg class="badge" viewBox="0 0 120 120" aria-hidden="true"><defs><path id="circ" d="M60,60 m-46,0 a46,46 0 1,1 92,0 a46,46 0 1,1 -92,0"/></defs><text><textPath href="#circ">SAVE THE DATE · KALUT-SHEFA '26 · 21 & 28 NOV ·</textPath></text><text x="60" y="68" text-anchor="middle" class="badge-c">E&amp;M</text></svg>
   <div class="scroll-cue"><span></span>Scroll</div>
 </section>
 
@@ -80,31 +84,6 @@
   <span>Kalut · Ease</span><span>Shefa · Abundance</span><span>Elijah &amp; Mary-ann</span><span>21 November · Traditional</span><span>28 November · White Wedding</span><span>#KalutShefa26</span>
   <span>Kalut · Ease</span><span>Shefa · Abundance</span><span>Elijah &amp; Mary-ann</span><span>21 November · Traditional</span><span>28 November · White Wedding</span><span>#KalutShefa26</span>
 </div></div>
-
-<!-- ============ MEANING ============ -->
-<section class="section meaning" id="meaning">
-  <div class="container">
-    <div class="section-head reveal">
-      <div class="eyebrow">The name of the day</div>
-      <h2><span class="gold-text">Kalut-Shefa</span></h2>
-      <div class="divider">✦</div>
-      <p>Two Hebrew words, one promise for the life they are building together.</p>
-    </div>
-    <div class="meaning-grid">
-      <div class="word-card tilt reveal"><div class="glow"></div>
-        <div class="heb">קלות</div>
-        <h3>Kalut <em>ease</em></h3>
-        <p>A love that feels light to carry. Grace in the ordinary days, peace in the hard ones, laughter that comes easily.</p>
-      </div>
-      <div class="word-card olive tilt reveal"><div class="glow"></div>
-        <div class="heb">שפע</div>
-        <h3>Shefa <em>abundance</em></h3>
-        <p>Overflowing joy, open doors, full tables, and more than enough love to share with everyone who walked with them here.</p>
-      </div>
-    </div>
-    <p class="meaning-quote reveal">“Ease and abundance.” That is the wish, the theme, and the whole mood of these two weekends.</p>
-  </div>
-</section>
 
 <!-- ============ COUNTDOWN ============ -->
 <section class="section countdown" id="countdown">
@@ -138,171 +117,6 @@
     </div>
   </div>
 </section>
-
-<!-- ============ STORY ============ -->
-<section class="section story" id="story">
-  <div class="story-pin" id="storyPin">
-    <div class="story-track" id="storyTrack">
-      <div class="chapter intro-ch">
-        <div class="eyebrow">Chapter one</div>
-        <h3 class="h-serif" style="font-size:clamp(3rem,7vw,6rem);margin:.2em 0">How he <em class="h-script" style="color:var(--gold-l)">asked</em></h3>
-        <p style="color:rgba(251,247,240,.75);font-size:1.1rem;max-width:460px">A room full of red, a circle of golden light, and six words waiting on the wall. Scroll through the night it all began.</p>
-      </div>
-      <div class="chapter"><div class="frame"><img src="assets/img/sun-circle.webp" alt="Their hands reaching into a glowing circle that reads Will you marry me" loading="lazy"></div>
-        <div><div class="num">01</div><h3>It started with a <em>glow</em></h3><p>A wall of balloons, a circle of sunset light, and a question projected in plain sight. Two hands reached in to touch it.</p></div></div>
-      <div class="chapter"><div class="frame"><img src="assets/img/will-you.webp" alt="Couple smiling at the Will you marry me wall" loading="lazy"></div>
-        <div><div class="num">02</div><h3>Will you <em>marry me?</em></h3><p>He let the words on the wall do the asking. Her smile did most of the answering.</p></div></div>
-      <div class="chapter"><div class="frame"><img src="assets/img/profile-glow.webp" alt="Mary-ann in profile against the proposal wall" loading="lazy"></div>
-        <div><div class="num">03</div><h3>A moment held <em>still</em></h3><p>Hands stacked, ring catching the light, the whole world quiet for a second.</p></div></div>
-      <div class="chapter"><div class="frame"><img src="assets/img/ring-red.webp" alt="Their hands clasped, engagement ring in red light" loading="lazy"></div>
-        <div><div class="num">04</div><h3>Then came the <em>ring</em></h3><p>Two hands that found each other and decided to stay.</p></div></div>
-      <div class="chapter"><div class="frame wide"><img src="assets/img/she-said-yes.webp" alt="His palm reads She said yes, her ring hand beside it" loading="lazy"></div>
-        <div><div class="num">05</div><h3>Her palm said it <em>first</em></h3><p>“I said YES!!” on hers. “She said yes!!” on his. Written in ink, sealed for life.</p></div></div>
-    </div>
-    <div class="story-progress"><i id="storyBar"></i></div>
-  </div>
-</section>
-
-<!-- ============ SCRATCH ============ -->
-<section class="section scratch-sec" id="answer">
-  <div class="container">
-    <div class="section-head reveal">
-      <div class="eyebrow">Interactive</div>
-      <h2>What did she <span class="gold-text">say?</span></h2>
-      <p>Scratch the gold to reveal her answer.</p>
-    </div>
-    <div class="scratch-pair">
-      <div class="reveal">
-        <div class="scratch-wrap" id="scratchWrap"><img src="assets/img/said-yes.webp" alt="Her palm reads I said YES"><canvas id="scratch"></canvas></div>
-        <div class="scratch-note" id="scratchNote">Use your finger or mouse ✨</div>
-      </div>
-      <div class="reply-card reveal">
-        <div class="scratch-wrap"><img src="assets/img/her-smile.webp" alt="Mary-ann smiling at the proposal wall"></div>
-        <div class="reply-cap">And that smile said the rest</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ FILMS ============ -->
-<section class="section films" id="films">
-  <div class="container">
-    <div class="section-head reveal">
-      <div class="eyebrow">Press play</div>
-      <h2>The <span class="gold-text">films</span></h2>
-      <p>The proposal, as it happened. Turn your sound on.</p>
-    </div>
-    <div class="reels">
-      <div class="phone reveal"><div class="screen vplayer">
-        <video src="assets/video/reel-film.mp4" poster="assets/img/reel-film-poster.jpg" playsinline preload="none"></video>
-        <button class="play" aria-label="Play Mary and Elijah reel"><span><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg></span></button>
-        <div class="cap"><b>Mary &amp; Elijah</b><small>The proposal reel</small></div>
-      </div></div>
-      <div class="phone reveal"><div class="screen vplayer">
-        <video src="assets/video/my-forever.mp4" poster="assets/img/my-forever-poster.jpg" playsinline preload="none"></video>
-        <button class="play" aria-label="Play My forever"><span><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg></span></button>
-        <div class="cap"><b>My forever.</b><small>In black &amp; white</small></div>
-      </div></div>
-    </div>
-    <div class="films-grid">
-      <div class="cinema vplayer reveal">
-        <video src="assets/video/film.mp4" poster="assets/img/film-poster.jpg" playsinline preload="none"></video>
-        <div class="bars"></div>
-        <div class="film-title"><small>The full film</small><b>Kalut-Shefa '26</b></div>
-        <button class="play" aria-label="Play the full proposal film"><span><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg></span></button>
-      </div>
-      <div class="cinema small vplayer reveal">
-        <video src="assets/video/lyric.mp4" poster="assets/img/lyric-poster.jpg" playsinline preload="none"></video>
-        <div class="bars"></div>
-        <div class="film-title"><small>Lyric cut</small><b>I'd risk it all</b></div>
-        <button class="play" aria-label="Play the lyric film"><span><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg></span></button>
-      </div>
-    </div>
-    <p class="credit">Proposal films by GSC Media</p>
-  </div>
-</section>
-
-<!-- ============ EVENTS ============ -->
-<section class="section events" id="events">
-  <div class="container">
-    <div class="section-head reveal">
-      <div class="eyebrow">Two weekends · One love</div>
-      <h2>The <span class="gold-text">celebrations</span></h2>
-      <p>Tap a card to flip it for the details.</p>
-    </div>
-    <div class="event-cards">
-      <div class="ev trad reveal" tabindex="0">
-        <div class="ev-face ev-front"><div class="bg" style="background-image:url(assets/img/ring-red.webp)"></div>
-          <span class="tag" style="color:var(--gold-l)">Part one</span>
-          <div><div class="big-date">21<sup>NOV</sup></div><h3>Traditional <em>Wedding</em></h3></div>
-          <div class="flip-hint">Tap for details ⟳</div>
-        </div>
-        <div class="ev-face ev-back">
-          <h4>Traditional Wedding</h4>
-          <dl>
-            <div><dt>Date</dt><dd>Saturday, 21 November 2026</dd></div>
-            <div><dt>Time &amp; venue</dt><dd>To be announced. Check back soon.</dd></div>
-            <div><dt>Wear the colours</dt><dd><div class="swatches"><i style="background:#6e0f1f"></i><i style="background:#d8bb8a"></i><i style="background:#5f6b34"></i><i style="background:#fff"></i></div></dd></div>
-          </dl>
-          <div class="cal-btns"><a class="btn btn-burg" data-cal="trad" href="#">Add to calendar</a></div>
-        </div>
-      </div>
-      <div class="ev white reveal" tabindex="0">
-        <div class="ev-face ev-front"><div class="bg" style="background-image:url(assets/img/she-said-yes.webp)"></div>
-          <span class="tag" style="color:var(--gold-l)">Part two</span>
-          <div><div class="big-date">28<sup>NOV</sup></div><h3>White <em>Wedding</em></h3></div>
-          <div class="flip-hint">Tap for details ⟳</div>
-        </div>
-        <div class="ev-face ev-back">
-          <h4>White Wedding</h4>
-          <dl>
-            <div><dt>Date</dt><dd>Saturday, 28 November 2026</dd></div>
-            <div><dt>Time &amp; venue</dt><dd>To be announced. Check back soon.</dd></div>
-            <div><dt>Wear the colours</dt><dd><div class="swatches"><i style="background:#6e0f1f"></i><i style="background:#d8bb8a"></i><i style="background:#5f6b34"></i><i style="background:#fff"></i></div></dd></div>
-          </dl>
-          <div class="cal-btns"><a class="btn btn-burg" data-cal="white" href="#">Add to calendar</a></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ COLOURS ============ -->
-<section class="section colours" id="colours">
-  <div class="container">
-    <div class="section-head reveal">
-      <div class="eyebrow">Colours of the day</div>
-      <h2>Dress in our <span class="gold-text">palette</span></h2>
-      <p>Tap a colour and watch the room change.</p>
-    </div>
-    <div class="colour-row">
-      <div class="colour c1" data-bg="#3d0610"><div class="fill"></div><div class="shine"></div><div class="label"><b>Burgundy</b><small>Deep &amp; rich</small></div></div>
-      <div class="colour c2" data-bg="#4a3a1c"><div class="fill"></div><div class="shine"></div><div class="label"><b>Champagne Gold</b><small>Warm &amp; glowing</small></div></div>
-      <div class="colour c3" data-bg="#2c3316"><div class="fill"></div><div class="shine"></div><div class="label"><b>Olive Green</b><small>Earthy &amp; calm</small></div></div>
-      <div class="colour c4" data-bg="#3a3330"><div class="fill"></div><div class="shine"></div><div class="label"><b>White</b><small>Pure &amp; bright</small></div></div>
-    </div>
-    <p class="colour-note reveal">Come dressed in any of the four. Bonus points for wearing two.</p>
-  </div>
-</section>
-
-<!-- ============ GALLERY ============ -->
-<section class="section gallery" id="gallery">
-  <div class="container">
-    <div class="section-head reveal">
-      <div class="eyebrow">Moments</div>
-      <h2>The <span class="gold-text">gallery</span></h2>
-    </div>
-    <div class="masonry" id="masonry"></div>
-    <div class="coming reveal">The official pre-wedding shoot lands here soon. Keep this page close.</div>
-  </div>
-</section>
-<div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
-  <button class="lb-btn lb-close" aria-label="Close">✕</button>
-  <button class="lb-btn lb-prev" aria-label="Previous">‹</button>
-  <img alt="">
-  <button class="lb-btn lb-next" aria-label="Next">›</button>
-  <div class="lb-count"></div>
-</div>
 
 <!-- ============ RSVP ============ -->
 <section class="section rsvp" id="rsvp">
@@ -388,6 +202,7 @@
         <button class="btn btn-line copy-btn magnetic" id="copyAcct">Copy account number</button>
       </div>
       <div class="gift-copy reveal">
+        <span class="soon-pill" id="soonPill">Coming soon</span>
         <h3>Prefer to use a <em class="h-script" style="color:var(--gold-l)">card?</em></h3>
         <p>Send a gift securely by card, bank transfer or USSD. Pick an amount or enter your own.</p>
         <div class="amounts" id="amounts">
@@ -405,7 +220,187 @@
     </div>
   </div>
 </section>
+<!-- ============ EVENTS ============ -->
+<section class="section events" id="events">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">Two weekends · One love</div>
+      <h2>The <span class="gold-text">celebrations</span></h2>
+      <p>Tap a card to flip it for the details.</p>
+    </div>
+    <div class="event-cards">
+      <div class="ev trad reveal" tabindex="0">
+        <div class="ev-face ev-front"><div class="bg" style="background-image:url(assets/img/ring-red.webp)"></div>
+          <span class="tag" style="color:var(--gold-l)">Part one</span>
+          <div><div class="big-date">21<sup>NOV</sup></div><h3>Traditional <em>Wedding</em></h3></div>
+          <div class="flip-hint">Tap for details ⟳</div>
+        </div>
+        <div class="ev-face ev-back">
+          <h4>Traditional Wedding</h4>
+          <dl>
+            <div><dt>Date</dt><dd>Saturday, 21 November 2026</dd></div>
+            <div><dt>Time &amp; venue</dt><dd>To be announced. Check back soon.</dd></div>
+            <div><dt>Wear the colours</dt><dd><div class="swatches"><i style="background:#6e0f1f"></i><i style="background:#d8bb8a"></i><i style="background:#5f6b34"></i><i style="background:#fff"></i></div></dd></div>
+          </dl>
+          <div class="cal-btns"><a class="btn btn-burg" data-cal="trad" href="#">Add to calendar</a></div>
+        </div>
+      </div>
+      <div class="ev white reveal" tabindex="0">
+        <div class="ev-face ev-front"><div class="bg" style="background-image:url(assets/img/she-said-yes.webp)"></div>
+          <span class="tag" style="color:var(--gold-l)">Part two</span>
+          <div><div class="big-date">28<sup>NOV</sup></div><h3>White <em>Wedding</em></h3></div>
+          <div class="flip-hint">Tap for details ⟳</div>
+        </div>
+        <div class="ev-face ev-back">
+          <h4>White Wedding</h4>
+          <dl>
+            <div><dt>Date</dt><dd>Saturday, 28 November 2026</dd></div>
+            <div><dt>Time &amp; venue</dt><dd>To be announced. Check back soon.</dd></div>
+            <div><dt>Wear the colours</dt><dd><div class="swatches"><i style="background:#6e0f1f"></i><i style="background:#d8bb8a"></i><i style="background:#5f6b34"></i><i style="background:#fff"></i></div></dd></div>
+          </dl>
+          <div class="cal-btns"><a class="btn btn-burg" data-cal="white" href="#">Add to calendar</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ COLOURS ============ -->
+<section class="section colours" id="colours">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">Colours of the day</div>
+      <h2>Dress in our <span class="gold-text">palette</span></h2>
+      <p>Tap a colour and watch the room change.</p>
+    </div>
+    <div class="colour-row">
+      <div class="colour c1" data-bg="#3d0610"><div class="fill"></div><div class="shine"></div><div class="label"><b>Burgundy</b><small>Deep &amp; rich</small></div></div>
+      <div class="colour c2" data-bg="#4a3a1c"><div class="fill"></div><div class="shine"></div><div class="label"><b>Champagne Gold</b><small>Warm &amp; glowing</small></div></div>
+      <div class="colour c3" data-bg="#2c3316"><div class="fill"></div><div class="shine"></div><div class="label"><b>Olive Green</b><small>Earthy &amp; calm</small></div></div>
+      <div class="colour c4" data-bg="#3a3330"><div class="fill"></div><div class="shine"></div><div class="label"><b>White</b><small>Pure &amp; bright</small></div></div>
+    </div>
+    <p class="colour-note reveal">Come dressed in any of the four. Bonus points for wearing two.</p>
+  </div>
+</section>
+
+<!-- ============ PORTRAITS ============ -->
+<section class="section portraits" id="portraits">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow" id="portraitsEyebrow">The pre-wedding shoot</div>
+      <h2 id="portraitsTitle">Portraits <span class="gold-text">coming soon</span></h2>
+      <p id="portraitsLead">Elijah and Mary-ann are stepping in front of the camera. The official photos land right here.</p>
+    </div>
+    <div class="portrait-row" id="portraitRow"></div>
+  </div>
+</section>
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+  <button class="lb-btn lb-close" aria-label="Close">✕</button>
+  <button class="lb-btn lb-prev" aria-label="Previous">‹</button>
+  <img alt="">
+  <button class="lb-btn lb-next" aria-label="Next">›</button>
+  <div class="lb-count"></div>
+</div>
+
+<!-- ============ STORY ============ -->
+<section class="section story" id="story">
+  <div class="story-pin" id="storyPin">
+    <div class="story-track" id="storyTrack">
+      <div class="chapter intro-ch">
+        <div class="eyebrow">How it started</div>
+        <h3 class="h-serif intro-h">How he <em class="h-script">asked</em></h3>
+        <p class="intro-p">A room full of red, a circle of golden light, and six words waiting on the wall.</p>
+      </div>
+      <div class="chapter"><div class="frame"><img src="assets/img/sun-circle.webp" alt="Their hands reaching into a glowing circle that reads Will you marry me" loading="lazy"></div>
+        <div class="ch-text"><div class="num">01</div><h3>It started with a <em>glow</em></h3><p>A wall of balloons, a circle of sunset light, and a question in plain sight.</p></div></div>
+      <div class="chapter"><div class="frame"><img src="assets/img/ring-red.webp" alt="Their hands clasped, engagement ring in red light" loading="lazy"></div>
+        <div class="ch-text"><div class="num">02</div><h3>Then came the <em>ring</em></h3><p>Two hands that found each other and decided to stay.</p></div></div>
+      <div class="chapter"><div class="frame wide"><img src="assets/img/she-said-yes.webp" alt="His palm reads She said yes, her ring hand beside it" loading="lazy"></div>
+        <div class="ch-text"><div class="num">03</div><h3>Written in <em>ink</em></h3><p>“I said YES!!” on her palm. “She said yes!!” on his. Sealed for life.</p></div></div>
+    </div>
+    <div class="story-progress"><i id="storyBar"></i></div>
+  </div>
+</section>
+
+<!-- ============ SCRATCH ============ -->
+<section class="section scratch-sec" id="answer">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">Interactive</div>
+      <h2>What did she <span class="gold-text">say?</span></h2>
+      <p>Scratch the gold to reveal her answer.</p>
+    </div>
+    <div class="scratch-pair">
+      <div class="reveal">
+        <div class="scratch-wrap" id="scratchWrap"><img src="assets/img/said-yes.webp" alt="Her palm reads I said YES"><canvas id="scratch"></canvas></div>
+        <div class="scratch-note" id="scratchNote">Use your finger or mouse ✨</div>
+      </div>
+      <div class="reply-card reveal hide-sm">
+        <div class="scratch-wrap"><img src="assets/img/her-smile.webp" alt="Mary-ann smiling at the proposal wall"></div>
+        <div class="reply-cap">And that smile said the rest</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FILMS ============ -->
+<section class="section films" id="films">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">Press play</div>
+      <h2>The <span class="gold-text">films</span></h2>
+      <p>The proposal, as it happened. Sound on.</p>
+    </div>
+    <div class="cinema vplayer reveal">
+      <video src="assets/video/film.mp4" poster="assets/img/film-poster.jpg" playsinline preload="none"></video>
+      <div class="bars"></div>
+      <div class="film-title"><small>The full film</small><b>Kalut-Shefa '26</b></div>
+      <button class="play" aria-label="Play the full proposal film"><span><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg></span></button>
+    </div>
+    <div class="reels">
+      <div class="phone reveal"><div class="screen vplayer">
+        <video src="assets/video/reel-film.mp4" poster="assets/img/reel-film-poster.jpg" playsinline preload="none"></video>
+        <button class="play" aria-label="Play Mary and Elijah reel"><span><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg></span></button>
+        <div class="cap"><b>Mary &amp; Elijah</b><small>The proposal reel</small></div>
+      </div></div>
+      <div class="phone reveal"><div class="screen vplayer">
+        <video src="assets/video/my-forever.mp4" poster="assets/img/my-forever-poster.jpg" playsinline preload="none"></video>
+        <button class="play" aria-label="Play My forever"><span><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg></span></button>
+        <div class="cap"><b>My forever.</b><small>In black &amp; white</small></div>
+      </div></div>
+    </div>
+    <p class="credit">Proposal films by GSC Media</p>
+  </div>
+</section>
+
+<!-- ============ MEANING ============ -->
+<section class="section meaning" id="meaning">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">The name of the day</div>
+      <h2><span class="gold-text">Kalut-Shefa</span></h2>
+      <div class="divider">✦</div>
+      <p>Two Hebrew words, one promise for the life they are building together.</p>
+    </div>
+    <div class="meaning-grid">
+      <div class="word-card tilt reveal"><div class="glow"></div>
+        <div class="heb">קלות</div>
+        <h3>Kalut <em>ease</em></h3>
+        <p>A love that feels light to carry. Grace in the ordinary days, peace in the hard ones, laughter that comes easily.</p>
+      </div>
+      <div class="word-card olive tilt reveal"><div class="glow"></div>
+        <div class="heb">שפע</div>
+        <h3>Shefa <em>abundance</em></h3>
+        <p>Overflowing joy, open doors, full tables, and more than enough love to share with everyone who walked with them here.</p>
+      </div>
+    </div>
+    <p class="meaning-quote reveal">“Ease and abundance.” That is the wish, the theme, and the whole mood of these two weekends.</p>
+  </div>
+</section>
+
 </main>
+<div class="dock" id="dock" aria-label="Quick actions"><a href="#rsvp" class="btn btn-gold">RSVP</a><a href="#gift" class="btn dock-gift">Send love ♥</a></div>
+
 
 <footer>
   <img src="assets/img/logo.webp" alt="Kalut-Shefa '26" loading="lazy">

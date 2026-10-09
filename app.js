@@ -63,19 +63,22 @@ if(location.hash && location.hash.length>1){ /* deep link, e.g. #rsvp from Whats
 /* ---------- hero entrance ---------- */
 const names=$('#heroNames');
 (function split(){ const html=[]; names.childNodes.forEach(n=>{ if(n.nodeType===3){ n.textContent.split('').forEach(ch=>html.push(ch===' '?' ':`<span class="ch">${ch}</span>`)); } else html.push(n.outerHTML); }); names.innerHTML=html.join(''); })();
-if(hasGsap && !reduce){ gsap.set('#heroLogo',{opacity:0,scale:.85,filter:'blur(12px)'}); gsap.set('#heroNames .ch, #heroNames .amp',{opacity:0,y:60,rotateX:-80}); gsap.set('#heroDates > *',{opacity:0,y:30}); }
+if(hasGsap && !reduce){ gsap.set('#heroEyebrow',{opacity:0,letterSpacing:'1.2em'}); gsap.set('#heroLogo',{opacity:0,scale:.85,filter:'blur(12px)'}); gsap.set('#heroNames .ch, #heroNames .amp',{opacity:0,y:60,rotateX:-80}); gsap.set('#heroDates > *',{opacity:0,y:30}); gsap.set('#heroCta > *',{opacity:0,y:20}); }
 function heroIn(){
   document.getElementById('nav').classList.add('show');
   if(!hasGsap||reduce) return;
   const tl=gsap.timeline();
-  tl.to('#heroLogo',{opacity:1,scale:1,filter:'blur(0px)',duration:1.6,ease:'expo.out'})
+  tl.to('#heroEyebrow',{opacity:1,letterSpacing:window.innerWidth<700?'0.4em':'0.55em',duration:1.4,ease:'expo.out'}).to('#heroLogo',{opacity:1,scale:1,filter:'blur(0px)',duration:1.6,ease:'expo.out'})
     .to('#heroNames .ch, #heroNames .amp',{opacity:1,y:0,rotateX:0,stagger:.045,duration:1.1,ease:'back.out(1.7)'},'-=1')
-    .to('#heroDates > *',{opacity:1,y:0,stagger:.12,duration:.9,ease:'power3.out'},'-=.6');
+    .to('#heroDates > *',{opacity:1,y:0,stagger:.12,duration:.9,ease:'power3.out'},'-=.6')
+    .to('#heroCta > *',{opacity:1,y:0,stagger:.12,duration:.8,ease:'power3.out'},'-=.4');
 }
 
 /* ---------- nav ---------- */
 const nav=$('#nav'), toTop=$('#toTop');
-addEventListener('scroll',()=>{ const y=scrollY; nav.classList.toggle('solid',y>80); toTop.classList.toggle('show',y>900); },{passive:true});
+const dock=$('#dock'); let inAction=false;
+if('IntersectionObserver' in window){ const seen=new Set(); const io=new IntersectionObserver(es=>{es.forEach(e=>e.isIntersecting?seen.add(e.target):seen.delete(e.target)); inAction=seen.size>0; dock.classList.toggle('show',scrollY>innerHeight*.8&&!inAction);},{threshold:.15}); ['#rsvp','#gift','footer'].forEach(q=>{const el=$(q); el&&io.observe(el);}); }
+addEventListener('scroll',()=>{ const y=scrollY; nav.classList.toggle('solid',y>80); toTop.classList.toggle('show',y>900); dock.classList.toggle('show',y>innerHeight*.8&&!inAction); document.body.classList.toggle('dock-on',dock.classList.contains('show')); },{passive:true});
 toTop.onclick=()=>lenis?lenis.scrollTo(0):scrollTo({top:0,behavior:'smooth'});
 $('#burger').onclick=()=>document.body.classList.toggle('menu-open');
 
@@ -153,6 +156,7 @@ $('.cd-heart').addEventListener('click',e=>fire({particleCount:60,origin:{x:e.cl
 /* ---------- scroll animations ---------- */
 if(hasGsap && window.ScrollTrigger && !reduce){
   gsap.registerPlugin(ScrollTrigger);
+  $$('.section-head h2').forEach(h=>{ h.innerHTML=`<span class="h2-mask"><span>${h.innerHTML}</span></span>`; gsap.from(h.querySelector('.h2-mask>span'),{yPercent:110,rotate:3,duration:1.3,ease:'expo.out',scrollTrigger:{trigger:h,start:'top 90%'}}); });
   $$('.reveal').forEach(el=>gsap.to(el,{opacity:1,y:0,duration:1.2,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 88%'}}));
   gsap.to('#heroVid, .hero-poster',{yPercent:18,ease:'none',scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:true}});
   gsap.to('.hero-content',{yPercent:-30,opacity:0,ease:'none',scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:true}});
@@ -219,19 +223,27 @@ $$('.colour').forEach(c=>c.addEventListener('click',e=>{ const sec=$('#colours')
   const r=c.getBoundingClientRect(); fire({particleCount:70,spread:70,origin:{x:(r.left+r.width/2)/innerWidth,y:(r.top+r.height/3)/innerHeight},colors:[getComputedStyle(c.querySelector('.fill')).backgroundImage.match(/#[0-9a-f]{6}|rgb\([^)]*\)/gi)?.[1]||'#d8bb8a','#ffffff','#d8bb8a']});
   toast(`${c.querySelector('b').textContent}. Great choice ✨`); }));
 
-/* ---------- gallery ---------- */
-const PH=['said-yes','sun-circle','she-said-yes','will-you','ring-red','profile-glow','her-smile','hands-glow-1','hands-glow-2'];
-const alts={'said-yes':'Her palm reads I said YES','sun-circle':'Hands reaching into the glowing Will you marry me circle','she-said-yes':'His palm reads She said yes','will-you':'The couple at the proposal wall','ring-red':'Hands clasped with the ring','profile-glow':'Mary-ann in profile','her-smile':'Mary-ann smiling','hands-glow-1':'The couple at the proposal wall','hands-glow-2':'The couple at the proposal wall'};
-const ms=$('#masonry'); ms.innerHTML=PH.map((p,i)=>`<figure class="reveal" data-i="${i}"><img src="assets/img/${p}-sm.webp" alt="${alts[p]}" loading="lazy"></figure>`).join('');
+/* ---------- portraits (pre-wedding shoot) ---------- */
+const PORTRAITS=(C.PORTRAITS||[]).filter(Boolean);
+const row=$('#portraitRow');
+const cam='<svg class="cam" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M3 8h3l2-3h8l2 3h3v11H3z"/><circle cx="12" cy="13" r="4"/></svg>';
+if(PORTRAITS.length){
+  row.classList.add('real');
+  $('#portraitsEyebrow').textContent='The pre-wedding shoot'; $('#portraitsTitle').innerHTML='Elijah <span class="gold-text">&amp;</span> Mary-ann'; $('#portraitsLead').textContent='Portraits from their pre-wedding shoot. Tap any photo.';
+  row.innerHTML=PORTRAITS.map((src,i)=>`<figure class="arch real reveal" data-i="${i}"><img src="${src}" alt="Elijah and Mary-ann, pre-wedding portrait ${i+1}" loading="lazy"></figure>`).join('');
+} else {
+  const ph=['ring-red-sm','sun-circle-sm','said-yes-sm'];
+  row.innerHTML=ph.map((p,i)=>`<div class="arch ${i===1?'mid':''} reveal"><div class="ph" style="background-image:url(assets/img/${p}.webp)"></div><div class="soon">${i===1?cam+'<b>Coming soon</b><small>Official portraits</small>':i===0?'<b>21.11</b><small>Traditional</small>':'<b>28.11</b><small>White wedding</small>'}</div></div>`).join('');
+}
 const lb=$('#lightbox'), lbImg=lb.querySelector('img'); let li=0;
-const show=i=>{li=(i+PH.length)%PH.length; lbImg.src=`assets/img/${PH[li]}.webp`; lbImg.alt=alts[PH[li]]; lbImg.style.animation='none'; lbImg.offsetHeight; lbImg.style.animation=''; lb.querySelector('.lb-count').textContent=`${li+1} / ${PH.length}`;};
-$$('#masonry figure').forEach(f=>f.onclick=()=>{show(+f.dataset.i); lb.classList.add('open'); lenis&&lenis.stop();});
+const show=i=>{li=(i+PORTRAITS.length)%PORTRAITS.length; lbImg.src=PORTRAITS[li]; lbImg.style.animation='none'; lbImg.offsetHeight; lbImg.style.animation=''; lb.querySelector('.lb-count').textContent=`${li+1} / ${PORTRAITS.length}`;};
+$$('#portraitRow .arch.real').forEach(f=>f.onclick=()=>{show(+f.dataset.i); lb.classList.add('open'); lenis&&lenis.stop();});
 const closeLb=()=>{lb.classList.remove('open'); lenis&&lenis.start();};
 lb.querySelector('.lb-close').onclick=closeLb; lb.querySelector('.lb-prev').onclick=()=>show(li-1); lb.querySelector('.lb-next').onclick=()=>show(li+1);
 lb.addEventListener('click',e=>{if(e.target===lb)closeLb()});
 addEventListener('keydown',e=>{ if(!lb.classList.contains('open')) return; if(e.key==='Escape')closeLb(); if(e.key==='ArrowLeft')show(li-1); if(e.key==='ArrowRight')show(li+1); });
 let sx=0; lb.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true}); lb.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>50) show(li+(dx<0?1:-1));});
-if(hasGsap&&window.ScrollTrigger&&!reduce) $$('#masonry figure').forEach(f=>gsap.to(f,{opacity:1,y:0,duration:1,ease:'power3.out',scrollTrigger:{trigger:f,start:'top 92%'}}));
+if(hasGsap&&window.ScrollTrigger&&!reduce) $$('#portraitRow .arch').forEach((f,i)=>gsap.to(f,{opacity:1,y:0,duration:1.2,delay:i*.1,ease:'expo.out',scrollTrigger:{trigger:'#portraitRow',start:'top 88%'}}));
 
 /* ---------- RSVP ---------- */
 const form=$('#rsvpForm'); let step=1, guests=1;
@@ -272,7 +284,8 @@ $('#copyAcct').onclick=async()=>{ try{ await navigator.clipboard.writeText(B.num
 $$('#amounts button').forEach(b=>b.onclick=()=>{ $$('#amounts button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); $('#gAmount').value=b.dataset.a; });
 $('#gAmount').oninput=()=>$$('#amounts button').forEach(x=>x.classList.toggle('on',x.dataset.a===$('#gAmount').value));
 const payBtn=$('#payBtn');
-if(!C.PAYSTACK_PUBLIC_KEY){ payBtn.disabled=true; payBtn.textContent='Card gifts opening soon'; $('#payNote').textContent='Card payments switch on shortly. Bank transfer to the account on the left works now.'; }
+if(C.PAYSTACK_PUBLIC_KEY){ const sp=$('#soonPill'); sp&&sp.remove(); }
+if(!C.PAYSTACK_PUBLIC_KEY){ payBtn.disabled=true; payBtn.classList.add('soon'); payBtn.classList.remove('btn-gold'); payBtn.textContent='Card gifts · coming soon'; $('#payNote').textContent='Card payments switch on shortly. Bank transfer to the account on the left works now.'; }
 payBtn.onclick=()=>{
   const amt=Math.round(+$('#gAmount').value), name=$('#gName').value.trim(), email=$('#gEmail').value.trim(), note=$('#gNote').value.trim();
   if(!(amt>=100)) return toast('Enter an amount of at least ₦100');
