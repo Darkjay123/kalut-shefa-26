@@ -37,7 +37,7 @@ if(window.Lenis && !reduce){
   else { const raf=t=>{lenis.raf(t);requestAnimationFrame(raf)}; requestAnimationFrame(raf); }
   lenis.stop();
 }
-$$('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
+$$('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{ if(document.body.classList.contains('menu-open')){ document.body.classList.remove('menu-open'); mm&&mm.setAttribute('aria-hidden','true'); document.documentElement.style.overflow=''; lenis&&lenis.start(); }
   const id=a.getAttribute('href'); if(id.length<2) return; const el=$(id); if(!el) return; e.preventDefault();
   document.body.classList.remove('menu-open');
   lenis ? lenis.scrollTo(el,{offset:-10}) : el.scrollIntoView({behavior:'smooth'});
@@ -78,10 +78,17 @@ function heroIn(){
 /* ---------- nav ---------- */
 const nav=$('#nav'), toTop=$('#toTop');
 const dock=$('#dock'); let inAction=false;
-if('IntersectionObserver' in window){ const seen=new Set(); const io=new IntersectionObserver(es=>{es.forEach(e=>e.isIntersecting?seen.add(e.target):seen.delete(e.target)); inAction=seen.size>0; dock.classList.toggle('show',scrollY>innerHeight*.8&&!inAction);},{threshold:.15}); ['#rsvp','#gift','footer'].forEach(q=>{const el=$(q); el&&io.observe(el);}); }
+if('IntersectionObserver' in window){ const seen=new Set(); const io=new IntersectionObserver(es=>{es.forEach(e=>e.isIntersecting?seen.add(e.target):seen.delete(e.target)); inAction=seen.size>0; dock.classList.toggle('show',scrollY>innerHeight*.8&&!inAction);},{threshold:.15}); ['#rsvp','#gift','footer','#noteForm','#booth .booth-controls','#boothCanvas'].forEach(q=>{const el=$(q); el&&io.observe(el);}); }
 addEventListener('scroll',()=>{ const y=scrollY; nav.classList.toggle('solid',y>80); toTop.classList.toggle('show',y>900); dock.classList.toggle('show',y>innerHeight*.8&&!inAction); document.body.classList.toggle('dock-on',dock.classList.contains('show')); },{passive:true});
 toTop.onclick=()=>lenis?lenis.scrollTo(0):scrollTo({top:0,behavior:'smooth'});
-$('#burger').onclick=()=>document.body.classList.toggle('menu-open');
+const mm=$('#mobileMenu');
+function openMenu(o){ document.body.classList.toggle('menu-open',o); mm.setAttribute('aria-hidden',String(!o)); if(lenis){ o?lenis.stop():lenis.start(); } document.documentElement.style.overflow=o?'hidden':''; 
+  if(o){ const now=Date.now(), T=Date.parse('2026-11-21T00:00:00+01:00'), Wd=Date.parse('2026-11-28T00:00:00+01:00'); const d=x=>Math.max(0,Math.ceil((x-now)/864e5));
+    $('#mmCount').innerHTML= now<T ? `<b>${d(T)}</b> days to the Traditional · <b>${d(Wd)}</b> to the White Wedding` : now<Wd ? `<b>${d(Wd)}</b> days to the White Wedding` : 'Married! ♥'; } }
+$('#burger').onclick=()=>openMenu(!document.body.classList.contains('menu-open'));
+$('#mmClose').onclick=()=>openMenu(false); $('#drawerBg').onclick=()=>openMenu(false);
+addEventListener('keydown',e=>{ if(e.key==='Escape'&&document.body.classList.contains('menu-open')) openMenu(false); });
+let mx0=null; mm.addEventListener('touchstart',e=>mx0=e.touches[0].clientX,{passive:true}); mm.addEventListener('touchend',e=>{ if(mx0!=null&&e.changedTouches[0].clientX-mx0>70) openMenu(false); mx0=null; });
 
 /* ---------- cursor + heart trail ---------- */
 if(!isTouch && !reduce){
