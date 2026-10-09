@@ -47,8 +47,7 @@ tr:hover td{background:rgba(216,187,138,.04)}
 <div id="loginView" class="login" style="display:none">
   <h1>E &amp; M</h1>
   <p style="letter-spacing:.3em;text-transform:uppercase;font-size:.62rem;color:var(--gold)">Admin portal</p>
-  <input id="em" type="email" placeholder="Admin email" autocomplete="username">
-  <input id="pw" type="password" placeholder="Password" autocomplete="current-password">
+  <input id="pw" type="password" placeholder="Admin password" autocomplete="current-password">
   <button class="btn solid" id="loginBtn">Sign in</button>
   <div class="err" id="loginErr"></div>
 </div>
@@ -73,13 +72,12 @@ tr:hover td{background:rgba(216,187,138,.04)}
   </div>
   <div class="panel" style="margin-bottom:22px">
     <h2>RSVPs <span class="tools"><input id="q" placeholder="Search name, phone…"><select id="fAtt"><option value="">All</option><option value="yes">Attending</option><option value="no">Not attending</option></select><select id="fEv"><option value="">Both events</option><option value="traditional">Traditional</option><option value="white">White</option></select></span></h2>
-    <div class="scroll"><table><thead><tr><th>When</th><th>Name</th><th>Contact</th><th>Status</th><th>Events</th><th>Party</th><th>For</th><th>Wish</th></tr></thead><tbody id="rsvpRows"></tbody></table></div>
+    <div class="scroll"><table><thead><tr><th>When</th><th>Name</th><th>Contact</th><th>Status</th><th>Events</th><th>Party</th><th>For</th><th>Wish</th><th></th></tr></thead><tbody id="rsvpRows"></tbody></table></div>
   </div>
   <div class="panel"><h2>Card gifts</h2><p style="font-size:.8rem;color:rgba(251,247,240,.55);margin-bottom:10px">Logged when a guest completes the Paystack window. Your Paystack dashboard is the final record of what settled.</p>
     <div class="scroll"><table><thead><tr><th>When</th><th>From</th><th>Amount</th><th>Note</th><th>Reference</th></tr></thead><tbody id="giftRows"></tbody></table></div></div>
 </div>
 <script src="config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="admin.js"></script>
 </body></html>

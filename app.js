@@ -7,25 +7,22 @@ const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const hasGsap = !!window.gsap;
 if(hasGsap && !reduce) document.documentElement.classList.add('js-anim');
 
-/* ---------- backend ---------- */
-let sb = null;
-if (C.SUPABASE_URL && C.SUPABASE_ANON_KEY && window.supabase) {
-  try { sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY, {auth:{persistSession:false}}); } catch(e){ console.warn(e); }
-}
+/* ---------- backend: Vercel API + Upstash ---------- */
 function visitorId(){
   let id = localStorage.getItem('ks_vid'); let isNew = false;
   if(!id){ id = (crypto.randomUUID ? crypto.randomUUID() : Date.now()+'-'+Math.random().toString(36).slice(2)); localStorage.setItem('ks_vid',id); isNew=true; }
   return {id,isNew};
 }
+const API={visits:'/api/visit',rsvps:'/api/rsvp',gifts:'/api/gift'};
 async function save(table,row){
-  if(sb){ const {error} = await sb.from(table).insert(row); if(error) throw error; return 'live'; }
-  const k='ks_demo_'+table; const arr=JSON.parse(localStorage.getItem(k)||'[]'); arr.push({...row,created_at:new Date().toISOString()}); localStorage.setItem(k,JSON.stringify(arr)); return 'demo';
+  const r=await fetch(API[table],{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(row),keepalive:table==='visits'});
+  const d=await r.json().catch(()=>({})); if(!r.ok||!d.ok) throw new Error(d.error||('HTTP '+r.status)); return 'live';
 }
 (function trackVisit(){
   const v = visitorId(); const p = new URLSearchParams(location.search);
   const ua = navigator.userAgent; const device = /iPad|Tablet/i.test(ua)?'tablet':(/Mobi|Android|iPhone/i.test(ua)?'mobile':'desktop');
   if(sessionStorage.getItem('ks_tracked')) return; sessionStorage.setItem('ks_tracked','1');
-  save('visits',{visitor_id:v.id,is_new:v.isNew,path:location.pathname,referrer:document.referrer||null,device,user_agent:ua.slice(0,300),utm_source:p.get('utm_source')||p.get('ref')||null}).catch(e=>console.warn('visit',e));
+  save('visits',{visitor_id:v.id,is_new:v.isNew,referrer:document.referrer||null,device,utm_source:p.get('utm_source')||p.get('ref')||null}).catch(e=>console.warn('visit',e));
 })();
 
 /* ---------- toast ---------- */
@@ -268,7 +265,7 @@ form.querySelectorAll('[name=attending]').forEach(r=>r.onchange=()=>{ $('#events
 $$('.stepper button',form).forEach(b=>b.onclick=()=>{ guests=Math.max(1,Math.min(10,guests+ +b.dataset.d)); const o=$('#guestOut'); o.textContent=guests; if(hasGsap) gsap.fromTo(o,{scale:1.4,color:'#d8bb8a'},{scale:1,color:'#6e0f1f',duration:.5}); });
 form.addEventListener('submit',async e=>{ e.preventDefault(); if(form.company.value) return; /* bot */
   const att=form.querySelector('[name=attending]:checked').value;
-  const row={ full_name:form.full_name.value.trim().slice(0,120), phone:form.phone.value.trim().slice(0,40)||null, email:form.email.value.trim().slice(0,160)||null,
+  const row={ company:form.company.value, full_name:form.full_name.value.trim().slice(0,120), phone:form.phone.value.trim().slice(0,40)||null, email:form.email.value.trim().slice(0,160)||null,
     attending:att, events:att==='yes'?[...form.querySelectorAll('[name=events]:checked')].map(c=>c.value):[], guests:att==='yes'?guests:0,
     side:(form.querySelector('[name=side]:checked')||{}).value||null, message:form.message.value.trim().slice(0,1000)||null, visitor_id:visitorId().id };
   const btn=$('#rsvpSubmit'); btn.disabled=true; btn.textContent='Sending…';

@@ -1,8 +1,6 @@
-/* Kalut-Shefa '26 site settings. Fill these in to switch on live RSVPs, visit tracking and card gifts. */
+/* Kalut-Shefa '26 site settings. */
 window.KS_CONFIG = {
-  // Supabase project (Settings > API). The anon key is safe to publish; security comes from the policies in supabase.sql.
-  SUPABASE_URL: "",
-  SUPABASE_ANON_KEY: "",
+  // RSVPs, gift notes and visits go to the site's own /api routes (Vercel + Upstash). Admin: /admin.html
 
   // Paystack PUBLIC key (pk_live_... or pk_test_...). Never put the secret key here.
   PAYSTACK_PUBLIC_KEY: "",
