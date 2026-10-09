@@ -666,3 +666,13 @@ footer .made-by .nc{font-weight:600;letter-spacing:.12em;text-transform:uppercas
   footer .made-by .dot{display:block;height:0;overflow:hidden;margin:0}
   footer .made-by a{white-space:nowrap}
 }
+/* drawer fit: CTA always visible, compact rows */
+.mobile-menu{gap:14px;padding-bottom:0}
+.mm-head img{height:38px}
+.mm-count{padding:9px 13px;font-size:.8rem}
+.mm-links a{padding:8px 2px}
+.mm-t b{font-size:1.12rem}
+.mm-t small{font-size:.7rem;margin-top:2px}
+.mm-cta{position:sticky;bottom:0;margin:auto -22px 0;padding:14px 22px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(180deg,rgba(28,3,7,0),#1c0307 35%)}
+.mm-foot{display:none}
+@media(max-width:700px){.cursor{display:none!important}}
