@@ -13,7 +13,7 @@ async function api(method,body){
 async function init(){ if(KEY){ try{ await showDash(); return; }catch(e){ KEY=''; sessionStorage.removeItem('ks_admin'); } } $('#loginView').style.display='block'; $('#pw').focus(); }
 $('#loginBtn').onclick=async()=>{ $('#loginErr').textContent=''; KEY=$('#pw').value; const btn=$('#loginBtn'); btn.disabled=true; btn.textContent='Checking…';
   try{ await showDash(); sessionStorage.setItem('ks_admin',KEY); $('#loginView').style.display='none'; }
-  catch(e){ KEY=''; $('#loginErr').textContent=e.status===401?'That password is not right.':e.message==='not_connected'?'The database is not connected yet.':'Could not sign in: '+e.message; }
+  catch(e){ KEY=''; $('#loginErr').textContent=e.status===401?'That password is not right.':e.status===429?'Too many wrong tries. Wait 15 minutes and try again.':e.message==='not_connected'?'The database is not connected yet.':'Could not sign in: '+e.message; }
   btn.disabled=false; btn.textContent='Sign in'; };
 $('#pw').addEventListener('keydown',e=>{if(e.key==='Enter')$('#loginBtn').click()});
 $('#logout').onclick=()=>{ sessionStorage.removeItem('ks_admin'); location.reload(); };

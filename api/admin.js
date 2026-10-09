@@ -1,5 +1,6 @@
 const crypto=require('crypto');
 const {pipe,body,send,fail}=require('./_db');
+const ipOf=req=>(req.headers['x-forwarded-for']||'').split(',')[0].trim()||'0';
 function authed(req){
   const pw=process.env.ADMIN_PASSWORD||''; const got=(req.headers.authorization||'').replace(/^Bearer\s+/i,'');
   if(!pw||!got) return false; const a=crypto.createHash('sha256').update(pw).digest(), b=crypto.createHash('sha256').update(got).digest();
@@ -11,7 +12,10 @@ async function find(key,id){ const [all]=await pipe([['LRANGE',key,'0','-1']]); 
 module.exports=async(req,res)=>{
   try{
     if(!process.env.ADMIN_PASSWORD) return send(res,503,{ok:false,error:'no_password_set'});
-    if(!authed(req)){ await new Promise(r=>setTimeout(r,600)); return send(res,401,{ok:false,error:'wrong_password'}); }
+    const fk='ks26:rl:adminfail:'+ipOf(req), gk='ks26:rl:adminfail:all';
+    const [mine,all]=await pipe([['GET',fk],['GET',gk]]);
+    if((+mine||0)>=8||(+all||0)>=150){ await new Promise(r=>setTimeout(r,800)); return send(res,429,{ok:false,error:'locked'}); }
+    if(!authed(req)){ await pipe([['SET',fk,'0','EX','900','NX'],['INCR',fk],['SET',gk,'0','EX','3600','NX'],['INCR',gk]]); await new Promise(r=>setTimeout(r,800)); return send(res,401,{ok:false,error:'wrong_password'}); }
     if(req.method==='GET'){
       const [v,r,g,n,p,h]=await pipe([['LRANGE','ks26:visits','0','-1'],['LRANGE','ks26:rsvps','0','-1'],['LRANGE','ks26:gifts','0','-1'],
         ['LRANGE','ks26:notes','0','-1'],['LRANGE','ks26:notes:pending','0','-1'],['GET','ks26:hearts']]);
