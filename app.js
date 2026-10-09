@@ -430,4 +430,13 @@ document.addEventListener('touchend',e=>{ const t=e.target.closest&&e.target.clo
   $('#boothShare').addEventListener('click',()=>out(true)); $('#boothSave').addEventListener('click',()=>out(false));
 })();
 
+
+/* ---------- for the singles ---------- */
+const SINGLE=["Tissues are on the house 🧻","Hold on, your own Kalut-Shefa is loading… 🔄","It's okay. Elijah waited for his Mary-Ann too. Your turn is coming 🙏","Mary-Ann's friends will be there. Elijah's friends too. Just saying 👀","Dress well on the 28th. Destiny helpers are attending 😌","Breathe. Tap the heart instead. Love is contagious 💛"];
+let si=0; const sb=$('#singleBtn');
+if(sb) sb.addEventListener('click',()=>{ const m=$('#singleMsg'); m.textContent=SINGLE[si++%SINGLE.length]; m.classList.remove('show'); void m.offsetWidth; m.classList.add('show');
+  if(reduce) return; for(let i=0;i<16;i++){ const t=document.createElement('span'); t.className='tissue'; t.textContent=i%4?'🧻':'🥲'; t.style.left=(Math.random()*100)+'vw';
+    t.style.animationDelay=(Math.random()*.6).toFixed(2)+'s'; t.style.setProperty('--r',(Math.random()*720-360).toFixed(0)+'deg'); t.style.fontSize=(20+Math.random()*18).toFixed(0)+'px';
+    document.body.appendChild(t); setTimeout(()=>t.remove(),3200); } });
+
 })();
