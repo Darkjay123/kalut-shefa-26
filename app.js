@@ -86,6 +86,7 @@ function openMenu(o){ document.body.classList.toggle('menu-open',o); mm.setAttri
   if(o){ const now=Date.now(), T=Date.parse('2026-11-21T00:00:00+01:00'), Wd=Date.parse('2026-11-28T00:00:00+01:00'); const d=x=>Math.max(0,Math.ceil((x-now)/864e5));
     $('#mmCount').innerHTML= now<T ? `<b>${d(T)}</b> days to the Traditional · <b>${d(Wd)}</b> to the White Wedding` : now<Wd ? `<b>${d(Wd)}</b> days to the White Wedding` : 'Married! ♥'; } }
 $('#burger').onclick=()=>openMenu(!document.body.classList.contains('menu-open'));
+if(/[?&]menu\b/.test(location.search)) setTimeout(()=>openMenu(true),900);
 $('#mmClose').onclick=()=>openMenu(false); $('#drawerBg').onclick=()=>openMenu(false);
 addEventListener('keydown',e=>{ if(e.key==='Escape'&&document.body.classList.contains('menu-open')) openMenu(false); });
 let mx0=null; mm.addEventListener('touchstart',e=>mx0=e.touches[0].clientX,{passive:true}); mm.addEventListener('touchend',e=>{ if(mx0!=null&&e.changedTouches[0].clientX-mx0>70) openMenu(false); mx0=null; });
