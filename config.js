@@ -3,7 +3,7 @@ window.KS_CONFIG = {
   // RSVPs, gift notes and visits go to the site's own /api routes (Vercel + Upstash). Admin: /admin.html
 
   // Paystack PUBLIC key (pk_live_... or pk_test_...). Never put the secret key here.
-  PAYSTACK_PUBLIC_KEY: "",
+  PAYSTACK_PUBLIC_KEY: "pk_live_12bf0a0d5131a348a8e7518e8db7da6ebc2dd522",
 
   // Countdown targets (WAT). Update the times once the couple confirm start times.
   EVENTS: {
