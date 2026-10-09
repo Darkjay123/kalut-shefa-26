@@ -676,3 +676,7 @@ footer .made-by .nc{font-weight:600;letter-spacing:.12em;text-transform:uppercas
 .mm-cta{position:sticky;bottom:0;margin:auto -22px 0;padding:14px 22px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(180deg,rgba(28,3,7,0),#1c0307 35%)}
 .mm-foot{display:none}
 @media(max-width:700px){.cursor{display:none!important}}
+/* hidden toast was peeking 6px above the bottom edge */
+.toast{transform:translate(-50%,calc(100% + 60px));visibility:hidden;transition:transform .6s var(--ease),visibility 0s .6s}
+.toast.show{transform:translate(-50%,0);visibility:visible;transition:transform .6s var(--ease),visibility 0s}
+.menu-open .dock{opacity:0;pointer-events:none}
