@@ -9,7 +9,7 @@ async function pipe(cmds){
 }
 const clip=(v,n)=>v==null?null:String(v).trim().slice(0,n)||null;
 const ip=req=>(req.headers['x-forwarded-for']||'').split(',')[0].trim()||'0';
-async function limited(req,key,max,secs){ const k=`ks26:rl:${key}:${ip(req)}`; const [n]=await pipe([['INCR',k],['EXPIRE',k,String(secs)]]); return n>max; }
+async function limited(req,key,max,secs){ const k=`ks26:rl:${key}:${ip(req)}`; const [,n]=await pipe([['SET',k,'0','EX',String(secs),'NX'],['INCR',k]]); return n>max; }
 function body(req){ let b=req.body; if(typeof b==='string'){ try{ b=JSON.parse(b);}catch(e){ b={}; } } return b||{}; }
 function send(res,code,obj){ res.statusCode=code; res.setHeader('Content-Type','application/json'); res.setHeader('Cache-Control','no-store'); res.end(JSON.stringify(obj)); }
 function fail(res,e){ console.error(e); send(res,e.code||500,{ok:false,error:e.code===503?'not_connected':'server_error'}); }

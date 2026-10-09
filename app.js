@@ -304,7 +304,7 @@ payBtn.onclick=()=>{
   const popup=new PaystackPop();
   popup.newTransaction({ key:C.PAYSTACK_PUBLIC_KEY, email, amount:amt*100, currency:'NGN', reference:ref,
     metadata:{custom_fields:[{display_name:'Guest',variable_name:'guest',value:name||'Anonymous'},{display_name:'Note',variable_name:'note',value:note||'-'}]},
-    onSuccess:(t)=>{ save('gifts',{name:name||null,email,amount_kobo:amt*100,reference:t.reference||ref,note:note||null,status:'paid_client'}).catch(console.warn);
+    onSuccess:(t)=>{ save('gifts',{name:name||null,email,amount_kobo:amt*100,reference:t.reference||ref,note:note||null}).catch(console.warn);
       toast('Thank you for blessing the couple 💛'); fire({particleCount:260,spread:160}); },
     onCancel:()=>toast('No worries. You can try again anytime.') });
 };

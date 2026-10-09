@@ -1,14 +1,22 @@
 # Kalut-Shefa '26 · Elijah & Mary-Ann
 
 Wedding site for Elijah Ijabor & Mary-Ann Nwakor. Traditional Wedding 21 Nov 2026, White Wedding 28 Nov 2026.
+Live: https://kalut-shefa-26.vercel.app (Vercel, auto-deploys from `main`). Admin: `/admin.html`.
 
-- `index.html` – the site (envelope intro, countdown, story, scratch reveal, films, events, colours, gallery, RSVP, gifts)
-- `admin.html` – admin portal (visits, RSVPs, gifts, CSV export)
-- `config.js` – Supabase + Paystack keys, event times, bank details
-- `the api folder` – run once in Supabase SQL editor
+- `index.html`, `styles.css`, `app.js` – the site
+- `config.js` – event dates, bank details, Paystack PUBLIC key, pre-wedding portraits list
+- `admin.html`, `admin.js` – admin portal (visits, RSVPs, gifts, hearts, love-jar approvals, CSV export)
+- `api/` – Vercel functions on Upstash Redis (keys prefixed `ks26:`): `rsvp`, `visit`, `love`, `gift`, `admin`
 
-## Go live
-1. Create a free Supabase project, run `the api folder`, add admin emails to `public.admins`.
-2. Supabase > Authentication > Users > Add user (email + password) for each admin.
-3. Put the project URL and anon key in `config.js`.
-4. Put the Paystack PUBLIC key (pk_live_...) in `config.js` once the groom's Paystack account is approved.
+## Vercel environment variables
+- `KV_REST_API_URL`, `KV_REST_API_TOKEN` – set by the Upstash integration
+- `ADMIN_PASSWORD` – admin portal password
+- `PAYSTACK_SECRET_KEY` – optional; when set, every card gift is confirmed with Paystack before it is recorded
+
+## Turning on card gifts
+1. Elijah opens a Paystack account and adds his Fidelity settlement account.
+2. Put his PUBLIC key (`pk_live_...`) in `config.js`.
+3. Put his SECRET key (`sk_live_...`) in Vercel as `PAYSTACK_SECRET_KEY` (never in the code), then redeploy.
+
+## Pre-wedding portraits
+Drop photos in `assets/img/shoot/` and list them in `config.js` → `PORTRAITS`.
