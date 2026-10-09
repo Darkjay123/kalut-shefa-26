@@ -59,7 +59,7 @@ function render(){
 }
 function filtered(){ const q=$('#q').value.toLowerCase(), a=$('#fAtt').value, e=$('#fEv').value;
   return data.rsvps.filter(r=>(!a||r.attending===a)&&(!e||(r.events||[]).includes(e))&&(!q||[r.full_name,r.phone,r.email,r.message].join(' ').toLowerCase().includes(q))); }
-function table(){ const ev={traditional:'Trad',white:'White'}, side={groom:'Elijah',bride:'Mary-ann',both:'Both'};
+function table(){ const ev={traditional:'Trad',white:'White'}, side={groom:'Elijah',bride:'Mary-Ann',both:'Both'};
   $('#rsvpRows').innerHTML=filtered().map(r=>`<tr><td>${when(r.created_at)}</td><td><b style="font-weight:500">${esc(r.full_name)}</b></td><td>${esc(r.phone)}${r.email?'<br><small style="opacity:.6">'+esc(r.email)+'</small>':''}</td><td><span class="pill ${r.attending}">${r.attending==='yes'?'Attending':'Not attending'}</span></td><td>${(r.events||[]).map(x=>ev[x]||x).join(' + ')||'–'}</td><td>${r.guests||'–'}</td><td>${side[r.side]||'–'}</td><td class="msg">${esc(r.message)}</td></tr>`).join('')||'<tr><td colspan="8" style="opacity:.5">No RSVPs yet.</td></tr>'; }
 ['#q','#fAtt','#fEv'].forEach(s=>$(s).addEventListener('input',table));
 $('#csv').onclick=()=>{ const rows=[['created_at','full_name','phone','email','attending','events','guests','side','message'],...filtered().map(r=>[r.created_at,r.full_name,r.phone,r.email,r.attending,(r.events||[]).join('|'),r.guests,r.side,r.message])];

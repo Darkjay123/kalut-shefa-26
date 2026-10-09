@@ -1,6 +1,6 @@
-# Kalut-Shefa '26 · Elijah & Mary-ann
+# Kalut-Shefa '26 · Elijah & Mary-Ann
 
-Wedding site for Elijah Ijabor & Mary-ann Nwakor. Traditional Wedding 21 Nov 2026, White Wedding 28 Nov 2026.
+Wedding site for Elijah Ijabor & Mary-Ann Nwakor. Traditional Wedding 21 Nov 2026, White Wedding 28 Nov 2026.
 
 - `index.html` – the site (envelope intro, countdown, story, scratch reveal, films, events, colours, gallery, RSVP, gifts)
 - `admin.html` – admin portal (visits, RSVPs, gifts, CSV export)

@@ -1,4 +1,4 @@
-/* Kalut-Shefa '26 · Elijah & Mary-ann */
+/* Kalut-Shefa '26 · Elijah & Mary-Ann */
 (function(){
 const C = window.KS_CONFIG || {};
 const $ = (s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
@@ -215,7 +215,7 @@ $$('.vplayer').forEach(box=>{ const v=box.querySelector('video'), b=box.querySel
 $$('.ev').forEach(c=>{ c.addEventListener('click',e=>{ if(e.target.closest('[data-cal]')) return; c.classList.toggle('flipped'); }); c.addEventListener('keydown',e=>{if(e.key==='Enter')c.classList.toggle('flipped')}); });
 $$('[data-cal]').forEach(a=>a.addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation(); const k=a.dataset.cal==='trad'?'trad':'white'; const ev=EV[k];
   const d=new Date(ev.date); const ymd=x=>x.toISOString().slice(0,10).replace(/-/g,''); const start=new Date(d.getTime()+3600e3); const end=new Date(start.getTime()+864e5);
-  const title=`Elijah & Mary-ann · ${ev.name}`; const details='Kalut-Shefa \'26 · '+location.href.split('#')[0];
+  const title=`Elijah & Mary-Ann · ${ev.name}`; const details='Kalut-Shefa \'26 · '+location.href.split('#')[0];
   if(/iPhone|iPad|Mac/i.test(navigator.userAgent)){
     const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//KalutShefa26//EN','BEGIN:VEVENT',`UID:${k}-kalutshefa26`,`DTSTAMP:${new Date().toISOString().replace(/[-:]/g,'').split('.')[0]}Z`,`DTSTART;VALUE=DATE:${ymd(start)}`,`DTEND;VALUE=DATE:${ymd(end)}`,`SUMMARY:${title}`,`DESCRIPTION:${details}`,'END:VEVENT','END:VCALENDAR'].join('\r\n');
     const url=URL.createObjectURL(new Blob([ics],{type:'text/calendar'})); const l=document.createElement('a'); l.href=url; l.download=`${k}-wedding.ics`; l.click();
@@ -233,8 +233,8 @@ const row=$('#portraitRow');
 const cam='<svg class="cam" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M3 8h3l2-3h8l2 3h3v11H3z"/><circle cx="12" cy="13" r="4"/></svg>';
 if(PORTRAITS.length){
   row.classList.add('real');
-  $('#portraitsEyebrow').textContent='The pre-wedding shoot'; $('#portraitsTitle').innerHTML='Elijah <span class="gold-text">&amp;</span> Mary-ann'; $('#portraitsLead').textContent='Portraits from their pre-wedding shoot. Tap any photo.';
-  row.innerHTML=PORTRAITS.map((src,i)=>`<figure class="arch real reveal" data-i="${i}"><img src="${src}" alt="Elijah and Mary-ann, pre-wedding portrait ${i+1}" loading="lazy"></figure>`).join('');
+  $('#portraitsEyebrow').textContent='The pre-wedding shoot'; $('#portraitsTitle').innerHTML='Elijah <span class="gold-text">&amp;</span> Mary-Ann'; $('#portraitsLead').textContent='Portraits from their pre-wedding shoot. Tap any photo.';
+  row.innerHTML=PORTRAITS.map((src,i)=>`<figure class="arch real reveal" data-i="${i}"><img src="${src}" alt="Elijah and Mary-Ann, pre-wedding portrait ${i+1}" loading="lazy"></figure>`).join('');
 } else {
   const ph=['ring-red-sm','sun-circle-sm','said-yes-sm'];
   row.innerHTML=ph.map((p,i)=>`<div class="arch ${i===1?'mid':''} reveal"><div class="ph" style="background-image:url(assets/img/${p}.webp)"></div><div class="soon">${i===1?cam+'<b>Coming soon</b><small>Official portraits</small>':i===0?'<b>21.11</b><small>Traditional</small>':'<b>28.11</b><small>White wedding</small>'}</div></div>`).join('');

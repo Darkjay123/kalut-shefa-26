@@ -3,14 +3,14 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>Admin · Kalut-Shefa '26</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Jost:wght@300;400;500&family=Pinyon+Script&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&amp;family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&amp;family=Frank+Ruhl+Libre:wght@400&amp;display=swap" rel="stylesheet">
 <style>
 :root{--burg:#6e0f1f;--burg-d:#3d0610;--bg:#14020a;--card:#21060e;--gold:#d8bb8a;--gold-l:#f1dfbd;--olive:#8a9658;--ivory:#fbf7f0;--line:rgba(216,187,138,.18)}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Jost,system-ui,sans-serif;background:radial-gradient(ellipse at top,#3d0610,var(--bg) 60%) fixed;color:var(--ivory);min-height:100vh;font-weight:300}
+body{font-family:'DM Sans',system-ui,sans-serif;background:radial-gradient(ellipse at top,#3d0610,var(--bg) 60%) fixed;color:var(--ivory);min-height:100vh;font-weight:400}
 .wrap{width:min(1240px,94vw);margin:0 auto;padding:30px 0 80px}
 header{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:26px}
-header h1{font-family:'Pinyon Script';font-weight:400;font-size:2.6rem;color:var(--gold-l);line-height:1}
+header h1{font-family:'Playfair Display';font-style:italic;font-weight:400;font-size:2.6rem;color:var(--gold-l);line-height:1}
 header small{display:block;font-size:.65rem;letter-spacing:.35em;text-transform:uppercase;color:var(--gold)}
 .btn{border:1px solid var(--gold);background:transparent;color:var(--gold-l);padding:10px 18px;border-radius:30px;font:inherit;font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer}
 .btn:hover,.btn.solid{background:var(--gold);color:var(--burg-d)}
@@ -19,11 +19,11 @@ header small{display:block;font-size:.65rem;letter-spacing:.35em;text-transform:
 .kpi{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;position:relative;overflow:hidden}
 .kpi:after{content:"";position:absolute;right:-30px;top:-30px;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,rgba(216,187,138,.18),transparent 70%)}
 .kpi small{font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold)}
-.kpi b{display:block;font-family:'Cormorant Garamond';font-weight:400;font-size:2.6rem;line-height:1.1;margin-top:6px}
+.kpi b{display:block;font-family:'Playfair Display';font-weight:400;font-size:2.6rem;line-height:1.1;margin-top:6px}
 .kpi span{font-size:.8rem;color:rgba(251,247,240,.6)}
 .grid2{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:22px}
 .panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px}
-.panel h2{font-family:'Cormorant Garamond';font-weight:400;font-size:1.6rem;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.panel h2{font-family:'Playfair Display';font-weight:400;font-size:1.6rem;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .tools{display:flex;gap:8px;flex-wrap:wrap}
 .tools input,.tools select{background:rgba(251,247,240,.06);border:1px solid var(--line);color:var(--ivory);border-radius:20px;padding:8px 14px;font:inherit;font-size:.85rem}
 table{width:100%;border-collapse:collapse;font-size:.88rem}
@@ -36,7 +36,7 @@ tr:hover td{background:rgba(216,187,138,.04)}
 .scroll{overflow-x:auto}
 .list li{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(216,187,138,.08);font-size:.9rem;list-style:none}
 .login{max-width:420px;margin:12vh auto;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:40px;text-align:center}
-.login h1{font-family:'Pinyon Script';font-weight:400;color:var(--gold-l);font-size:3rem}
+.login h1{font-family:'Playfair Display';font-style:italic;font-weight:400;color:var(--gold-l);font-size:3rem}
 .login input{width:100%;margin-top:14px;background:rgba(251,247,240,.06);border:1px solid var(--line);color:var(--ivory);border-radius:14px;padding:14px;font:inherit}
 .login .btn{width:100%;margin-top:18px;padding:14px}
 .login p{font-size:.85rem;color:rgba(251,247,240,.6);margin-top:12px}
@@ -55,7 +55,7 @@ tr:hover td{background:rgba(216,187,138,.04)}
 
 <div id="dash" class="wrap" style="display:none">
   <header>
-    <div><small>Kalut-Shefa '26 · Admin</small><h1>Elijah &amp; Mary-ann</h1></div>
+    <div><small>Kalut-Shefa '26 · Admin</small><h1>Elijah &amp; Mary-Ann</h1></div>
     <div class="tools"><button class="btn" id="refresh">Refresh</button><button class="btn" id="csv">Export RSVPs (CSV)</button><button class="btn" id="logout">Sign out</button></div>
   </header>
   <div class="banner" id="demoBanner" style="display:none">Demo mode: the site isn't connected to the database yet, so these numbers are sample data (plus anything tested on this browser). Fill in config.js to go live.</div>
