@@ -271,7 +271,7 @@ $$('.next',form).forEach(b=>b.onclick=()=>{ if(!valid(step)) return; const att=f
 $$('.back',form).forEach(b=>b.onclick=()=>{ const att=form.querySelector('[name=attending]:checked'); go(step===4 && att && att.value==='no'?2:step-1); });
 form.querySelectorAll('[name=attending]').forEach(r=>r.onchange=()=>{ $('#eventsPick').style.display=r.value==='no'&&r.checked?'none':''; });
 $$('.stepper button',form).forEach(b=>b.onclick=()=>{ guests=Math.max(1,Math.min(10,guests+ +b.dataset.d)); const o=$('#guestOut'); o.textContent=guests; if(hasGsap) gsap.fromTo(o,{scale:1.4,color:'#d8bb8a'},{scale:1,color:'#6e0f1f',duration:.5}); });
-form.addEventListener('submit',async e=>{ e.preventDefault(); if(form.company.value) return; /* bot */
+form.addEventListener('submit',async e=>{ e.preventDefault(); if(form.company&&form.company.value) return; /* bot */
   const att=form.querySelector('[name=attending]:checked').value;
   const row={ company:form.company.value, full_name:form.full_name.value.trim().slice(0,120), phone:form.phone.value.trim().slice(0,40)||null, email:form.email.value.trim().slice(0,160)||null,
     attending:att, events:att==='yes'?[...form.querySelectorAll('[name=events]:checked')].map(c=>c.value):[], guests:att==='yes'?guests:0,
@@ -352,7 +352,7 @@ const loveSec=$('#love'); let lovePoll=null;
 if(loveSec){ new IntersectionObserver(es=>es.forEach(en=>{ if(en.isIntersecting){ loadLove(); clearInterval(lovePoll); lovePoll=setInterval(loadLove,25000); } else clearInterval(lovePoll); }),{rootMargin:'400px'}).observe(loveSec); }
 const nf=$('#noteForm'), nn=$('#nNote');
 if(nf){ nn.addEventListener('input',()=>$('#nCount').textContent=nn.value.length+' / 280');
-  nf.addEventListener('submit',async e=>{ e.preventDefault(); const hp=nf.querySelector('[name=company]').value; if(hp) return;
+  nf.addEventListener('submit',async e=>{ e.preventDefault(); const hp=(nf.querySelector('[name=company]')||{}).value; if(hp) return;
     const note=nn.value.trim(); if(note.length<3){ $('#noteErr').textContent='Write a few words first.'; return; } $('#noteErr').textContent='';
     const btn=$('#noteBtn'); btn.disabled=true; btn.textContent='Folding it up…';
     try{ const r=await fetch('/api/love',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'note',name:$('#nName').value.trim(),note,company:hp})});
