@@ -53,7 +53,7 @@ function render(){
   }
   const src={}; visits.forEach(v=>{const h=v.utm_source||host(v.referrer); src[h]=(src[h]||0)+1}); $('#sources').innerHTML=Object.entries(src).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([k,n])=>`<li><span>${esc(k)}</span><b>${n}</b></li>`).join('');
   $('#kHearts').textContent=(data.hearts||0).toLocaleString(); $('#kNotes').textContent=(data.pending||[]).length+' notes waiting';
-  const nc=(n,live)=>`<div class="note"><p>“${esc(n.note)}”</p><b>${esc(n.name)}</b><small>${when(n.created_at)}</small><div class="acts">${live?'':`<button class="ok" onclick="ksApprove('${esc(n.id)}')">Approve ♥</button>`}<button class="no" onclick="ksDelete('${live?'notes':'pending'}','${esc(n.id)}')">${live?'Take down':'Delete'}</button></div></div>`;
+  const nc=(n,live)=>`<div class="note"><p>“${esc(n.note)}”</p><b>${esc(n.name)}</b><small>${when(n.created_at)}</small><div class="acts">${live?'':`<button class="ok" data-act="approve" data-id="${esc(n.id)}">Approve ♥</button>`}<button class="no" data-act="delete" data-kind="${live?'notes':'pending'}" data-id="${esc(n.id)}">${live?'Take down':'Delete'}</button></div></div>`;
   $('#pendingNotes').innerHTML=(data.pending||[]).map(n=>nc(n,false)).join('')||'<p class="empty-n">No new notes right now.</p>';
   $('#liveNotes').innerHTML=(data.notes||[]).map(n=>nc(n,true)).join('')||'<p class="empty-n">Nothing approved yet.</p>';
   table(); $('#giftRows').innerHTML=gifts.map(g=>`<tr><td>${when(g.created_at)}</td><td>${esc(g.name||'Anonymous')}<br><small style="opacity:.6">${esc(g.email)}</small></td><td>${naira(g.amount_kobo)}</td><td class="msg">${esc(g.note)}</td><td><small>${esc(g.reference)}</small><br><small style="opacity:.75;color:${g.status==='verified'?'#9fb26a':'#d8bb8a'}">${g.status==='verified'?'✓ Confirmed by Paystack':'Not yet confirmed'}</small></td></tr>`).join('')||'<tr><td colspan="5" style="opacity:.5">No card gifts yet.</td></tr>';
@@ -61,9 +61,19 @@ function render(){
 function filtered(){ const q=$('#q').value.toLowerCase(), a=$('#fAtt').value, e=$('#fEv').value;
   return data.rsvps.filter(r=>(!a||r.attending===a)&&(!e||(r.events||[]).includes(e))&&(!q||[r.full_name,r.phone,r.email,r.message].join(' ').toLowerCase().includes(q))); }
 function table(){ const ev={traditional:'Trad',white:'White'}, side={groom:'Elijah',bride:'Mary-Ann',both:'Both'};
-  $('#rsvpRows').innerHTML=filtered().map(r=>`<tr><td>${when(r.created_at)}</td><td><b style="font-weight:500">${esc(r.full_name)}</b></td><td>${esc(r.phone)}${r.email?'<br><small style="opacity:.6">'+esc(r.email)+'</small>':''}</td><td><span class="pill ${r.attending}">${r.attending==='yes'?'Attending':'Not attending'}</span></td><td>${(r.events||[]).map(x=>ev[x]||x).join(' + ')||'–'}</td><td>${r.guests||'–'}</td><td>${side[r.side]||'–'}</td><td class="msg">${esc(r.message)}</td><td>${r.id?`<button class="del" title="Remove" onclick="ksDelete('rsvps','${esc(r.id)}')">✕</button>`:''}</td></tr>`).join('')||'<tr><td colspan="9" style="opacity:.5">No RSVPs yet.</td></tr>'; }
+  $('#rsvpRows').innerHTML=filtered().map(r=>`<tr><td>${when(r.created_at)}</td><td><b style="font-weight:500">${esc(r.full_name)}</b></td><td>${esc(r.phone)}${r.email?'<br><small style="opacity:.6">'+esc(r.email)+'</small>':''}</td><td><span class="pill ${r.attending}">${r.attending==='yes'?'Attending':'Not attending'}</span></td><td>${(r.events||[]).map(x=>ev[x]||x).join(' + ')||'–'}</td><td>${r.guests||'–'}</td><td>${side[r.side]||'–'}</td><td class="msg">${esc(r.message)}</td><td>${r.id?`<button class="del" title="Remove" data-act="delete" data-kind="rsvps" data-id="${esc(r.id)}">✕</button>`:''}</td></tr>`).join('')||'<tr><td colspan="9" style="opacity:.5">No RSVPs yet.</td></tr>'; }
 ['#q','#fAtt','#fEv'].forEach(s=>$(s).addEventListener('input',table));
 $('#csv').onclick=()=>{ const rows=[['created_at','full_name','phone','email','attending','events','guests','side','message'],...filtered().map(r=>[r.created_at,r.full_name,r.phone,r.email,r.attending,(r.events||[]).join('|'),r.guests,r.side,r.message])];
   const csv=rows.map(r=>r.map(x=>`"${String(x??'').replace(/"/g,'""')}"`).join(',')).join('\n'); const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='kalut-shefa-rsvps.csv'; a.click(); };
 init();
 })();
+
+/* one listener for every approve/delete button (inline onclick is blocked by the security policy) */
+document.addEventListener('click',async e=>{
+  const b=e.target.closest('[data-act]'); if(!b) return;
+  const {act,id,kind}=b.dataset; const label=b.textContent;
+  try{
+    if(act==='approve'){ b.disabled=true; b.textContent='Approving…'; await window.ksApprove(id); }
+    else if(act==='delete'){ await window.ksDelete(kind,id); }
+  }catch(err){ alert('That did not go through: '+err.message); b.disabled=false; b.textContent=label; }
+});
