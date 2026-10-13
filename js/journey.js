@@ -45,7 +45,7 @@ var modal=document.getElementById('journeyModal'), mapEl=document.getElementById
 if(!modal||!mapEl||!window.L) return;
 var map=null,line=null,car=null,pin=null,wpDots=[],raf=null,mode=null,t0=0,playing=false,fired=[];
 function $(id){return document.getElementById(id)}
-var capT=$('jCapT'),capS=$('jCapS'),capBox=$('jCap'),bar=$('jBar'),begin=$('jBegin'),arrival=$('jArrival'),skip=$('jSkip'),dirBtn=$('jDir'),mapBtn=$('jMapBtn'),again=$('jAgain'),arrName=$('jArrName'),arrAddr=$('jArrAddr');
+var capT=$('jCapT'),capS=$('jCapS'),capBox=$('jCap'),bar=$('jBar'),beginBtn=$('jBegin'),arrival=$('jArrival'),skip=$('jSkip'),dirBtn=$('jDir'),mapBtn=$('jMapBtn'),again=$('jAgain'),arrName=$('jArrName'),arrAddr=$('jArrAddr');
 function ease(t){return t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2}
 function divIcon(cls,html,w,h){return L.divIcon({className:'',html:'<div class="'+cls+'">'+html+'</div>',iconSize:[w,h],iconAnchor:[w/2,h-4]})}
 function arc(latlngs){var a=[0],tot=0,i;for(i=1;i<latlngs.length;i++){var dx=latlngs[i][0]-latlngs[i-1][0],dy=latlngs[i][1]-latlngs[i-1][1];tot+=Math.sqrt(dx*dx+dy*dy);a.push(tot)}return{a:a,tot:tot}}
@@ -82,7 +82,7 @@ function frame(ts){if(!playing)return;
   if(mode.route&&s.f>0&&s.f<.999&&pos)wpDots.push(L.marker(pos,{icon:L.divIcon({className:'',html:'<div class="wp-dot"></div>',iconSize:[12,12],iconAnchor:[6,6]}),interactive:false}).addTo(map))}});
  if(p>=1){arrive();return}
  raf=requestAnimationFrame(frame)}
-function begin(){begin.classList.remove('show');arrival.classList.remove('show');skip.classList.add('show');clearLayers();
+function startJourney(){beginBtn.classList.remove('show');arrival.classList.remove('show');skip.classList.add('show');clearLayers();
  if(mode.route){line=L.polyline(mode.route,{color:'#d8bb8a',weight:3.5,opacity:.9,dashArray:'1 9',lineCap:'round'}).addTo(map);
   mode._arc=arc(mode.route);
   car=L.marker(mode.route[0],{icon:divIcon('ride-car','🚗',40,44),keyboard:false,zIndexOffset:800}).addTo(map);
@@ -97,18 +97,18 @@ function open(key){mode=V[key];initMap();map.invalidateSize();
  clearLayers();capBox.classList.add('hide');arrival.classList.remove('show');skip.classList.remove('show');
  modal.classList.add('open');document.documentElement.classList.add('ks-lock');
  window.lenis&&window.lenis.stop();
- if(REDUCE){begin.classList.remove('show');
+ if(REDUCE){beginBtn.classList.remove('show');
   if(mode.route){line=L.polyline(mode.route,{color:'#d8bb8a',weight:3.5,opacity:.9}).addTo(map);mode._arc=arc(mode.route);
    map.fitBounds(L.latLngBounds(mode.route).pad(.25))}
   else map.setView(mode.church,mode.zEnd);
   arrive();return}
  if(mode.route)map.fitBounds(L.latLngBounds(mode.route).pad(.25));
  else map.setView(mode.start,mode.zDrive);
- setTimeout(function(){begin.classList.add('show')},450)}
+ setTimeout(function(){beginBtn.classList.add('show')},450)}
 function close(){cancelAnimationFrame(raf);playing=false;modal.classList.remove('open');
  document.documentElement.classList.remove('ks-lock');window.lenis&&window.lenis.start()}
-begin.addEventListener('click',begin);
-again.addEventListener('click',begin);
+beginBtn.addEventListener('click',startJourney);
+again.addEventListener('click',startJourney);
 skip.addEventListener('click',function(){t0=-1e12});
 $('jClose').addEventListener('click',close);
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&modal.classList.contains('open'))close()});
