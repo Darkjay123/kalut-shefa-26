@@ -54,7 +54,7 @@ var capT=$('jCapT'),capS=$('jCapS'),capBox=$('jCap'),bar=$('jBar'),beginBtn=$('j
 var mode=null,liveKey='trad',engine=null,state='idle';
 /* ---------- helpers ---------- */
 var GRAD=(function(){var s=[95,150,210,255],d=new Uint8Array(s.length*4),i;for(i=0;i<s.length;i++){d[i*4]=d[i*4+1]=d[i*4+2]=s[i];d[i*4+3]=255}var t=new THREE.DataTexture(d,s.length,1,THREE.RGBAFormat);t.minFilter=t.magFilter=THREE.NearestFilter;t.needsUpdate=true;return t})();
-function mat(c,opt){opt=opt||{};var m=new THREE.MeshToonMaterial(Object.assign({color:c,gradientMap:GRAD},opt));if(opt.noOutline)m.userData.outlineParameters={visible:false};return m}
+function mat(c,opt){opt=Object.assign({},opt||{});var no=opt.noOutline;delete opt.noOutline;var m=new THREE.MeshToonMaterial(Object.assign({color:c,gradientMap:GRAD},opt));if(no)m.userData.outlineParameters={visible:false};return m}
 /* CC0 scenery: Kenney kits, loaded once, cloned everywhere */
 var ASSETS={},ASSET_LEFT=0,ASSET_READY=false,ASSET_CBS=[];
 (function(){if(!window.THREE||!THREE.GLTFLoader){ASSET_READY=true;return}
@@ -389,11 +389,11 @@ Drive.prototype.tick=function(dt){
   this.camera.position.y+=k*3.2*k;this.camera.position.x-=dir.x*k*2.4;this.camera.position.z-=dir.z*k*2.4}
  /* heart puffs from the exhaust */
  if(Math.random()<.12){for(var qi=0;qi<this.puffs.length;qi++){var q=this.puffs[qi];
-  if(q.t<0){q.t=0;q.s.position.set(pos.x-dir.x*2.2+ (Math.random()-.5)*.4,.5,pos.z-dir.z*2.2);break}}}
+  if(q.t<0){q.t=0;q.s.position.set(pos.x-dir.x*1.3+ (Math.random()-.5)*.4,.45,pos.z-dir.z*1.3);break}}}
  for(var pi=0;pi<this.puffs.length;pi++){var pp2=this.puffs[pi];
   if(pp2.t>=0){pp2.t+=dt;var f2=pp2.t/1.6;
    pp2.s.position.y+=dt*1.1;pp2.s.position.x+=dt*.5*(pp2.s.position.x>pos.x?1:-1)*.3;
-   pp2.s.material.opacity=Math.max(0,1-f2)*.85;pp2.s.scale.setScalar(.35+f2*.5);
+   pp2.s.material.opacity=Math.max(0,1-f2)*.85;pp2.s.scale.setScalar(.3+f2*.38);
    if(f2>=1){pp2.t=-1;pp2.s.material.opacity=0}}}
  /* progress, hud, captions */
  if(bar)bar.style.width=(d*100).toFixed(1)+'%';
