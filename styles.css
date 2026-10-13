@@ -697,10 +697,9 @@ html.ks-lock{overflow:hidden}
 .journey{position:fixed;inset:0;z-index:260;display:none;background:#0b0204}
 .journey.open{display:block}
 #jMap{position:absolute;inset:0}
-.journey .leaflet-container{background:#0b0204;font-family:var(--sans)}
-.journey .leaflet-tile-pane{filter:invert(1) hue-rotate(185deg) sepia(.5) hue-rotate(-30deg) saturate(2.1) brightness(.72) contrast(1.05)}
-.journey .leaflet-control-attribution{background:rgba(11,2,4,.6)!important;color:#b49a6e;font-size:9px;padding:2px 6px}
-.journey .leaflet-control-attribution a{color:#d8bb8a}
+.journey .maplibregl-map{background:#0b0204;font-family:var(--sans)}
+.journey .maplibregl-ctrl-attrib{background:rgba(11,2,4,.6)!important;color:#b49a6e;font-size:9px;padding:2px 6px}
+.journey .maplibregl-ctrl-attrib a{color:#d8bb8a}
 .j-bar{position:absolute;top:0;left:0;right:0;height:3px;z-index:11;background:rgba(216,187,138,.15)}
 .j-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#6e0f1f,#d8bb8a)}
 .jm-top{position:absolute;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;gap:12px;padding:calc(12px + env(safe-area-inset-top)) 16px 14px;pointer-events:none;background:linear-gradient(180deg,rgba(11,2,4,.85),rgba(11,2,4,0))}
