@@ -225,7 +225,8 @@ button{font-family:inherit;cursor:pointer}
 .events{background:linear-gradient(180deg,var(--burg-dd),#24040a)}
 .event-cards{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,50px);perspective:1800px}
 .ev{position:relative;min-height:520px;transform-style:preserve-3d;transition:transform 1.1s var(--ease);cursor:pointer}
-.ev.flipped{transform:rotateY(180deg)}
+.ev.flipped .ev-front{transform:rotateY(180deg)}
+.ev.flipped .ev-back{transform:rotateY(0deg)}
 .ev-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:26px;overflow:hidden;padding:clamp(30px,4vw,50px);display:flex;flex-direction:column;justify-content:space-between}
 .ev-front{color:var(--ivory)}
 .ev-front .bg{position:absolute;inset:0;background-size:cover;background-position:center;transform:scale(1.05);transition:transform 1.2s var(--ease)}
