@@ -66,7 +66,7 @@ if(!modal||!mapEl||!window.maplibregl) return;
 function $(id){return document.getElementById(id)}
 var map=null,ready=false,pendingFit=null,polished=false,
     car=null,pin=null,poiDots=[],raf=null,mode=null,hud=$('jHud'),
-    t0=0,state='idle',preTimer=null,fired=[],lastBrg=null,lastPitch=0,
+    t0=0,state='idle',preTimer=null,stage2Timer=null,fired=[],lastBrg=null,lastPitch=0,
     RT=null,ARC=null;
 var capT=$('jCapT'),capS=$('jCapS'),capBox=$('jCap'),bar=$('jBar'),beginBtn=$('jBegin'),arrival=$('jArrival'),skip=$('jSkip'),dirBtn=$('jDir'),mapBtn=$('jMapBtn'),again=$('jAgain'),arrName=$('jArrName'),arrAddr=$('jArrAddr');
 function ease(t){return t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2}
@@ -149,7 +149,7 @@ function dropPin(){
  var el=elFor('ks-pin-wrap','<div class="ks-pin"><span class="ks-pin-i">'+HEART+'</span></div>');
  pin=new maplibregl.Marker({element:el,anchor:'bottom',offset:[0,2]}).setLngLat([mode.church[1],mode.church[0]]).addTo(map);
  var p=el.querySelector('.ks-pin');if(p)p.classList.add('drop')}
-function arrive(){state='arrived';cancelAnimationFrame(raf);clearTimeout(preTimer);bar.style.width='100%';
+function arrive(){state='arrived';cancelAnimationFrame(raf);clearTimeout(preTimer);clearTimeout(stage2Timer);bar.style.width='100%';
  hud.classList.remove('show');
  setCap(mode.stops[mode.stops.length-1]);dropPin();
  if(car){car.setLngLat([mode.church[1],mode.church[0]]);var cel=car.getElement();if(cel)cel.classList.remove('driving')}
@@ -182,6 +182,10 @@ function frame(ts){
  if(p>=1){arrive();return}
  raf=requestAnimationFrame(frame)}
 function loopStart(){if(state!=='prefly')return;state='drive';t0=performance.now();raf=requestAnimationFrame(frame)}
+/* white-wedding flight: dive in flat, THEN tilt into 3D once the ground fills the screen
+   (a pitched camera at low zoom shows mostly sky - the dead patch caught on QA) */
+function stageTwo(){if(state!=='prefly'&&state!=='drive')return;
+ map.easeTo({center:[mode.church[1],mode.church[0]],zoom:mode.zEnd,pitch:45,bearing:-25,duration:mode.dur*.45,essential:true})}
 function startJourney(){if(state==='prefly'||state==='drive')return;
  beginBtn.classList.remove('show');arrival.classList.remove('show');skip.classList.add('show');
  if(mode.hudText){hud.textContent=mode.hudText;hud.classList.add('show')}
@@ -201,7 +205,8 @@ function startJourney(){if(state==='prefly'||state==='drive')return;
    preTimer=setTimeout(loopStart,1700)}
   else{RT=null;ARC=null;
    if(REDUCE){map.jumpTo({center:[mode.church[1],mode.church[0]],zoom:mode.zEnd,pitch:0,bearing:0});preTimer=setTimeout(loopStart,400)}
-   else{map.flyTo({center:[mode.church[1],mode.church[0]],zoom:mode.zEnd,pitch:45,bearing:-25,duration:mode.dur,essential:true});
+   else{map.flyTo({center:[mode.church[1],mode.church[0]],zoom:10.5,pitch:0,bearing:-15,duration:mode.dur*.55,essential:true});
+    stage2Timer=setTimeout(stageTwo,900+mode.dur*.55);
     preTimer=setTimeout(loopStart,900)}}};
  if(ready)go();else pendingFit=go}
 function open(key){mode=V[key];initMap();state='idle';
@@ -231,7 +236,7 @@ function open(key){mode=V[key];initMap();state='idle';
   else map.jumpTo({center:[mode.start[1],mode.start[0]],zoom:mode.zFollow,pitch:0,bearing:0})};
  if(ready)overview();else pendingFit=overview;
  setTimeout(function(){if(state==='idle')beginBtn.classList.add('show')},450)}
-function close(){cancelAnimationFrame(raf);clearTimeout(preTimer);state='idle';
+function close(){cancelAnimationFrame(raf);clearTimeout(preTimer);clearTimeout(stage2Timer);state='idle';
  modal.classList.remove('open');document.documentElement.classList.remove('ks-lock');window.lenis&&window.lenis.start()}
 beginBtn.addEventListener('click',startJourney);
 again.addEventListener('click',startJourney);
