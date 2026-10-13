@@ -53,10 +53,10 @@ var capT=$('jCapT'),capS=$('jCapS'),capBox=$('jCap'),bar=$('jBar'),beginBtn=$('j
 function ease(t){return t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2}
 function divIcon(cls,html,w,h){return L.divIcon({className:'',html:'<div class="'+cls+'">'+html+'</div>',iconSize:[w,h],iconAnchor:[w/2,h-4]})}
 function arc(latlngs){var a=[0],tot=0,i;for(i=1;i<latlngs.length;i++){var dx=latlngs[i][0]-latlngs[i-1][0],dy=latlngs[i][1]-latlngs[i-1][1];tot+=Math.sqrt(dx*dx+dy*dy);a.push(tot)}return{a:a,tot:tot}}
-function posAt(dist){var L=mode.route,r=mode._arc,i=0;
- while(i<L.length-2&&r.a[i+1]<dist)i++;
+function posAt(dist){var P=mode.route,r=mode._arc,i=0;
+ while(i<P.length-2&&r.a[i+1]<dist)i++;
  var seg=(r.a[i+1]-r.a[i])||1e-9,k=Math.max(0,Math.min(1,(dist-r.a[i])/seg));
- return[L[i][0]+(L[i+1][0]-L[i][0])*k,L[i][1]+(L[i+1][1]-L[i][1])*k,i]}
+ return[P[i][0]+(P[i+1][0]-P[i][0])*k,P[i][1]+(P[i+1][1]-P[i][1])*k,i]}
 function lerpAng(a,b,k){var d=b-a;while(d>180)d-=360;while(d<-180)d+=360;return a+d*k}
 function clearLayers(){wpDots.forEach(function(d){map.removeLayer(d)});wpDots=[];fired=[];lastBrg=null;
  if(line){map.removeLayer(line);line=null}
@@ -82,7 +82,7 @@ function frame(ts){
  var p=Math.min(1,(ts-t0)/mode.dur);
  var pos=null,i=null;
  if(mode.route){var d=distFrac(p),dOut=posAt(d*mode._arc.tot);pos=[dOut[0],dOut[1]];i=dOut[2];
-  var L=mode.route,nxt=L[Math.min(i+1,L.length-1)],prv=L[Math.max(i-1,0)];
+  var RT=mode.route,nxt=RT[Math.min(i+1,RT.length-1)],prv=RT[Math.max(i-1,0)];
   var brg=Math.atan2(nxt[1]-prv[1],nxt[0]-prv[0])*180/Math.PI;if(brg<0)brg+=360;
   if(lastBrg===null)lastBrg=brg;lastBrg=lerpAng(lastBrg,brg,.12);
   car.setLatLng(pos);if(rotEl)rotEl.style.transform='rotate('+(lastBrg+90).toFixed(1)+'deg)';
