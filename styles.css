@@ -763,7 +763,7 @@ html.ks-lock{overflow:hidden}
   .cal-btns .btn{flex:1 1 100%;justify-content:center;padding:13px 12px;font-size:.7rem;letter-spacing:.16em}
 }
 /* personalized journey: where are you coming from? */
-.j-start{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(104px + env(safe-area-inset-bottom));z-index:10;width:min(400px,90vw);text-align:center;opacity:0;pointer-events:none;transition:opacity .5s}
+.j-start{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(104px + env(safe-area-inset-bottom));z-index:15;width:min(400px,90vw);text-align:center;opacity:0;pointer-events:none;transition:opacity .5s}
 .j-start.show{opacity:1;pointer-events:auto}
 .js-q{display:block;font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:#cbb489;margin-bottom:10px}
 .js-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px}
