@@ -715,7 +715,7 @@ html.ks-lock{overflow:hidden}
 .j-cap{position:absolute;left:50%;bottom:calc(104px + env(safe-area-inset-bottom));z-index:10;width:min(430px,88vw);text-align:center;background:rgba(11,2,4,.78);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid rgba(216,187,138,.35);border-radius:18px;padding:14px 20px;opacity:0;transform:translateX(-50%) translateY(14px)}
 .j-cap.in{animation:capIn .7s var(--ease) forwards}
 .j-cap.hide{opacity:0!important;transition:opacity .5s}
-@keyframes capIn{to{opacity:1;transform:translateX(-50%) translateY(0)}}
+@keyframes capIn{0%{opacity:0;transform:translateX(-50%) translateY(14px) scale(.92)}62%{opacity:1;transform:translateX(-50%) translateY(0) scale(1.03)}100%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}}
 .j-cap b{font-family:var(--serif);color:#f5efe0;font-size:1.05rem;display:block;margin-bottom:2px}
 .j-cap span{font-size:.85rem;color:#d8c9a6}
 .j-begin{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(34px + env(safe-area-inset-bottom));z-index:10;border-radius:999px;border:1px solid var(--gold);background:var(--burg);color:var(--ivory);font-family:var(--sans);font-weight:600;letter-spacing:.06em;font-size:1rem;padding:16px 30px;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .5s,transform .3s var(--ease);box-shadow:0 18px 50px rgba(0,0,0,.6)}
@@ -731,7 +731,14 @@ html.ks-lock{overflow:hidden}
 .j-arr-btns .btn{padding:11px 18px;font-size:.85rem}
 .j-replay{margin-top:12px;background:none;border:none;color:var(--gold-l);font-family:var(--sans);font-size:.8rem;letter-spacing:.06em;cursor:pointer;opacity:.85}
 .j-replay:hover{opacity:1}
-.ride-car{font-size:26px;line-height:1;filter:drop-shadow(0 6px 8px rgba(0,0,0,.65))}
+.ride-car{line-height:0;filter:drop-shadow(0 6px 8px rgba(0,0,0,.65))}
+.ride-car svg{display:block}
+.ride-car.driving svg{animation:jbob .22s ease-in-out infinite alternate}
+@keyframes jbob{from{transform:translateY(-1px)}to{transform:translateY(1.5px)}}
+.poi-chip{display:flex;align-items:center;gap:6px;background:#fff;color:#2e2620;border-radius:999px;padding:4px 11px 4px 5px;font-family:var(--sans);font-size:.68rem;font-weight:700;letter-spacing:.02em;white-space:nowrap;box-shadow:0 5px 16px rgba(0,0,0,.4)}
+.poi-chip span{display:grid;place-items:center;width:19px;height:19px;background:var(--gold-l);border-radius:50%;font-size:.62rem}
+.j-hud{position:absolute;left:50%;bottom:calc(196px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:10;background:rgba(255,255,255,.94);color:#2e2620;font-family:var(--sans);font-weight:700;font-size:.72rem;letter-spacing:.08em;padding:7px 15px;border-radius:999px;box-shadow:0 6px 18px rgba(0,0,0,.45);opacity:0;transition:opacity .4s;pointer-events:none}
+.j-hud.show{opacity:1}
 .ride-rot{display:block;will-change:transform}
 .wp-dot{width:12px;height:12px;border-radius:50%;background:#d8bb8a;animation:wpPulse 2s ease-out infinite}
 @keyframes wpPulse{0%{box-shadow:0 0 0 3px rgba(216,187,138,.35)}70%,100%{box-shadow:0 0 0 10px rgba(216,187,138,0)}}
@@ -740,7 +747,7 @@ html.ks-lock{overflow:hidden}
 .ks-pin-i{position:absolute;inset:0;display:grid;place-items:center;color:#f5efe0;font-size:19px;padding-bottom:6px}
 .ks-pin.drop{animation:pinDrop .9s cubic-bezier(.2,1.4,.4,1)}
 @keyframes pinDrop{from{transform:translateY(-90px);opacity:0}to{transform:translateY(0);opacity:1}}
-@media(max-width:700px){.jm-head b{font-size:1.05rem}.j-cap{bottom:calc(96px + env(safe-area-inset-bottom));padding:12px 16px}.j-cap b{font-size:.95rem}}
+@media(max-width:700px){.jm-head b{font-size:1.05rem}.j-cap{bottom:calc(96px + env(safe-area-inset-bottom));padding:12px 16px}.j-cap b{font-size:.95rem}.j-hud{bottom:calc(184px + env(safe-area-inset-bottom));font-size:.68rem}}
 @media(prefers-reduced-motion:reduce){.j-begin.show{animation:none}.wp-dot{animation:none}}
 
 .portrait-row.solo{grid-template-columns:1fr;justify-items:center}
