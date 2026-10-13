@@ -262,8 +262,8 @@ Drive.prototype.buildVenue=function(){
  else{
   var ch=new THREE.Group();
   var nave=box(9,4.2,7,WEDDING.white);nave.position.y=2.1;ch.add(nave);
-  var roof=new THREE.Mesh(new THREE.CylinderGeometry(4.9,4.9,8.6,3,1),mat(WEDDING.cream));
-  roof.rotation.z=Math.PI/2;roof.rotation.y=Math.PI/2;roof.scale.y=.62;roof.position.y=4.9;ch.add(roof);
+  var roof=new THREE.Mesh(new THREE.ConeGeometry(6.4,2.8,4),mat(WEDDING.burgundyDeep));
+  roof.rotation.y=Math.PI/4;roof.position.y=5.6;ch.add(roof);
   var tower=box(2.6,6.4,2.6,WEDDING.white);tower.position.set(0,3.2,4.6);ch.add(tower);
   var steeple=new THREE.Mesh(new THREE.ConeGeometry(2,2.6,4),mat(WEDDING.burgundy));steeple.position.set(0,7.7,4.6);steeple.rotation.y=Math.PI/4;ch.add(steeple);
   var crossM=new THREE.Mesh(new THREE.BoxGeometry(.16,1.5,.16),mat(WEDDING.goldHot));crossM.position.set(0,9.6,4.6);ch.add(crossM);
