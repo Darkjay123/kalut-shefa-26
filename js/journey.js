@@ -373,7 +373,7 @@ function toggleSat(){
   polish();
   if(RT&&ARC&&mode&&mode.route){try{map.removeSource('ks-route')}catch(e){};routeLayers()}
  },120)})}
-function jViewBtn(){var b=$('jView');if(b)b.textContent=SAT?'\U0001F303 Night map':'\U0001F6F0 Satellite view'}
+function jViewBtn(){var b=$('jView');if(b)b.textContent=SAT?'\uD83C\uDF03 Night map':'\U0001F6F0 Satellite view'}
 var vBtn=$('jView');if(vBtn)vBtn.addEventListener('click',toggleSat);
 
 /* shared link boot: ?from=lat,lng&w=trad&n=Warri replays that guest's exact drive */
