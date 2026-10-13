@@ -82,6 +82,7 @@ function frame(ts){
  var p=Math.min(1,(ts-t0)/mode.dur);
  var pos=null,i=null;
  if(mode.route){var d=distFrac(p),dOut=posAt(d*mode._arc.tot);pos=[dOut[0],dOut[1]];i=dOut[2];
+  if(!isFinite(pos[0])||!isFinite(pos[1])){raf=requestAnimationFrame(frame);return}
   var RT=mode.route,nxt=RT[Math.min(i+1,RT.length-1)],prv=RT[Math.max(i-1,0)];
   var brg=Math.atan2(nxt[1]-prv[1],nxt[0]-prv[0])*180/Math.PI;if(brg<0)brg+=360;
   if(lastBrg===null)lastBrg=brg;lastBrg=lerpAng(lastBrg,brg,.12);
@@ -93,7 +94,8 @@ function frame(ts){
  if(p>=1){arrive();return}
  raf=requestAnimationFrame(frame)}
 function loopStart(){if(state!=='prefly')return;state='drive';t0=performance.now();raf=requestAnimationFrame(frame)}
-function startJourney(){beginBtn.classList.remove('show');arrival.classList.remove('show');skip.classList.add('show');
+function startJourney(){if(state==='prefly'||state==='drive')return;
+ beginBtn.classList.remove('show');arrival.classList.remove('show');skip.classList.add('show');
  clearLayers();state='prefly';
  if(mode.route){line=L.polyline(mode.route,{color:'#d8bb8a',weight:3.5,opacity:.9,dashArray:'1 9',lineCap:'round'}).addTo(map);
   mode._arc=arc(mode.route);
