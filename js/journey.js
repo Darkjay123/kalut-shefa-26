@@ -149,7 +149,7 @@ function dropPin(){
  var el=elFor('ks-pin-wrap','<div class="ks-pin"><span class="ks-pin-i">'+HEART+'</span></div>');
  pin=new maplibregl.Marker({element:el,anchor:'bottom',offset:[0,2]}).setLngLat([mode.church[1],mode.church[0]]).addTo(map);
  var p=el.querySelector('.ks-pin');if(p)p.classList.add('drop')}
-function arrive(){state='arrived';cancelAnimationFrame(raf);clearTimeout(preTimer);clearTimeout(stage2Timer);modal.classList.remove('ks-pov');bar.style.width='100%';
+function arrive(){state='arrived';cancelAnimationFrame(raf);clearTimeout(preTimer);clearTimeout(stage2Timer);modal.classList.remove('ks-pov');bar.style.width='100%';try{if(SAT&&map.getLayer('sat-ref'))map.setLayoutProperty('sat-ref','visibility','visible')}catch(e){};
  hud.classList.remove('show');
  setCap(mode.stops[mode.stops.length-1]);dropPin();
  if(car){car.setLngLat([mode.church[1],mode.church[0]]);var cel=car.getElement();if(cel)cel.classList.remove('driving')}
@@ -220,7 +220,7 @@ function warmCorridor(){
       urls.push('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/'+z+'/'+(xy[1]+dy)+'/'+(xy[0]+dx))}}}}
   urls=urls.slice(0,420);
   var q=urls.slice();
-  (function pump(){var n=0;while(n<6&&q.length){var im=new Image();im.onload=im.onerror=function(){setTimeout(pump,30)};im.src=q.shift();n++}})();
+  (function pump(){var n=0;while(n<8&&q.length){var im=new Image();im.onload=im.onerror=function(){setTimeout(pump,20)};im.src=q.shift();n++}})();
  }catch(e){}}
 function loopStart(){if(state!=='prefly')return;state='drive';t0=performance.now();prevD=0;prevT=t0;kmhS=0;wheelAng=0;prevRaw=null;raf=requestAnimationFrame(frame)}
 /* white-wedding flight: dive in flat, THEN tilt into 3D once the ground fills the screen
@@ -234,6 +234,7 @@ function startJourney(){if(state==='prefly'||state==='drive')return;
  var go=function(){
   if(mode.route){
    RT=toGL(mode.route);ARC=arc(RT);routeLayers();
+   try{if(SAT&&map.getLayer('sat-ref'))map.setLayoutProperty('sat-ref','visibility','none')}catch(e){}
    if(POV){modal.classList.add('ks-pov');var gT=$('gKmT');if(gT)gT.textContent=mode.hudTail;
     var ds=Math.round(mode.dur/1000);
     if(gKm)gKm.textContent=mode.km.toFixed(1);
