@@ -732,6 +732,7 @@ html.ks-lock{overflow:hidden}
 .j-replay{margin-top:12px;background:none;border:none;color:var(--gold-l);font-family:var(--sans);font-size:.8rem;letter-spacing:.06em;cursor:pointer;opacity:.85}
 .j-replay:hover{opacity:1}
 .ride-car{font-size:26px;line-height:1;filter:drop-shadow(0 6px 8px rgba(0,0,0,.65))}
+.ride-rot{display:block;will-change:transform}
 .wp-dot{width:12px;height:12px;border-radius:50%;background:#d8bb8a;animation:wpPulse 2s ease-out infinite}
 @keyframes wpPulse{0%{box-shadow:0 0 0 3px rgba(216,187,138,.35)}70%,100%{box-shadow:0 0 0 10px rgba(216,187,138,0)}}
 .ks-pin{position:relative;width:44px;height:48px}
@@ -745,3 +746,13 @@ html.ks-lock{overflow:hidden}
 .portrait-row.solo{grid-template-columns:1fr;justify-items:center}
 .portrait-row.solo .arch{flex:0 0 min(72vw,380px)}
 @media(max-width:700px){.portrait-row.solo{display:flex;justify-content:center;overflow:visible;margin:0}}
+
+@media(max-width:700px){
+  .ev{min-height:660px}
+  .ev-face{padding:26px 22px;border-radius:22px}
+  .ev h4{font-size:1.55rem}
+  .ev-back dl{gap:10px;margin:14px 0}
+  .ev-back dd{font-size:1.05rem;line-height:1.45}
+  .cal-btns{gap:8px;margin-top:auto}
+  .cal-btns .btn{flex:1 1 100%;justify-content:center;padding:13px 12px;font-size:.7rem;letter-spacing:.16em}
+}
