@@ -58,9 +58,10 @@ function mat(c,opt){opt=Object.assign({},opt||{});var no=opt.noOutline;delete op
 /* CC0 scenery: Kenney kits, loaded once, cloned everywhere */
 var ASSETS={},ASSET_ANIMS={},ASSET_LEFT=0,ASSET_READY=false,ASSET_CBS=[];
 (function(){if(!window.THREE||!THREE.GLTFLoader){ASSET_READY=true;return}
- var NAMES=['donkey','casual_male','casual_female','building-type-d','building-type-g','building-type-i','building-type-j','building-type-m','building-type-p','fence','fence-2x2','tree-large','planter','sedan','suv','taxi','truck','delivery-flat','tree_palmTall','tree_palmShort','tree_oak','tree_oak_dark','tree_detailed','tree_detailed_dark','plant_bush','flower_redC','grass','rock_largeA','rock_smallE','crops_cornStageA','crops_cornStageB','fence_simpleLow','stone_tallD','display-fruit','display-bread','shelf-boxes','column','character-employee'];
+ var NAMES=['donkey','casual_male','casual_female','city-kit-suburban/building-type-d','city-kit-suburban/building-type-g','city-kit-suburban/building-type-i','city-kit-suburban/building-type-j','city-kit-suburban/building-type-m','city-kit-suburban/building-type-p','city-kit-suburban/fence','city-kit-suburban/fence-2x2','city-kit-suburban/tree-large','city-kit-suburban/planter','car-kit/sedan','car-kit/suv','car-kit/taxi','car-kit/truck','car-kit/delivery-flat','car-kit/hatchback-sports','car-kit/wheel-default','car-kit/box','tree_palmTall','tree_palmShort','tree_oak','tree_oak_dark','tree_detailed','tree_detailed_dark','plant_bush','flower_redC','grass','rock_largeA','rock_smallE','crops_cornStageA','crops_cornStageB','fence_simpleLow','stone_tallD','mini-market/display-fruit','mini-market/display-bread','mini-market/shelf-boxes','mini-market/column','mini-market/character-employee','mini-market/fence-door-rotate'];
  ASSET_LEFT=NAMES.length;var L=new THREE.GLTFLoader();
- NAMES.forEach(function(nm){L.load('assets/models/'+nm+'.glb',function(g){ASSETS[nm]=g.scene;ASSET_ANIMS[nm]=g.animations||[];done()},undefined,function(){done()})});
+ NAMES.forEach(function(nm){var key=nm.split('/').pop();
+  L.load('assets/models/'+nm+'.glb',function(g){ASSETS[key]=g.scene;ASSET_ANIMS[key]=g.animations||[];done()},undefined,function(){done()})});
  function done(){ASSET_LEFT--;if(ASSET_LEFT<=0&&!ASSET_READY){ASSET_READY=true;var c=ASSET_CBS;ASSET_CBS=[];c.forEach(function(f){f()})}}})();
 function onAssets(f){if(ASSET_READY)f();else ASSET_CBS.push(f)}
 function box(w,h,d,c,round){
@@ -83,6 +84,22 @@ function heartTex(){
  x.bezierCurveTo(26,4,30,8,32,12);x.bezierCurveTo(34,8,38,4,44,4);
  x.bezierCurveTo(52,4,60,8,60,18);x.bezierCurveTo(60,26,56,40,32,56);x.fill();
  return new THREE.CanvasTexture(c)}
+function roadTex(){
+ var c=document.createElement('canvas');c.width=c.height=128;var x=c.getContext('2d');
+ x.fillStyle='#9c9494';x.fillRect(0,0,128,128);
+ for(var i=0;i<900;i++){var g=140+Math.floor(Math.random()*90);
+  x.fillStyle='rgba('+g+','+(g-6)+','+(g-10)+','+(Math.random()*.5+.15)+')';
+  x.fillRect(Math.random()*128,Math.random()*128,Math.random()*2.4+.6,Math.random()*2.4+.6)}
+ var t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.anisotropy=4;return t}
+function groundTex(){
+ var c=document.createElement('canvas');c.width=c.height=256;var x=c.getContext('2d');
+ x.fillStyle='#aebfa2';x.fillRect(0,0,256,256);
+ for(var i=0;i<38;i++){var r=6+Math.random()*26;
+  x.fillStyle='rgba('+(168+Math.random()*40|0)+','+(178+Math.random()*30|0)+','+(120+Math.random()*40|0)+','+(Math.random()*.32+.1)+')';
+  x.beginPath();x.ellipse(Math.random()*256,Math.random()*256,r,r*(.5+Math.random()*.6),Math.random()*3,0,6.3);x.fill()}
+ for(i=0;i<700;i++){x.fillStyle='rgba(120,140,90,'+(Math.random()*.3+.08)+')';
+  x.fillRect(Math.random()*256,Math.random()*256,Math.random()*3+1,Math.random()*3+1)}
+ var t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(90,90);t.anisotropy=4;return t}
 /* ---------- the world ---------- */
 function Drive(key){
  this.key=key;this.mode=V[key];this.build()}
@@ -146,10 +163,12 @@ Drive.prototype.buildRoad=function(){
   pts.push(new THREE.Vector3(c.x+nx*w,0.02,c.z+nz*w));
   pts.push(new THREE.Vector3(c.x-nx*w,0.02,c.z-nz*w))}
  var g=new THREE.BufferGeometry(),verts=[],idx=[];
+ var uvs=[];
+ for(i=0;i<pts.length;i++){uvs.push((i%2)?1:0,(i>>1)*2.4)}
  for(i=0;i<pts.length;i++)verts.push(pts[i].x,pts[i].y,pts[i].z);
  for(i=0;i<N;i++){var a=2*i,b=2*i+1,c2=2*i+2,d2=2*i+3;idx.push(a,c2,b,b,c2,d2)}
- g.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));g.setIndex(idx);g.computeVertexNormals();
- var road=new THREE.Mesh(g,mat(WEDDING.asphalt));this.scene.add(road);
+ g.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));g.setIndex(idx);g.computeVertexNormals();
+ var road=new THREE.Mesh(g,mat(WEDDING.asphalt,{map:roadTex()}));this.scene.add(road);
  /* cream shoulders + gold dashes */
  var self2=this,step=4.5,dd;
  for(dd=2;dd<this.len;dd+=step){
@@ -162,7 +181,7 @@ Drive.prototype.buildRoad=function(){
    var r=l.clone();r.position.set(p.x-nx*(w+.35),.04,p.z-nz*(w+.35));this.scene.add(r)}}
 };
 Drive.prototype.buildGround=function(){
- var g=new THREE.Mesh(new THREE.CircleGeometry(420,40),mat(WEDDING.olive));
+ var g=new THREE.Mesh(new THREE.CircleGeometry(420,40),mat(WEDDING.olive,{map:groundTex()}));
  g.rotation.x=-Math.PI/2;g.position.y=-.06;g.scene=this.scene;this.scene.add(g);
  var far=new THREE.Mesh(new THREE.CircleGeometry(560,40),mat(WEDDING.oliveDeep));
  far.rotation.x=-Math.PI/2;far.position.y=-.14;this.scene.add(far);
@@ -304,6 +323,27 @@ Drive.prototype.buildFolks=function(){var self=this;
   if(self.marketPos)actor('casual_female',self.marketPos.x+3.4,self.marketPos.z+1.2,2.6,1.5,'Idle');
   var end=self.road?self.road.getPointAt(.999):null;
   if(end)actor('casual_male',end.x+4.5,end.z+2.2,2.4,1.5,'Victory');
+  /* tinted villagers: same rig, different cloth, so the crowd never looks copied */
+  function twin(nm,x,z,ry,clip,hue,lit){
+   var src=ASSETS[nm];if(!src)return;
+   var c=src.clone(true);c.position.set(x,0,z);c.rotation.y=ry;c.scale.setScalar(1.5);
+   c.traverse(function(m){if(m.isMesh&&m.material){m.material=m.material.clone();
+    if(m.material.color)m.material.color.offsetHSL(hue,.18,lit)}});
+   self.scene.add(c);
+   var clips=ASSET_ANIMS[nm]||[];
+   for(var i=0;i<clips.length;i++){if(clips[i].name===clip){
+     var mx=new THREE.AnimationMixer(c);mx.clipAction(clips[i]).play();self.mixers.push(mx);break}}}
+  if(self.marketPos){twin('casual_male',self.marketPos.x+5.1,self.marketPos.z-.6,2.9,'Idle',.04,.02);
+   twin('casual_female',self.marketPos.x+1.9,self.marketPos.z+3.3,3.5,'Idle',-.05,.06)}
+  /* one villager strolls the far shoulder through the wide shot */
+  var seg=self.road?self.road.getPointAt(.38):null;
+  if(seg){var pc=ASSETS['casual_male'].clone(true);pc.scale.setScalar(1.45);
+   pc.traverse(function(m){if(m.isMesh&&m.material){m.material=m.material.clone();
+    if(m.material.color)m.material.color.offsetHSL(.55,.15,.04)}});
+   self.scene.add(pc);self.ped=pc;self.pedBase=this_len(self);
+   var wclips=ASSET_ANIMS['casual_male']||[];
+   for(var wi2=0;wi2<wclips.length;wi2++){if(wclips[wi2].name==='Walk'){
+     var wm=new THREE.AnimationMixer(pc);wm.clipAction(wclips[wi2]).play();self.mixers.push(wm);break}}}
  });
 };
 Drive.prototype.buildClouds=function(){var self=this,i;this.clouds=[];
@@ -422,6 +462,7 @@ Drive.prototype.makeBlob=function(rx,rz,op){
  var sh=new THREE.Mesh(new THREE.CircleGeometry(1,18),new THREE.MeshBasicMaterial({color:0x2a2416,transparent:true,opacity:op||.16,depthWrite:false}));
  sh.rotation.x=-Math.PI/2;sh.scale.set(rx||1.6,rz||2.6,1);sh.renderOrder=2;this.scene.add(sh);return sh};
 
+function this_len(self){return self.len?self.len*.3:0}
 /* ---------- animation ---------- */
 Drive.prototype.capPose=function(){
  var self=this,c=this.curve.getPointAt(.9995),t=this.curve.getTangentAt(.9995),nx=-t.z,nz=t.x;
@@ -485,6 +526,13 @@ Drive.prototype.tick=function(dt){
  var steer=THREE.MathUtils.clamp(roll*2.2,-.38,.38);
  for(var wi=0;wi<this.wheels.length;wi++){var w=this.wheels[wi];w.rotation.x+=spin;w.rotation.y=steer}
  if(this.clouds)for(var ci=0;ci<this.clouds.length;ci++){var cc=this.clouds[ci];cc.position.x+=dt*1.4;if(cc.position.x>240)cc.position.x=-240}
+ /* a villager strolls the shoulder */
+ if(this.ped&&this.pedBase!==undefined){
+  var pu=(this.pedU=(this.pedU||0)+dt*.85)%26;
+  var pp=this.roadPoint(Math.min(this.len-8,this.pedBase+pu));
+  var pt=this.roadDir(Math.min(this.len-8,this.pedBase+pu));
+  this.ped.position.set(pp.x-pt.z*3.6,0,pp.z+pt.x*3.6);
+  this.ped.rotation.y=Math.atan2(pt.x,pt.z)}
  /* oncoming taxi: passes the couple around the wide-chase shot */
  if(this.onCar&&this.onU!==undefined){
   this.onU-=dt*.0125;
