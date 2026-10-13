@@ -101,7 +101,19 @@ Drive.prototype.build=function(){
  gr.addColorStop(0,'#f7e8d2');gr.addColorStop(.45,'#f3d9b8');gr.addColorStop(.8,'#efd0ac');gr.addColorStop(1,'#e7c39a');
  sx.fillStyle=gr;sx.fillRect(0,0,2,256);
  var skyT=new THREE.CanvasTexture(sc);
- this.scene.background=skyT;
+ /* sky dome: the gradient wraps the world instead of painting a flat wall behind it */
+ var dome=new THREE.Mesh(new THREE.SphereGeometry(420,24,14),
+  new THREE.MeshBasicMaterial({map:skyT,side:THREE.BackSide,fog:false,depthWrite:false}));
+ dome.renderOrder=-10;this.scene.add(dome);this.skyDome=dome;
+ /* low sun glow near the horizon, same side as the light */
+ var gc=document.createElement('canvas');gc.width=gc.height=128;var gx=gc.getContext('2d');
+ var gg=gx.createRadialGradient(64,64,4,64,64,64);
+ gg.addColorStop(0,'rgba(255,238,200,.9)');gg.addColorStop(.35,'rgba(255,220,160,.45)');gg.addColorStop(1,'rgba(255,210,150,0)');
+ gx.fillStyle=gg;gx.fillRect(0,0,128,128);
+ var glow=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(gc),transparent:true,opacity:.55,depthWrite:false,fog:false}));
+ var sdir=new THREE.Vector3(-60,80,-40).normalize();
+ glow.position.copy(sdir).multiplyScalar(360);glow.position.y=Math.max(30,glow.position.y*.55);glow.scale.setScalar(190);
+ glow.renderOrder=-9;this.scene.add(glow);
  this.scene.fog=new THREE.Fog(0xf0d6b2,90,340);
  this.camera=new THREE.PerspectiveCamera(55,mount.clientWidth/Math.max(1,mount.clientHeight),.1,600);
  this.scene.add(new THREE.HemisphereLight(0xfff3dd,0x545c2e,.95));
@@ -111,7 +123,7 @@ Drive.prototype.build=function(){
  this.curve=new THREE.CatmullRomCurve3(pts.map(function(p){return new THREE.Vector3(p[0],0,p[1])}));
  this.len=this.curve.getLength();
  this.ROAD_END=this.len-14; /* car stops short of the gate */
- this.sway=[];this.bflies=[];this.buildRoad();this.buildGround();this.buildScenery();this.buildVenue();this.buildCar();this.buildGoat();this.buildFolks();this.buildButterflies();this.buildBirds();this.buildPetals();this.buildOncoming();this.buildPuffs();this.buildClouds();
+ this.sway=[];this.bflies=[];this.buildRoad();this.buildGround();this.buildScenery();this.buildVenue();this.buildCar();this.buildGoat();this.buildFolks();this.buildButterflies();this.buildBirds();this.buildPetals();this.buildOncoming();this.buildPuffs();this.buildDust();this.buildClouds();
  var selfA=this;onAssets(function(){if(selfA&&!selfA.destroyed)selfA.dress()});this.sway=[];this.bflies=[];
  this.u=0;this.state='attract';this.attractT=0;this.capFired=[];this.goatDone=false;
  this.camPos=new THREE.Vector3();this.camAim=new THREE.Vector3();this.brV=0;this.lastRoll=0;
@@ -372,7 +384,7 @@ Drive.prototype.buildGoat=function(){var self=this;this.mixers=[];
   if(self.destroyed)return;
   var dk=ASSETS['donkey'];if(!dk)return;
   dk.scale.setScalar(1.5);dk.visible=false;self.scene.add(dk);
-  self.donkey=dk;
+  self.donkey=dk;self.goatBlob=self.makeBlob(1.4,2.2,.13);
   var clips=ASSET_ANIMS['donkey']||[];
   for(var i=0;i<clips.length;i++){if(clips[i].name==='Walk'){
     var m2=new THREE.AnimationMixer(dk);m2.clipAction(clips[i]).play();self.mixers.push(m2);break}}
@@ -388,7 +400,8 @@ Drive.prototype.runGoat=function(dt,dist){
  this.goat.position.set(gp.x-gdir.z*across*this.goatSide,0,gp.z+gdir.x*across*this.goatSide);
  this.goat.rotation.y=Math.atan2(gdir.x,gdir.z)+(this.goatSide>0?Math.PI/2:-Math.PI/2);
  this.goat.visible=true;
- this.donkey.visible=true};
+ this.donkey.visible=true;
+ if(this.goatBlob)this.goatBlob.position.set(gp.x-gdir.z*across*this.goatSide,.02,gp.z+gdir.x*across*this.goatSide)};
 Drive.prototype.buildPuffs=function(){
  var tex=heartTex(),i,self=this;
  this.puffs=[];
@@ -396,6 +409,15 @@ Drive.prototype.buildPuffs=function(){
   var s=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,opacity:0}));
   s.scale.setScalar(.5);this.scene.add(s);this.puffs.push({s:s,t:-1})}};
 
+Drive.prototype.dustTex=function(){
+ var c=document.createElement('canvas');c.width=c.height=64;var x=c.getContext('2d');
+ var g=x.createRadialGradient(32,32,2,32,32,32);
+ g.addColorStop(0,'rgba(226,208,178,.55)');g.addColorStop(.6,'rgba(214,194,160,.28)');g.addColorStop(1,'rgba(210,190,155,0)');
+ x.fillStyle=g;x.fillRect(0,0,64,64);return new THREE.CanvasTexture(c)};
+Drive.prototype.buildDust=function(){
+ var tex=this.dustTex();this.dusts=[];
+ for(var i=0;i<9;i++){var s=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,opacity:0,depthWrite:false}));
+  s.scale.setScalar(.4);this.scene.add(s);this.dusts.push({s:s,t:-1})}};
 Drive.prototype.makeBlob=function(rx,rz,op){
  var sh=new THREE.Mesh(new THREE.CircleGeometry(1,18),new THREE.MeshBasicMaterial({color:0x2a2416,transparent:true,opacity:op||.16,depthWrite:false}));
  sh.rotation.x=-Math.PI/2;sh.scale.set(rx||1.6,rz||2.6,1);sh.renderOrder=2;this.scene.add(sh);return sh};
@@ -459,7 +481,9 @@ Drive.prototype.tick=function(dt){
  this.car.rotation.y=heading;this.car.rotation.x=0;this.car.rotation.z=roll;
  if(this.blob){this.blob.position.set(pos.x,.02,pos.z);this.blob.rotation.z=-heading;
   var bs=1+Math.sin(this.t/120)*.015;this.blob.scale.set(1.7*bs,2.9*bs,1)}
- var spin=dt*26*(1-p*.35);this.wheels.forEach(function(w){w.rotation.x+=spin});
+ var spin=dt*26*(1-p*.35);
+ var steer=THREE.MathUtils.clamp(roll*2.2,-.38,.38);
+ for(var wi=0;wi<this.wheels.length;wi++){var w=this.wheels[wi];w.rotation.x+=spin;w.rotation.y=steer}
  if(this.clouds)for(var ci=0;ci<this.clouds.length;ci++){var cc=this.clouds[ci];cc.position.x+=dt*1.4;if(cc.position.x>240)cc.position.x=-240}
  /* oncoming taxi: passes the couple around the wide-chase shot */
  if(this.onCar&&this.onU!==undefined){
@@ -482,11 +506,11 @@ Drive.prototype.tick=function(dt){
  if(this.goatDone)this.runGoat(dt,dist);
  /* directed shots: hard cuts between angles, each shot one slow move */
  var SHOTS=this.SHOTS||(this.SHOTS=[
-  {u0:0,   u1:.24, kind:'chase', back:7.6, height:3.7},
-  {u0:.24, u1:.34, kind:'side'},
-  {u0:.34, u1:.56, kind:'chase', back:12.5, height:5.7},
-  {u0:.56, u1:.645,kind:'hero'},
-  {u0:.645,u1:1.02,kind:'chase', back:9.5, height:4.6}]);
+  {u0:0,   u1:.24, kind:'chase', back:7.6, height:3.7, fov:57},
+  {u0:.24, u1:.34, kind:'side', fov:50},
+  {u0:.34, u1:.56, kind:'chase', back:12.5, height:5.7, fov:48},
+  {u0:.56, u1:.645,kind:'hero', fov:44},
+  {u0:.645,u1:1.02,kind:'chase', back:9.5, height:4.6, fov:55}]);
  if(this.shotIdx===undefined)this.shotIdx=-1;if(this.petals)for(var pi=0;pi<this.petals.length;pi++)this.petals[pi].m.visible=false;
  var shot=null,shotI=SHOTS.length-1;
  for(var si=0;si<SHOTS.length;si++){if(d>=SHOTS[si].u0&&d<SHOTS[si].u1){shot=SHOTS[si];shotI=si;break}}
@@ -508,7 +532,8 @@ Drive.prototype.tick=function(dt){
   var aim=this.roadPoint(Math.min(this.len,dist+26));
   aimT=new THREE.Vector3(aim.x,1.6,aim.z);
  }
- if(cut){this.camPos.copy(desired);this.camAim.copy(aimT);this.brV=-.5}
+ if(cut){this.camPos.copy(desired);this.camAim.copy(aimT);this.brV=-.5;
+  this.camera.fov=(shot&&shot.fov)||55;this.camera.updateProjectionMatrix()}
  else{var kf=1-Math.exp(-(this.dampP||3.4)*dt),ka=1-Math.exp(-(this.dampA||5)*dt);
   this.camPos.lerp(desired,kf);this.camAim.lerp(aimT,ka)}
  /* springy follow: velocity keeps a little life after hard cuts */
@@ -527,6 +552,15 @@ Drive.prototype.tick=function(dt){
    pp2.s.position.y+=dt*1.1;pp2.s.position.x+=dt*.5*(pp2.s.position.x>pos.x?1:-1)*.3;
    pp2.s.material.opacity=Math.max(0,1-f2)*.85;pp2.s.scale.setScalar(.3+f2*.38);
    if(f2>=1){pp2.t=-1;pp2.s.material.opacity=0}}}
+ /* dust kicked up behind the wheels */
+ if(Math.random()<.5){for(var di=0;di<this.dusts.length;di++){var dd=this.dusts[di];
+  if(dd.t<0){dd.t=0;
+   dd.s.position.set(pos.x-dir.x*1.5+(Math.random()-.5)*.9,.18,pos.z-dir.z*1.5+(Math.random()-.5)*.9);break}}}
+ for(var di=0;di<this.dusts.length;di++){var dd=this.dusts[di];
+  if(dd.t>=0){dd.t+=dt;var fd=dd.t/1.1;
+   dd.s.position.y+=dt*.42;dd.s.scale.setScalar(.35+fd*1.05);
+   dd.s.material.opacity=Math.max(0,1-fd)*.3;
+   if(fd>=1){dd.t=-1;dd.s.material.opacity=0}}}
  /* progress, hud, captions */
  if(bar)bar.style.width=(d*100).toFixed(1)+'%';
  if(hud){hud.textContent=Math.max(0,Math.round((1-d)*this.mode.km))+' '+this.mode.hudTail+' \u2661';hud.classList.add('show')}
