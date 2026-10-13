@@ -386,3 +386,15 @@ if(sb) sb.addEventListener('click',()=>{ const m=$('#singleMsg'); m.textContent=
     document.body.appendChild(t); setTimeout(()=>t.remove(),3200); } });
 
 })();
+
+/* live visits pill, lagos-life style */
+(function(){
+  var el=document.getElementById('vPills');
+  if(!el)return;
+  fetch('/api/visit').then(function(r){return r.ok?r.json():null}).then(function(d){
+    if(!d||typeof d.count!=='number')return;
+    var c=document.getElementById('visitCount');
+    if(c)c.textContent=d.count.toLocaleString('en-US');
+    el.hidden=false;
+  }).catch(function(){});
+})();

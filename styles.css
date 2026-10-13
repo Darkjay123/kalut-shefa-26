@@ -794,3 +794,10 @@ html.ks-lock{overflow:hidden}
 .journey.ks-pov .j-hud{bottom:calc(170px + env(safe-area-inset-bottom))}
 .journey.ks-pov .j-cap{bottom:calc(120px + env(safe-area-inset-bottom))}
 @media(max-width:700px){.journey.ks-pov .j-hud{bottom:calc(160px + env(safe-area-inset-bottom))}}
+
+/* lagos-life-style social proof pills */
+.v-pills{display:flex;gap:10px;justify-content:center;margin:0 0 26px;flex-wrap:wrap}
+.v-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;background:rgba(21,7,16,.72);border:1px solid rgba(216,187,138,.25);color:#d8bb8a;font-size:.8rem;letter-spacing:.04em;backdrop-filter:blur(6px)}
+.v-dot{width:8px;height:8px;border-radius:50%;background:#f5efe0;box-shadow:0 0 8px rgba(245,239,224,.8)}
+.v-online{width:8px;height:8px;border-radius:50%;background:#3fae5a;box-shadow:0 0 8px rgba(63,174,90,.8);animation:vpulse 2.2s ease-in-out infinite}
+@keyframes vpulse{0%,100%{opacity:1}50%{opacity:.35}}

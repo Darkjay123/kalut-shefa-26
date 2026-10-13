@@ -381,18 +381,7 @@ var cBtn=$('jCam');
 if(cBtn)cBtn.addEventListener('click',function(){
  POV=!POV;
  try{localStorage.setItem('ks26cam',POV?'pov':'chase')}catch(e){}
- camLabel();
- if(state!=='drive'&&state!=='prefly'){if(POV)modal.classList.add('ks-pov');else modal.classList.remove('ks-pov')}});
-/* the wheel is also the horn: two-tone, the way a real car sings */
-if(jWheelEl)jWheelEl.addEventListener('click',function(){try{
- var C=window.AudioContext||window.webkitAudioContext;if(!C)return;
- horn._c=horn._c||new C();var c=horn._c,t=c.currentTime,g=c.createGain();
- g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.16,t+.02);
- g.gain.setValueAtTime(.16,t+.26);g.gain.linearRampToValueAtTime(0,t+.42);
- g.connect(c.destination);
- [370,466].forEach(function(f){var o=c.createOscillator();o.type='sawtooth';o.frequency.value=f;o.connect(g);o.start(t);o.stop(t+.44)});
-}catch(e){}});
-function horn(){}
+ camLabel();});
 
 /* ---- view toggle: night vector map <-> real satellite imagery (Esri World Imagery,
    free with attribution, no key; place labels overlaid on top) ---- */

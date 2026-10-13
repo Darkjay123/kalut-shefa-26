@@ -1,5 +1,8 @@
 const {pipe,clip,limited,body,send,fail}=require('./_db');
 module.exports=async(req,res)=>{
+  if(req.method==='GET'){
+    try{ const [n]=await pipe([['LLEN','ks26:visits']]); return send(res,200,{ok:true,count:n}); }catch(e){ return fail(res,e); }
+  }
   if(req.method!=='POST') return send(res,405,{ok:false});
   try{
     const b=body(req); if(await limited(req,'visit',60,3600)) return send(res,200,{ok:true});
