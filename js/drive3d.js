@@ -79,8 +79,10 @@ function Drive(key){
  this.key=key;this.mode=V[key];this.build()}
 Drive.prototype.build=function(){
  var self=this;
- this.renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});
- this.renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.75));
+ var small=Math.min(window.innerWidth||9999,window.innerHeight||9999)<500;
+ this.SMALL=small;
+ this.renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});
+ this.renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,small?1.5:1.75));
  this.renderer.outputEncoding=THREE.sRGBEncoding;
  mount.innerHTML='';mount.appendChild(this.renderer.domElement);
  this.scene=new THREE.Scene();
@@ -168,9 +170,9 @@ Drive.prototype.house=function(x,z,ry,roofC){
  var win2=win.clone();win2.position.x=-1.4;g.add(win2);
  g.position.set(x,0,z);g.rotation.y=ry||0;this.scene.add(g);return g};
 Drive.prototype.buildScenery=function(){
- var self=this,i,d;
- for(d=10;d<this.len-30;d+=11){
-  var p=this.roadPoint(d),t=this.roadDir(d),nx=-t.z,nz=t.x,side=(Math.round(d/11)%2?1:-1);
+ var self=this,i,d,STEP=this.SMALL?14:11;
+ for(d=10;d<this.len-30;d+=STEP){
+  var p=this.roadPoint(d),t=this.roadDir(d),nx=-t.z,nz=t.x,side=(Math.round(d/STEP)%2?1:-1);
   var off=8+Math.random()*14,x=p.x+nx*off*side,z=p.z+nz*off*side,r=Math.random();
   if(r<.42)this.tree(x,z,.8+Math.random()*.7,false);
   else if(r<.62)this.tree(x,z,.85+Math.random()*.5,true);
@@ -273,10 +275,11 @@ Drive.prototype.buildGoat=function(){
 Drive.prototype.runGoat=function(dt,dist){
  if(this.goatT>=1.9){this.goat.visible=false;return}
  this.goatT+=dt;
+ var gdir=this.roadDir(Math.min(this.len-6,dist+60));
  var gp=this.roadPoint(Math.min(this.len-6,dist+60));
  var across=(this.goatT/1.9-.5)*18;
- this.goat.position.set(gp.x-dir.z*across*this.goatSide,0,gp.z+dir.x*across*this.goatSide);
- this.goat.rotation.y=Math.atan2(dir.x,dir.z)+(this.goatSide>0?Math.PI/2:-Math.PI/2);
+ this.goat.position.set(gp.x-gdir.z*across*this.goatSide,0,gp.z+gdir.x*across*this.goatSide);
+ this.goat.rotation.y=Math.atan2(gdir.x,gdir.z)+(this.goatSide>0?Math.PI/2:-Math.PI/2);
  this.goat.visible=true;
  var hop=(this.goatT*7)%2;this.goat.position.y=hop<1?.05*hop:.05*(2-hop)};
 Drive.prototype.buildPuffs=function(){
@@ -297,7 +300,8 @@ Drive.prototype.attract=function(dt){
  this.camera.lookAt(look.x,2,look.z)};
 Drive.prototype.frame=function(){
  var self=this;
- if(!this.paused)this.tick(Math.min(this.clock.getDelta(),.1));
+ try{if(!this.paused&&!document.hidden)this.tick(Math.min(this.clock.getDelta(),.1))}
+ catch(e){/* one bad frame must never freeze the drive */}
  this.renderer.render(this.scene,this.camera);
  this.raf=requestAnimationFrame(this.loop)};
 Drive.prototype.tick=function(dt){
