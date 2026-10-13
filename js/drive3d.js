@@ -108,15 +108,15 @@ Drive.prototype.build=function(){
  this.loop=function(ts){self2.frame()};this.raf=requestAnimationFrame(this.loop);
  window.addEventListener('resize',this.onR=function(){self.resize()});};
 Drive.prototype.roadPoint=function(d){
- var u=Math.max(0,Math.min(1,d/this.len));
+ var u=Math.max(0,Math.min(.9995,d/this.len));
  return this.curve.getPointAt(u)};
 Drive.prototype.roadDir=function(d){
- var u=Math.max(0,Math.min(1,d/this.len));
+ var u=Math.max(0,Math.min(.9995,d/this.len));
  return this.curve.getTangentAt(u)};
 
 Drive.prototype.buildRoad=function(){
  var self=this,N=260,w=4.2,pts=[],i;
- for(i=0;i<=N;i++){var d=i/N*this.len,c=this.curve.getPointAt(d),t=this.curve.getTangentAt(d);
+ for(i=0;i<=N;i++){var u=i/N,c=this.curve.getPointAt(u),t=this.curve.getTangentAt(u);
   var nx=-t.z,nz=t.x; /* normal in XZ */
   pts.push(new THREE.Vector3(c.x+nx*w,0.02,c.z+nz*w));
   pts.push(new THREE.Vector3(c.x-nx*w,0.02,c.z-nz*w))}
@@ -368,7 +368,7 @@ Drive.prototype.arrive=function(){
  var rest=this.roadPoint(this.ROAD_END),rt=this.roadDir(this.ROAD_END);
  this.car.position.set(rest.x,.06,rest.z);this.car.rotation.y=Math.atan2(rt.x,rt.z);
  /* camera: rise into a beauty shot of the venue */
- var end=this.curve.getPointAt(1),t=this.curve.getTangentAt(1),nx=-t.z,nz=t.x;
+ var end=this.curve.getPointAt(.9995),t=this.curve.getTangentAt(.9995),nx=-t.z,nz=t.x;
  this.camAimT=new THREE.Vector3(end.x,2.5,end.z);
  this.camT=new THREE.Vector3(end.x-dir.x*0-nx*0+(t.x*0),7.5,end.z-t.z*13);
  if(onArrive)onArrive()};
