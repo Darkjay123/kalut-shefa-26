@@ -79,10 +79,9 @@ function Drive(key){
  this.key=key;this.mode=V[key];this.build()}
 Drive.prototype.build=function(){
  var self=this;
- var small=Math.min(window.innerWidth||9999,window.innerHeight||9999)<500;
- this.SMALL=small;
+ this.SMALL=Math.min(window.innerWidth||9999,window.innerHeight||9999)<500;
  this.renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});
- this.renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,small?1.5:1.75));
+ this.renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
  this.renderer.outputEncoding=THREE.sRGBEncoding;
  mount.innerHTML='';mount.appendChild(this.renderer.domElement);
  this.scene=new THREE.Scene();
@@ -170,7 +169,7 @@ Drive.prototype.house=function(x,z,ry,roofC){
  var win2=win.clone();win2.position.x=-1.4;g.add(win2);
  g.position.set(x,0,z);g.rotation.y=ry||0;this.scene.add(g);return g};
 Drive.prototype.buildScenery=function(){
- var self=this,i,d,STEP=this.SMALL?14:11;
+ var self=this,i,d,STEP=11;
  for(d=10;d<this.len-30;d+=STEP){
   var p=this.roadPoint(d),t=this.roadDir(d),nx=-t.z,nz=t.x,side=(Math.round(d/STEP)%2?1:-1);
   var off=8+Math.random()*14,x=p.x+nx*off*side,z=p.z+nz*off*side,r=Math.random();
