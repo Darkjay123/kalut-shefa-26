@@ -111,7 +111,7 @@ Drive.prototype.build=function(){
  this.curve=new THREE.CatmullRomCurve3(pts.map(function(p){return new THREE.Vector3(p[0],0,p[1])}));
  this.len=this.curve.getLength();
  this.ROAD_END=this.len-14; /* car stops short of the gate */
- this.buildRoad();this.buildGround();this.buildScenery();this.buildVenue();this.buildCar();this.buildGoat();this.buildFolks();this.buildButterflies();this.buildPuffs();this.buildClouds();
+ this.sway=[];this.bflies=[];this.buildRoad();this.buildGround();this.buildScenery();this.buildVenue();this.buildCar();this.buildGoat();this.buildFolks();this.buildButterflies();this.buildPuffs();this.buildClouds();
  var selfA=this;onAssets(function(){if(selfA&&!selfA.destroyed)selfA.dress()});this.sway=[];this.bflies=[];
  this.u=0;this.state='attract';this.attractT=0;this.capFired=[];this.goatDone=false;
  this.camPos=new THREE.Vector3();this.camAim=new THREE.Vector3();
@@ -236,12 +236,12 @@ Drive.prototype.sign=function(x,z,ry,tex,w,h,yBase){
  face.position.y=h*.72;if(ry!==0)face.rotation.y=ry;g.add(face);
  var face2=face.clone();face2.rotation.y=ry+Math.PI;g.add(face2);
  g.position.set(x,0,z);this.scene.add(g);return g};
-Drive.prototype.buildButterflies=function(){var self=this;
+Drive.prototype.buildButterflies=function(){var self=this;this.bflies=this.bflies||[];this.sway=this.sway||[];
  var cols=[0xd8bb8a,0x9a1b2e,0xf3ead8];
  for(var i=0;i<4;i++){
   var g=new THREE.Group();
   var wg=new THREE.PlaneGeometry(.22,.16);
-  var mm=new THREE.MeshToonMaterial({color:cols[i%3],side:THREE.DoubleSide,gradientMap:this.grad});
+  var mm=new THREE.MeshToonMaterial({color:cols[i%3],side:THREE.DoubleSide,gradientMap:GRAD});
   var w1=new THREE.Mesh(wg,mm),w2=new THREE.Mesh(wg,mm);
   w1.position.x=.11;w2.position.x=-.11;
   g.add(w1);g.add(w2);
