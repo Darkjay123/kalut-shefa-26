@@ -19,6 +19,8 @@ var V={
    {f:0,     t:"Upper Iweka, Onitsha", s:"Jump on the Old Road. Abagana first."},
    {f:.7273, t:"The Old Road, Abagana",s:"Cruising through Abagana. Keep rolling."},
    {f:.9328, t:"Enugu-Ukwu junction",  s:"Ezi-Elias ahead. Turn right towards Nimo."},
+   {amb:1,f:.42, t:"The Old Road",        s:"Windows down, the dotted line hums toward Nimo."},
+   {amb:1,f:.8,  t:"Almost there",        s:"The compound lights are close now."},
    {f:.999,  t:"Nwakor compound",      s:"Behind Assumption Catholic Church. You have arrived."}
   ]
  },
@@ -35,6 +37,7 @@ var V={
   zFollow:5.2, zEnd:16.8, dur:9500, hudText:"En route to Abraka", pois:[],
   stops:[
    {f:0,    t:"Delta State, Nigeria",        s:"Somewhere in this state, a church is waiting."},
+   {amb:1,f:.5, t:"Into Abraka",          s:"The town slows down for the gate."},
    {f:.62,  t:"Little London Road, Abraka",  s:"Turn in here. Almost there."},
    {f:.999, t:"Gospel Stars Church",         s:"No. 9 Gospel Stars Church Street, Abraka."}
   ]
@@ -94,7 +97,8 @@ function frame(ts){
  var pos=null,i=null;
  if(mode.route){var d=distFrac(p),dOut=posAt(d*mode._arc.tot);pos=[dOut[0],dOut[1]];i=dOut[2];
   if(!isFinite(pos[0])||!isFinite(pos[1])){raf=requestAnimationFrame(frame);return}
-  hud.textContent=(Math.max(0,(1-d)*mode.km)).toFixed(1)+' '+mode.hudTail;hud.classList.add('show');
+  var remS=(1-p)*mode.dur/1000, mm=Math.floor(remS/60), ss=Math.floor(remS%60);
+  hud.textContent=(Math.max(0,(1-d)*mode.km)).toFixed(1)+' '+mode.hudTail+' · '+mm+':'+String(ss).padStart(2,'0')+' to the gate';hud.classList.add('show');
   var RT=mode.route,nxt=RT[Math.min(i+1,RT.length-1)],prv=RT[Math.max(i-1,0)];
   var brg=Math.atan2(nxt[1]-prv[1],nxt[0]-prv[0])*180/Math.PI;if(brg<0)brg+=360;
   if(lastBrg===null)lastBrg=brg;lastBrg=lerpAng(lastBrg,brg,.12);
@@ -102,7 +106,7 @@ function frame(ts){
   map.panTo(pos,{animate:false});bar.style.width=(d*100).toFixed(1)+'%'}
  else{bar.style.width=(p*100).toFixed(1)+'%'}
  mode.stops.forEach(function(s,si){if(p>=s.f&&!fired[si]){fired[si]=1;setCap(s);
-  if(mode.route&&s.f>0&&s.f<.999&&pos)wpDots.push(L.marker(pos,{icon:L.divIcon({className:'',html:'<div class="wp-dot"></div>',iconSize:[12,12],iconAnchor:[6,6]}),interactive:false}).addTo(map))}});
+  if(mode.route&&!s.amb&&s.f>0&&s.f<.999&&pos)wpDots.push(L.marker(pos,{icon:L.divIcon({className:'',html:'<div class="wp-dot"></div>',iconSize:[12,12],iconAnchor:[6,6]}),interactive:false}).addTo(map))}});
  if(p>=1){arrive();return}
  raf=requestAnimationFrame(frame)}
 function loopStart(){if(state!=='prefly')return;state='drive';t0=performance.now();raf=requestAnimationFrame(frame)}
