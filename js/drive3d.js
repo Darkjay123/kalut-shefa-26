@@ -306,6 +306,11 @@ Drive.prototype.frame=function(){
 Drive.prototype.tick=function(dt){
  var self=this,dur=this.dur||DUR;
  if(this.state==='attract'){this.attract(dt);return}
+ if(this.state==='arrived'){
+  if(this.restPos){
+   this.camPos.lerp(this.restPos,.045);this.camAim.lerp(this.restAim,.05);
+   this.camera.position.copy(this.camPos);this.camera.lookAt(this.camAim)}
+  return}
  if(this.state!=='drive')return;
  this.t+=dt*1000;
  var p=Math.min(1,this.t/dur),d=distFrac(p),dist=d*this.ROAD_END;
@@ -372,8 +377,10 @@ Drive.prototype.arrive=function(){
  this.car.position.set(rest.x,.06,rest.z);this.car.rotation.y=Math.atan2(rt.x,rt.z);
  /* camera: rise into a beauty shot of the venue */
  var end=this.curve.getPointAt(.9995),t=this.curve.getTangentAt(.9995),nx=-t.z,nz=t.x;
- this.camAimT=new THREE.Vector3(end.x,2.5,end.z);
- this.camT=new THREE.Vector3(end.x-dir.x*0-nx*0+(t.x*0),7.5,end.z-t.z*13);
+ /* rest targets: camera parks behind the venue, aimed at the gate */
+ this.restPos=new THREE.Vector3(end.x-t.x*14,7.5,end.z-t.z*14);
+ this.restAim=new THREE.Vector3(end.x+t.x*5,2.5,end.z+t.z*5);
+ if(this.goat)this.goat.visible=false;
  if(onArrive)onArrive()};
 Drive.prototype.resize=function(){
  if(!this.camera)return;
