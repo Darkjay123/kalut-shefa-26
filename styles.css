@@ -786,3 +786,11 @@ html.ks-lock{overflow:hidden}
 .j-plan{margin-top:6px}
 .js-view{border-radius:999px;border:1px solid rgba(216,187,138,.35);background:transparent;color:#cbb489;font-family:var(--sans);font-weight:600;font-size:.78rem;padding:11px 14px;cursor:pointer;transition:background .3s,color .3s}
 .js-view:hover{background:rgba(216,187,138,.14);color:#f0e2c4}
+
+/* cockpit view: first-person dash + steering wheel */
+.j-wheel{position:absolute;left:50%;bottom:calc(-52px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(310px,58vw);z-index:9;display:none;pointer-events:auto;cursor:pointer;filter:drop-shadow(0 10px 30px rgba(0,0,0,.55))}
+.journey.ks-pov .j-wheel{display:block}
+.j-wheel svg{width:100%;height:auto;display:block;transition:transform .12s linear}
+.journey.ks-pov .j-hud{bottom:calc(170px + env(safe-area-inset-bottom))}
+.journey.ks-pov .j-cap{bottom:calc(120px + env(safe-area-inset-bottom))}
+@media(max-width:700px){.journey.ks-pov .j-hud{bottom:calc(160px + env(safe-area-inset-bottom))}}

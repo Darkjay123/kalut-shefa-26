@@ -484,11 +484,22 @@
     <button class="jm-skip" id="jSkip">Skip to arrival</button>
   </div>
   <div class="j-hud" id="jHud"></div>
+  <div class="j-wheel" id="jWheel" title="Tap for the horn">
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle cx="100" cy="100" r="86" fill="none" stroke="#1c0b11" stroke-width="26"/>
+      <circle cx="100" cy="100" r="86" fill="none" stroke="#d8bb8a" stroke-opacity=".5" stroke-width="2.5"/>
+      <rect x="18" y="92" width="74" height="16" rx="8" fill="#1c0b11"/>
+      <rect x="108" y="92" width="74" height="16" rx="8" fill="#1c0b11"/>
+      <rect x="92" y="108" width="16" height="76" rx="8" fill="#1c0b11"/>
+      <circle cx="100" cy="100" r="30" fill="#150710" stroke="#d8bb8a" stroke-width="2.5"/>
+      <g transform="translate(78,74)"><path d="M22 44C10 34 3 26.5 3 17.5 3 10 8.6 5 15.4 5c3 0 5.2 1.2 6.6 3.2C23.4 6.2 25.6 5 28.6 5 35.4 5 41 10 41 17.5c0 9-7 16.5-19 26.5z" fill="#b4283b" stroke="#d8bb8a" stroke-width="2"/></g>
+    </svg>
+  </div>
   <div class="j-cap" id="jCap"><b id="jCapT"></b><span id="jCapS"></span></div>
   <div class="j-start" id="jStart">
     <div id="jRecent"></div>
     <span class="js-q">Where are you coming from?</span>
-    <div class="js-row"><button class="js-geo" id="jGeo" type="button">📍 Use my location</button><span class="js-or">or</span><button class="js-view" id="jView" type="button">🛰 Satellite view</button></div>
+    <div class="js-row"><button class="js-geo" id="jGeo" type="button">📍 Use my location</button><span class="js-or">or</span><button class="js-view" id="jView" type="button">🛰 Satellite view</button><button class="js-view" id="jCam" type="button">🛞 Cockpit view</button></div>
     <div class="js-search">
       <input id="jSearch" type="text" placeholder="Type your area... Warri, Asaba, Lagos" autocomplete="off" enterkeyhint="search">
       <div class="js-sug" id="jSug"></div>

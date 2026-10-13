@@ -149,7 +149,7 @@ function dropPin(){
  var el=elFor('ks-pin-wrap','<div class="ks-pin"><span class="ks-pin-i">'+HEART+'</span></div>');
  pin=new maplibregl.Marker({element:el,anchor:'bottom',offset:[0,2]}).setLngLat([mode.church[1],mode.church[0]]).addTo(map);
  var p=el.querySelector('.ks-pin');if(p)p.classList.add('drop')}
-function arrive(){state='arrived';cancelAnimationFrame(raf);clearTimeout(preTimer);clearTimeout(stage2Timer);bar.style.width='100%';
+function arrive(){state='arrived';cancelAnimationFrame(raf);clearTimeout(preTimer);clearTimeout(stage2Timer);modal.classList.remove('ks-pov');bar.style.width='100%';
  hud.classList.remove('show');
  setCap(mode.stops[mode.stops.length-1]);dropPin();
  if(car){car.setLngLat([mode.church[1],mode.church[0]]);var cel=car.getElement();if(cel)cel.classList.remove('driving')}
@@ -164,24 +164,42 @@ function frame(ts){
   var d=distFrac(p),dOut=posAt(d*ARC.tot),pos=dOut,i=dOut[2];
   if(!isFinite(pos[0])||!isFinite(pos[1])){raf=requestAnimationFrame(frame);return}
   var remS=(1-p)*mode.dur/1000, mm=Math.floor(remS/60), ss=Math.floor(remS%60);
-  hud.textContent=(Math.max(0,(1-d)*mode.km)).toFixed(1)+' '+mode.hudTail+' · '+mm+':'+String(ss).padStart(2,'0')+' to the gate';hud.classList.add('show');
+  if(POV){hud.textContent=Math.round(kmhS)+' km/h · '+(Math.max(0,(1-d)*mode.km)).toFixed(1)+' '+mode.hudTail+' · '+mm+':'+String(ss).padStart(2,'0')+' to the gate'}
+  else hud.textContent=(Math.max(0,(1-d)*mode.km)).toFixed(1)+' '+mode.hudTail+' · '+mm+':'+String(ss).padStart(2,'0')+' to the gate';
+  hud.classList.add('show');
   var nxt=RT[Math.min(i+1,RT.length-1)],prv=RT[Math.max(i-1,0)];
   var brg=Math.atan2(nxt[0]-prv[0],nxt[1]-prv[1])*180/Math.PI;if(brg<0)brg+=360;
   if(lastBrg===null)lastBrg=brg;lastBrg=lerpAng(lastBrg,brg,.08);
-  var zoomT=Math.max(0,Math.min(1,(p-.9)/.1)),zoom=mode.zFollow+.9*ease(zoomT);
-  var pitchT=Math.max(0,Math.min(1,p/.08)),pitchE=p>.92?Math.max(0,Math.min(1,(1-p)/.08)):1;
-  var pitch=52*ease(pitchT)*ease(pitchE);lastPitch=pitch;
-  var ahead=posAt(Math.min(ARC.tot,d*ARC.tot+ARC.tot*.022));
-  if(car)car.setLngLat([pos[0],pos[1]]);
-  if(car&&car.setRotation)car.setRotation(lastBrg);
-  setDone(i);
-  map.jumpTo({center:[ahead[0],ahead[1]],zoom:zoom,bearing:lastBrg,pitch:pitch});
+  if(POV){
+   var dtS=Math.max(.001,(ts-prevT)/1000);
+   var k=(d-prevD)*mode.km*3.6/dtS;if(isFinite(k))kmhS+=(k-kmhS)*.12;
+   prevD=d;prevT=ts;
+   if(prevRaw===null)prevRaw=brg;
+   var dbr=brg-prevRaw;while(dbr>180)dbr-=360;while(dbr<-180)dbr+=360;prevRaw=brg;
+   var wt=Math.max(-80,Math.min(80,dbr/dtS*.32));
+   wheelAng+=(wt-wheelAng)*.22;
+   var wsvg=jWheelEl&&jWheelEl.querySelector('svg');if(wsvg)wsvg.style.transform='rotate('+wheelAng.toFixed(1)+'deg)'}
+  if(POV){
+   var lk=posAt(Math.min(ARC.tot,d*ARC.tot+Math.max(ARC.tot*.002,.001)));
+   var dz=16.8+1.5*ease(Math.max(0,Math.min(1,p/.06)));
+   var dp=66*ease(Math.max(0,Math.min(1,p/.05)));
+   setDone(i);
+   map.jumpTo({center:[lk[0],lk[1]],zoom:dz,bearing:lastBrg,pitch:dp})}
+  else{
+   var zoomT=Math.max(0,Math.min(1,(p-.9)/.1)),zoom=mode.zFollow+.9*ease(zoomT);
+   var pitchT=Math.max(0,Math.min(1,p/.08)),pitchE=p>.92?Math.max(0,Math.min(1,(1-p)/.08)):1;
+   var pitch=52*ease(pitchT)*ease(pitchE);lastPitch=pitch;
+   var ahead=posAt(Math.min(ARC.tot,d*ARC.tot+ARC.tot*.022));
+   if(car)car.setLngLat([pos[0],pos[1]]);
+   if(car&&car.setRotation)car.setRotation(lastBrg);
+   setDone(i);
+   map.jumpTo({center:[ahead[0],ahead[1]],zoom:zoom,bearing:lastBrg,pitch:pitch})}
   bar.style.width=(d*100).toFixed(1)+'%'}
  else{bar.style.width=(p*100).toFixed(1)+'%'}
  mode.stops.forEach(function(s,si){if(p>=s.f&&!fired[si]){fired[si]=1;setCap(s)}});
  if(p>=1){arrive();return}
  raf=requestAnimationFrame(frame)}
-function loopStart(){if(state!=='prefly')return;state='drive';t0=performance.now();raf=requestAnimationFrame(frame)}
+function loopStart(){if(state!=='prefly')return;state='drive';t0=performance.now();prevD=0;prevT=t0;kmhS=0;wheelAng=0;prevRaw=null;raf=requestAnimationFrame(frame)}
 /* white-wedding flight: dive in flat, THEN tilt into 3D once the ground fills the screen
    (a pitched camera at low zoom shows mostly sky - the dead patch caught on QA) */
 function stageTwo(){if(state!=='prefly'&&state!=='drive')return;
@@ -193,9 +211,11 @@ function startJourney(){if(state==='prefly'||state==='drive')return;
  var go=function(){
   if(mode.route){
    RT=toGL(mode.route);ARC=arc(RT);routeLayers();
-   car=new maplibregl.Marker({element:elFor('ride-car','<span class="ride-rot">'+CAR+'</span>'),anchor:'center'})
-    .setLngLat(RT[0]).addTo(map);
-   var cel=car.getElement();if(cel)cel.classList.add('driving');
+   if(POV)modal.classList.add('ks-pov');
+   if(!POV){
+    car=new maplibregl.Marker({element:elFor('ride-car','<span class="ride-rot">'+CAR+'</span>'),anchor:'center'})
+     .setLngLat(RT[0]).addTo(map);
+    var cel=car.getElement();if(cel)cel.classList.add('driving')}
    (mode.pois||[]).forEach(function(p){
     var pp=posAt(p.f*ARC.tot);
     poiDots.push(new maplibregl.Marker({element:elFor('poi','<div class="poi-chip"><span>'+p.e+'</span>'+p.n+'</div>'),anchor:'bottom',offset:[0,-6],rotationAlignment:'viewport'})
@@ -349,6 +369,30 @@ function renderRecent(){
   var rb=document.getElementById('jRecentBtn');
   if(rb)rb.addEventListener('click',function(){goLive([r.lat,r.lng],r.label,r.w)})}
  else box.innerHTML=''}
+
+
+/* ---- cockpit view: first-person dash, live steering wheel, horn ---- */
+var POV=false;
+try{POV=localStorage.getItem('ks26cam')==='pov'}catch(e){}
+var jWheelEl=$('jWheel'),prevD=0,prevT=0,kmhS=0,wheelAng=0,prevRaw=null;
+function camLabel(){var b=$('jCam');if(b)b.textContent=POV?'\uD83C\uDFA5 Chase view':'\uD83D\uDEDE Cockpit view'}
+camLabel();
+var cBtn=$('jCam');
+if(cBtn)cBtn.addEventListener('click',function(){
+ POV=!POV;
+ try{localStorage.setItem('ks26cam',POV?'pov':'chase')}catch(e){}
+ camLabel();
+ if(state!=='drive'&&state!=='prefly'){if(POV)modal.classList.add('ks-pov');else modal.classList.remove('ks-pov')}});
+/* the wheel is also the horn: two-tone, the way a real car sings */
+if(jWheelEl)jWheelEl.addEventListener('click',function(){try{
+ var C=window.AudioContext||window.webkitAudioContext;if(!C)return;
+ horn._c=horn._c||new C();var c=horn._c,t=c.currentTime,g=c.createGain();
+ g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.16,t+.02);
+ g.gain.setValueAtTime(.16,t+.26);g.gain.linearRampToValueAtTime(0,t+.42);
+ g.connect(c.destination);
+ [370,466].forEach(function(f){var o=c.createOscillator();o.type='sawtooth';o.frequency.value=f;o.connect(g);o.start(t);o.stop(t+.44)});
+}catch(e){}});
+function horn(){}
 
 /* ---- view toggle: night vector map <-> real satellite imagery (Esri World Imagery,
    free with attribution, no key; place labels overlaid on top) ---- */
