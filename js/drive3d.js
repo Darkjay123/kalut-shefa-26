@@ -114,7 +114,7 @@ Drive.prototype.build=function(){
  this.sway=[];this.bflies=[];this.buildRoad();this.buildGround();this.buildScenery();this.buildVenue();this.buildCar();this.buildGoat();this.buildFolks();this.buildButterflies();this.buildBirds();this.buildPetals();this.buildOncoming();this.buildPuffs();this.buildClouds();
  var selfA=this;onAssets(function(){if(selfA&&!selfA.destroyed)selfA.dress()});this.sway=[];this.bflies=[];
  this.u=0;this.state='attract';this.attractT=0;this.capFired=[];this.goatDone=false;
- this.camPos=new THREE.Vector3();this.camAim=new THREE.Vector3();
+ this.camPos=new THREE.Vector3();this.camAim=new THREE.Vector3();this.brV=0;this.lastRoll=0;
  this.clock=new THREE.Clock();
  var self2=this;this.raf=null;
  this.loop=function(ts){self2.frame()};this.raf=requestAnimationFrame(this.loop);
@@ -348,7 +348,7 @@ Drive.prototype.buildCar=function(){
  var br=bl.clone();br.position.x=.26;bow.add(br);
  var knot=new THREE.Mesh(new THREE.SphereGeometry(.13,6,5),bm);bow.add(knot);
  bow.position.set(0,1.62,-.1);g.add(bow);
- this.wheels=[];this.scene.add(g);this.car=g;
+ this.wheels=[];this.scene.add(g);this.car=g;this.blob=this.makeBlob(1.7,2.9,.17);
  onAssets(function(){
   if(self.destroyed||self.car!==g)return;
   var sd=ASSETS['sedan'];
@@ -396,6 +396,10 @@ Drive.prototype.buildPuffs=function(){
   var s=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,opacity:0}));
   s.scale.setScalar(.5);this.scene.add(s);this.puffs.push({s:s,t:-1})}};
 
+Drive.prototype.makeBlob=function(rx,rz,op){
+ var sh=new THREE.Mesh(new THREE.CircleGeometry(1,18),new THREE.MeshBasicMaterial({color:0x2a2416,transparent:true,opacity:op||.16,depthWrite:false}));
+ sh.rotation.x=-Math.PI/2;sh.scale.set(rx||1.6,rz||2.6,1);sh.renderOrder=2;this.scene.add(sh);return sh};
+
 /* ---------- animation ---------- */
 Drive.prototype.capPose=function(){
  var self=this,c=this.curve.getPointAt(.9995),t=this.curve.getTangentAt(.9995),nx=-t.z,nz=t.x;
@@ -403,7 +407,7 @@ Drive.prototype.capPose=function(){
 Drive.prototype.attract=function(dt){
  var self=this,t=this.attractT+=dt,a=Math.sin(t*.16)*.5;
  var look=this.roadPoint(this.len*.82);
- this.camera.position.lerp(new THREE.Vector3(look.x+Math.sin(a)*30,14+Math.sin(t*.09)*3,look.z-Math.cos(a)*30),.02);
+ this.camera.position.lerp(new THREE.Vector3(look.x+Math.sin(a)*30,14+Math.sin(t*.09)*3,look.z-Math.cos(a)*30),1-Math.exp(-1.2*dt));
  this.camera.lookAt(look.x,2,look.z)};
 Drive.prototype.frame=function(){
  var self=this;
@@ -429,7 +433,7 @@ Drive.prototype.tick=function(dt){
  if(this.state==='attract'){this.attract(dt);return}
  if(this.state==='arrived'){
   if(this.restPos){
-   this.camPos.lerp(this.restPos,.045);this.camAim.lerp(this.restAim,.05);
+   var kf2=1-Math.exp(-2.6*dt),ka2=1-Math.exp(-3*dt);this.camPos.lerp(this.restPos,kf2);this.camAim.lerp(this.restAim,ka2);
    this.camera.position.copy(this.camPos);this.camera.lookAt(this.camAim)}
   /* petals rain down on the couple */
   for(var pi=0;pi<this.petals.length;pi++){
@@ -448,10 +452,13 @@ Drive.prototype.tick=function(dt){
  /* car: heading + bob + curve lean */
  var roll=0;
  if(this.prevDir){var dotc=THREE.MathUtils.clamp(this.prevDir.dot(dir),-1,1);roll=THREE.MathUtils.clamp((Math.asin(dotc))*6,-.14,.14)}
+ this.lastRoll+=(roll-this.lastRoll)*(1-Math.exp(-4*dt));roll=this.lastRoll;
  this.prevDir=dir.clone();
  var heading=Math.atan2(dir.x,dir.z);
  this.car.position.set(pos.x,.06+Math.sin(this.t/120)*.03,pos.z);
  this.car.rotation.y=heading;this.car.rotation.x=0;this.car.rotation.z=roll;
+ if(this.blob){this.blob.position.set(pos.x,.02,pos.z);this.blob.rotation.z=-heading;
+  var bs=1+Math.sin(this.t/120)*.015;this.blob.scale.set(1.7*bs,2.9*bs,1)}
  var spin=dt*26*(1-p*.35);this.wheels.forEach(function(w){w.rotation.x+=spin});
  if(this.clouds)for(var ci=0;ci<this.clouds.length;ci++){var cc=this.clouds[ci];cc.position.x+=dt*1.4;if(cc.position.x>240)cc.position.x=-240}
  /* oncoming taxi: passes the couple around the wide-chase shot */
@@ -501,10 +508,13 @@ Drive.prototype.tick=function(dt){
   var aim=this.roadPoint(Math.min(this.len,dist+26));
   aimT=new THREE.Vector3(aim.x,1.6,aim.z);
  }
- if(cut){this.camPos.copy(desired);this.camAim.copy(aimT)}
- else{this.camPos.lerp(desired,.055);this.camAim.lerp(aimT,.08)}
- var breathe=Math.sin(this.t/460)*.14;
- this.camera.position.set(this.camPos.x,this.camPos.y+breathe,this.camPos.z);
+ if(cut){this.camPos.copy(desired);this.camAim.copy(aimT);this.brV=-.5}
+ else{var kf=1-Math.exp(-(this.dampP||3.4)*dt),ka=1-Math.exp(-(this.dampA||5)*dt);
+  this.camPos.lerp(desired,kf);this.camAim.lerp(aimT,ka)}
+ /* springy follow: velocity keeps a little life after hard cuts */
+ var br=Math.sin(this.t/460)*.14+this.brV*(1-Math.exp(-6*dt));
+ this.brV*=(1-Math.exp(-3*dt));
+ this.camera.position.set(this.camPos.x,this.camPos.y+br,this.camPos.z);
  this.camera.lookAt(this.camAim);
  /* arrival sweep: rise to frame the gate */
  if(p>.94){var k=(p-.94)/.06;
@@ -544,7 +554,7 @@ Drive.prototype.arrive=function(){
  if(setCap)setCap(this.mode.stops[this.mode.stops.length-1]);
  /* the car glides the last stretch and rests at the gate */
  var rest=this.roadPoint(this.ROAD_END),rt=this.roadDir(this.ROAD_END);
- this.car.position.set(rest.x,.06,rest.z);this.car.rotation.y=Math.atan2(rt.x,rt.z);
+ this.car.position.set(rest.x,.06,rest.z);this.car.rotation.y=Math.atan2(rt.x,rt.z);if(this.blob)this.blob.position.set(rest.x,.02,rest.z);
  /* camera: rise into a beauty shot of the venue */
  var end=this.curve.getPointAt(.9995),t=this.curve.getTangentAt(.9995),nx=-t.z,nz=t.x;
  /* rest targets: camera parks behind the venue, aimed at the gate */
