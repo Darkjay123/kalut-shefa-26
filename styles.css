@@ -784,3 +784,5 @@ html.ks-lock{overflow:hidden}
 .js-chip{display:inline-block;border-radius:999px;border:1px solid rgba(216,187,138,.45);background:rgba(110,15,31,.55);color:#f0e2c4;font-family:var(--sans);font-size:.8rem;font-weight:600;padding:8px 15px;margin-bottom:10px;cursor:pointer}
 .js-chip:hover{background:rgba(110,15,31,.8)}
 .j-plan{margin-top:6px}
+.js-view{border-radius:999px;border:1px solid rgba(216,187,138,.35);background:transparent;color:#cbb489;font-family:var(--sans);font-weight:600;font-size:.78rem;padding:11px 14px;cursor:pointer;transition:background .3s,color .3s}
+.js-view:hover{background:rgba(216,187,138,.14);color:#f0e2c4}

@@ -349,6 +349,33 @@ function renderRecent(){
   var rb=document.getElementById('jRecentBtn');
   if(rb)rb.addEventListener('click',function(){goLive([r.lat,r.lng],r.label,r.w)})}
  else box.innerHTML=''}
+
+/* ---- view toggle: night vector map <-> real satellite imagery (Esri World Imagery,
+   free with attribution, no key; place labels overlaid on top) ---- */
+var SAT=false;
+var SATSTYLE={version:8,
+ sources:{
+  sat:{type:'raster',tileSize:256,maxzoom:19,
+   tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
+   attribution:'\u00a9 Esri, Maxar, Earthstar Geographics, and the GIS User Community'},
+  ref:{type:'raster',tileSize:256,maxzoom:19,
+   tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}'],
+   attribution:''}},
+ layers:[{id:'sat-img',type:'raster',source:'sat',paint:{'raster-fade-duration':220}},
+         {id:'sat-ref',type:'raster',source:'ref',paint:{'raster-fade-duration':220,'raster-opacity':.9}}]};
+function toggleSat(){
+ if(!map||state!=='idle')return;
+ SAT=!SAT;
+ jViewBtn();
+ if(SAT)map.setStyle(SATSTYLE);
+ else{map.setStyle('https://tiles.openfreemap.org/styles/liberty');polished=false}
+ map.once('styledata',function(){setTimeout(function(){
+  polish();
+  if(RT&&ARC&&mode&&mode.route){try{map.removeSource('ks-route')}catch(e){};routeLayers()}
+ },120)})}
+function jViewBtn(){var b=$('jView');if(b)b.textContent=SAT?'\U0001F303 Night map':'\U0001F6F0 Satellite view'}
+var vBtn=$('jView');if(vBtn)vBtn.addEventListener('click',toggleSat);
+
 /* shared link boot: ?from=lat,lng&w=trad&n=Warri replays that guest's exact drive */
 (function(){var q=new URLSearchParams(location.search),
  f=q.get('from'),w=q.get('w'),n=q.get('n');
