@@ -111,7 +111,7 @@ function initMap(){
  if(map)return;
  map=new maplibregl.Map({container:mapEl,style:SAT?SATSTYLE:'https://tiles.openfreemap.org/styles/liberty',
   center:[mode.start[1],mode.start[0]],zoom:mode.zStart,attributionControl:{compact:false},interactive:false,maxTileCacheSize:600});
- map.on('load',function(){ready=true;try{map.setFadeDuration(SAT?0:300)}catch(e){};polish();if(pendingFit){pendingFit();pendingFit=null}});
+ map.on('load',function(){ready=true;try{map.setFadeDuration(SAT?250:300)}catch(e){};polish();if(pendingFit){pendingFit();pendingFit=null}});
 }
 function clearLayers(){
  poiDots.forEach(function(d){d.remove()});poiDots=[];fired=[];lastBrg=null;lastPitch=0;
@@ -403,8 +403,8 @@ var SATSTYLE={version:8,
   ref:{type:'raster',tileSize:256,maxzoom:17,
    tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}'],
    attribution:''}},
- layers:[{id:'sat-img',type:'raster',source:'sat',paint:{'raster-fade-duration':0}},
-         {id:'sat-ref',type:'raster',source:'ref',paint:{'raster-fade-duration':0,'raster-opacity':.9}}]};
+ layers:[{id:'sat-img',type:'raster',source:'sat',paint:{'raster-fade-duration':250}},
+         {id:'sat-ref',type:'raster',source:'ref',paint:{'raster-fade-duration':250,'raster-opacity':.9}}]};
 function toggleSat(){
  if(!map||state!=='idle')return;
  SAT=!SAT;
@@ -412,7 +412,7 @@ function toggleSat(){
  if(SAT)map.setStyle(SATSTYLE);
  else{map.setStyle('https://tiles.openfreemap.org/styles/liberty');polished=false}
  afterStyle(function(){
-  try{map.setFadeDuration(SAT?0:300)}catch(e){}
+  try{map.setFadeDuration(SAT?250:300)}catch(e){}
   if(!SAT)polish();
   if(RT&&ARC&&mode&&mode.route){['ks-done','ks-done-glow','ks-full'].forEach(function(s){try{map.removeLayer(s)}catch(e){}});try{map.removeSource('ks-route')}catch(e){};routeLayers()}
  })}
