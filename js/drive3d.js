@@ -111,7 +111,7 @@ Drive.prototype.build=function(){
  this.curve=new THREE.CatmullRomCurve3(pts.map(function(p){return new THREE.Vector3(p[0],0,p[1])}));
  this.len=this.curve.getLength();
  this.ROAD_END=this.len-14; /* car stops short of the gate */
- this.sway=[];this.bflies=[];this.buildRoad();this.buildGround();this.buildScenery();this.buildVenue();this.buildCar();this.buildGoat();this.buildFolks();this.buildButterflies();this.buildPuffs();this.buildClouds();
+ this.sway=[];this.bflies=[];this.buildRoad();this.buildGround();this.buildScenery();this.buildVenue();this.buildCar();this.buildGoat();this.buildFolks();this.buildButterflies();this.buildBirds();this.buildPetals();this.buildOncoming();this.buildPuffs();this.buildClouds();
  var selfA=this;onAssets(function(){if(selfA&&!selfA.destroyed)selfA.dress()});this.sway=[];this.bflies=[];
  this.u=0;this.state='attract';this.attractT=0;this.capFired=[];this.goatDone=false;
  this.camPos=new THREE.Vector3();this.camAim=new THREE.Vector3();
@@ -236,6 +236,35 @@ Drive.prototype.sign=function(x,z,ry,tex,w,h,yBase){
  face.position.y=h*.72;if(ry!==0)face.rotation.y=ry;g.add(face);
  var face2=face.clone();face2.rotation.y=ry+Math.PI;g.add(face2);
  g.position.set(x,0,z);this.scene.add(g);return g};
+Drive.prototype.buildOncoming=function(){var self=this;
+ onAssets(function(){
+  if(self.destroyed)return;
+  var src=ASSETS['hatchback-sports'];if(!src)return;
+  src.scale.setScalar(1.05);self.scene.add(src);self.onCar=src;self.onU=.74});
+};
+Drive.prototype.buildBirds=function(){var self=this;this.birds=[];
+ var mm=new THREE.MeshToonMaterial({color:0x4a5230,side:THREE.DoubleSide,gradientMap:GRAD});
+ for(var i=0;i<5;i++){
+  var g=new THREE.Group();
+  var wg=new THREE.PlaneGeometry(.9,.28);
+  var w1=new THREE.Mesh(wg,mm),w2=new THREE.Mesh(wg,mm);
+  w1.position.x=.45;w2.position.x=-.45;g.add(w1);g.add(w2);
+  g.userData={w1:w1,w2:w2,f:.12+i*.045,y:8.5+Math.random()*3.5,ph:i*1.3,x:(Math.random()*2-1)*8};
+  g.visible=false;this.scene.add(g);this.birds.push(g)}
+};
+Drive.prototype.buildPetals=function(){var self=this;this.petals=[];
+ if(!this.road)return;
+ var end=this.road.getPointAt(.999);
+ var cols=[0x6e0f1f,0xd8bb8a,0xf3ead8,0x5f6b34];
+ for(var i=0;i<38;i++){
+  var pg=new THREE.PlaneGeometry(.17,.11);
+  var pm=new THREE.MeshToonMaterial({color:cols[i%4],side:THREE.DoubleSide,gradientMap:GRAD});
+  var m=new THREE.Mesh(pg,pm);
+  m.position.set(end.x+(Math.random()*2-1)*22,2+Math.random()*9,end.z+(Math.random()*2-1)*22);
+  m.rotation.set(Math.random()*6.28,Math.random()*6.28,0);
+  m.visible=false;this.scene.add(m);
+  this.petals.push({m:m,vy:.5+Math.random()*.45,ph:Math.random()*6.28,end:end})}
+};
 Drive.prototype.buildButterflies=function(){var self=this;this.bflies=this.bflies||[];this.sway=this.sway||[];
  var cols=[0xd8bb8a,0x9a1b2e,0xf3ead8];
  for(var i=0;i<4;i++){
@@ -402,6 +431,15 @@ Drive.prototype.tick=function(dt){
   if(this.restPos){
    this.camPos.lerp(this.restPos,.045);this.camAim.lerp(this.restAim,.05);
    this.camera.position.copy(this.camPos);this.camera.lookAt(this.camAim)}
+  /* petals rain down on the couple */
+  for(var pi=0;pi<this.petals.length;pi++){
+   var pt=this.petals[pi];pt.m.visible=true;
+   pt.m.position.y-=dt*pt.vy;
+   pt.m.position.x=pt.end.x+(pt.m.position.x-pt.end.x)+Math.sin(this.elapsed*1.4+pt.ph)*.012;
+   pt.m.rotation.z+=dt*.8;
+   if(pt.m.position.y<.05){pt.m.position.y=6+Math.random()*6;
+    pt.m.position.x=pt.end.x+(Math.random()*2-1)*22;
+    pt.m.position.z=pt.end.z+(Math.random()*2-1)*22}}
   return}
  if(this.state!=='drive')return;
  this.t+=dt*1000;
@@ -416,16 +454,55 @@ Drive.prototype.tick=function(dt){
  this.car.rotation.y=heading;this.car.rotation.x=0;this.car.rotation.z=roll;
  var spin=dt*26*(1-p*.35);this.wheels.forEach(function(w){w.rotation.x+=spin});
  if(this.clouds)for(var ci=0;ci<this.clouds.length;ci++){var cc=this.clouds[ci];cc.position.x+=dt*1.4;if(cc.position.x>240)cc.position.x=-240}
+ /* oncoming taxi: passes the couple around the wide-chase shot */
+ if(this.onCar&&this.onU!==undefined){
+  this.onU-=dt*.0125;
+  if(this.onU<.04)this.onU=.76;
+  var oP=this.roadPoint(this.onU*this.len),oD=this.roadDir(this.onU*this.len);
+  this.onCar.position.set(oP.x,.05,oP.z);
+  this.onCar.rotation.y=Math.atan2(-oD.x,-oD.z)}
+ /* birds: a small flock crossing high above */
+ for(var wi=0;wi<this.birds.length;wi++){
+  var bd=this.birds[bi=wi],du=bd.userData;
+  bd.visible=(d>.06&&d<.5);
+  if(bd.visible){
+   var bAt=this.roadPoint((du.f+d*.5)%1*this.len);
+   bd.position.set(bAt.x+du.x+this.elapsed*3.2,du.y+Math.sin(this.elapsed+du.ph)*.4,bAt.z-14);
+   var fl2=Math.sin(this.elapsed*9+du.ph)*.7;
+   du.w1.rotation.y=fl2;du.w2.rotation.y=-fl2}}
  /* goat: trots across the road just past mid-journey */
  if(!this.goatDone&&d>=GOAT_AT){this.goatDone=true;this.goatT=0}
  if(this.goatDone)this.runGoat(dt,dist);
- /* chase camera with lag and breathing: parked BEHIND the car */
- var back=9.5,height=4.6;
- var camAt=this.roadPoint(Math.max(0,dist-back));
- var desired=new THREE.Vector3(camAt.x+nx*1.1,height,camAt.z+nz*1.1);
- this.camPos.lerp(desired,.055);
- var aim=this.roadPoint(Math.min(this.len,dist+26));
- this.camAim.lerp(new THREE.Vector3(aim.x,1.6,aim.z),.08);
+ /* directed shots: hard cuts between angles, each shot one slow move */
+ var SHOTS=this.SHOTS||(this.SHOTS=[
+  {u0:0,   u1:.24, kind:'chase', back:7.6, height:3.7},
+  {u0:.24, u1:.34, kind:'side'},
+  {u0:.34, u1:.56, kind:'chase', back:12.5, height:5.7},
+  {u0:.56, u1:.645,kind:'hero'},
+  {u0:.645,u1:1.02,kind:'chase', back:9.5, height:4.6}]);
+ if(this.shotIdx===undefined)this.shotIdx=-1;if(this.petals)for(var pi=0;pi<this.petals.length;pi++)this.petals[pi].m.visible=false;
+ var shot=null,shotI=SHOTS.length-1;
+ for(var si=0;si<SHOTS.length;si++){if(d>=SHOTS[si].u0&&d<SHOTS[si].u1){shot=SHOTS[si];shotI=si;break}}
+ var cut=(shotI!==this.shotIdx);this.shotIdx=shotI;
+ var desired,aimT;
+ if(shot&&shot.kind==='side'){
+  var sAt=this.roadPoint(Math.min(this.len,dist+5));
+  var off=5.4+Math.sin(this.t/1400)*.7;
+  desired=new THREE.Vector3(sAt.x+nx*off,2.0,sAt.z+nz*off);
+  aimT=new THREE.Vector3(pos.x,1.2,pos.z);
+ }else if(shot&&shot.kind==='hero'){
+  var hAt=this.roadPoint(Math.min(this.len,dist+15));
+  desired=new THREE.Vector3(hAt.x-dir.x*2.2+nx*3.4,1.6,hAt.z-dir.z*2.2+nz*3.4);
+  aimT=new THREE.Vector3(pos.x,1.2,pos.z);
+ }else{
+  var back=shot?shot.back:9.5,height=shot?shot.height:4.6;
+  var camAt=this.roadPoint(Math.max(0,dist-back));
+  desired=new THREE.Vector3(camAt.x+nx*1.1,height,camAt.z+nz*1.1);
+  var aim=this.roadPoint(Math.min(this.len,dist+26));
+  aimT=new THREE.Vector3(aim.x,1.6,aim.z);
+ }
+ if(cut){this.camPos.copy(desired);this.camAim.copy(aimT)}
+ else{this.camPos.lerp(desired,.055);this.camAim.lerp(aimT,.08)}
  var breathe=Math.sin(this.t/460)*.14;
  this.camera.position.set(this.camPos.x,this.camPos.y+breathe,this.camPos.z);
  this.camera.lookAt(this.camAim);
@@ -450,7 +527,7 @@ Drive.prototype.tick=function(dt){
 Drive.prototype.begin=function(area){
  if(this.state==='drive')return;
  if(area)try{localStorage.setItem('ks26area',area)}catch(e){}
- this.dur=DUR;this.t=0;this.state='drive';this.capFired=[];this.goatDone=false;this.goatT=0;
+ this.dur=DUR;this.t=0;this.state='drive';this.capFired=[];this.goatDone=false;this.goatT=0;this.shotIdx=-1;
  /* sign carries the guest's town */
  if(area&&this.areaSign){
   var tex=textTex([area.toUpperCase()+" \u279c "+this.mode.dest.toUpperCase()],{size:44,fg:'#f5efe0',bg:'#6e0f1f',border:'#d8bb8a',bw:10});
