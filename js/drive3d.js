@@ -118,10 +118,11 @@ Drive.prototype.build=function(){
  gr.addColorStop(0,'#f7e8d2');gr.addColorStop(.45,'#f3d9b8');gr.addColorStop(.8,'#efd0ac');gr.addColorStop(1,'#e7c39a');
  sx.fillStyle=gr;sx.fillRect(0,0,2,256);
  var skyT=new THREE.CanvasTexture(sc);
+ this.scene.background=skyT;
  /* sky dome: the gradient wraps the world instead of painting a flat wall behind it */
  var dome=new THREE.Mesh(new THREE.SphereGeometry(420,24,14),
   new THREE.MeshBasicMaterial({map:skyT,side:THREE.BackSide,fog:false,depthWrite:false}));
- dome.renderOrder=-10;this.scene.add(dome);this.skyDome=dome;
+ dome.renderOrder=-10;dome.userData.outlineParameters={visible:false};this.scene.add(dome);this.skyDome=dome;
  /* low sun glow near the horizon, same side as the light */
  var gc=document.createElement('canvas');gc.width=gc.height=128;var gx=gc.getContext('2d');
  var gg=gx.createRadialGradient(64,64,4,64,64,64);
