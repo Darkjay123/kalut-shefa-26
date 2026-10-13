@@ -260,9 +260,8 @@ Drive.prototype.buildFolks=function(){var self=this;
    for(var i=0;i<clips.length;i++){if(clips[i].name===clipName){
      var mx=new THREE.AnimationMixer(src);mx.clipAction(clips[i]).play();self.mixers.push(mx);break}}
    return src}
-  var mk=this.len*.55;
-  if(this.marketPos)actor('casual_female',this.marketPos.x+3.4,this.marketPos.z+1.2,2.6,1.5,'Idle');
-  var end=this.road?this.road.getPointAt(.999):null;
+  if(self.marketPos)actor('casual_female',self.marketPos.x+3.4,self.marketPos.z+1.2,2.6,1.5,'Idle');
+  var end=self.road?self.road.getPointAt(.999):null;
   if(end)actor('casual_male',end.x+4.5,end.z+2.2,2.4,1.5,'Victory');
  });
 };
