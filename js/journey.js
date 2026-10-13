@@ -179,10 +179,10 @@ function frame(ts){
    wheelAng+=(wt-wheelAng)*.22;
    var wob=Math.sin(ts/280)*Math.min(2.2,kmhS*.045);
    var wsvg=jWheelEl&&jWheelEl.querySelector('svg');if(wsvg)wsvg.style.transform='rotate('+(wheelAng+wob).toFixed(1)+'deg)';
-   if(gNum){gNum.textContent=Math.round(kmhS);
-    if(gNeedle)gNeedle.style.transform='rotate('+(-120+Math.max(0,Math.min(240,kmhS))/240*240).toFixed(1)+'deg)';
-    gKm.textContent=(Math.max(0,(1-d)*mode.km)).toFixed(1);
-    gEta.textContent=mm+':'+String(ss).padStart(2,'0')}}
+   if(gNum)gNum.textContent=Math.round(kmhS);
+   if(gNeedle)gNeedle.style.transform='rotate('+(-120+Math.max(0,Math.min(240,kmhS))/240*240).toFixed(1)+'deg)';
+   if(gKm)gKm.textContent=(Math.max(0,(1-d)*mode.km)).toFixed(1);
+   if(gEta)gEta.textContent=mm+':'+String(ss).padStart(2,'0')}
   if(POV){
    var lk=posAt(Math.min(ARC.tot,d*ARC.tot+Math.max(ARC.tot*.002,.001)));
    var dz=16.6+(SAT?.6:1.7)*ease(Math.max(0,Math.min(1,p/.06)));
@@ -204,6 +204,23 @@ function frame(ts){
  mode.stops.forEach(function(s,si){if(p>=s.f&&!fired[si]){fired[si]=1;setCap(s)}});
  if(p>=1){arrive();return}
  raf=requestAnimationFrame(frame)}
+function warmCorridor(){
+ try{
+  if(!SAT||!mode||!mode.route||!mode.route.length)return;
+  var cs=mode.route,seen={},urls=[];
+  function txy(lat,lng,z){var t=Math.pow(2,z),x=(lng+180)/360*t;
+   var r=lat*Math.PI/180,y=(1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*t;
+   return[Math.floor(((x%t)+t)%t),Math.max(0,Math.min(t-1,Math.floor(y)))]}
+  var zs=POV?[16,17]:[14,15];
+  for(var i=0;i<cs.length;i+=Math.max(1,Math.round(cs.length/50))){
+   for(var zi=0;zi<zs.length;zi++){var z=zs[zi],xy=txy(cs[i][0],cs[i][1],z);
+    for(var dx=-1;dx<=1;dx++)for(var dy=-1;dy<=1;dy++){
+     var k=z+':'+(xy[0]+dx)+':'+(xy[1]+dy);
+     if(!seen[k]){seen[k]=1;
+      urls.push('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/'+z+'/'+(xy[1]+dy)+'/'+(xy[0]+dx))}}}}
+  urls=urls.slice(0,380);
+  for(var u=0;u<urls.length;u++){var im=new Image();im.src=urls[u]}
+ }catch(e){}}
 function loopStart(){if(state!=='prefly')return;state='drive';t0=performance.now();prevD=0;prevT=t0;kmhS=0;wheelAng=0;prevRaw=null;raf=requestAnimationFrame(frame)}
 /* white-wedding flight: dive in flat, THEN tilt into 3D once the ground fills the screen
    (a pitched camera at low zoom shows mostly sky - the dead patch caught on QA) */
@@ -244,6 +261,7 @@ function open(key){mode=V[key];liveKey=key;initMap();state='idle';showChooser();
  dirBtn.href=mode.dirLink;mapBtn.href=mode.mapLink;
  clearLayers();RT=null;ARC=null;capBox.classList.add('hide');arrival.classList.remove('show');skip.classList.remove('show');
  modal.classList.add('open');document.documentElement.classList.add('ks-lock');
+ warmCorridor();
  window.lenis&&window.lenis.stop();
  requestAnimationFrame(function(){map.resize()});
  if(REDUCE){beginBtn.classList.remove('show');
@@ -327,7 +345,7 @@ function goLive(from,label,key){
   $('jEyebrow').textContent=mode.eyebrow;$('jTitle').textContent=mode.title;
   arrName.textContent=mode.venueName;arrAddr.textContent=mode.venueAddr;
   dirBtn.href=mode.dirLink;mapBtn.href=mode.mapLink;
-  clearLayers();RT=null;ARC=null;state='idle';
+  clearLayers();RT=null;ARC=null;state='idle';warmCorridor();
   startJourney()})}
 function phQuery(q){
  fetch('https://photon.komoot.io/api/?q='+encodeURIComponent(q)+'&limit=6&lat=5.9&lon=6.4&lang=en')
