@@ -187,7 +187,7 @@ function loopStart(){if(state!=='prefly')return;state='drive';t0=performance.now
 function stageTwo(){if(state!=='prefly'&&state!=='drive')return;
  map.easeTo({center:[mode.church[1],mode.church[0]],zoom:mode.zEnd,pitch:45,bearing:-25,duration:mode.dur*.45,essential:true})}
 function startJourney(){if(state==='prefly'||state==='drive')return;
- beginBtn.classList.remove('show');arrival.classList.remove('show');skip.classList.add('show');
+ hideChooser();beginBtn.classList.remove('show');arrival.classList.remove('show');skip.classList.add('show');
  if(mode.hudText){hud.textContent=mode.hudText;hud.classList.add('show')}
  clearLayers();state='prefly';
  var go=function(){
@@ -209,7 +209,7 @@ function startJourney(){if(state==='prefly'||state==='drive')return;
     stage2Timer=setTimeout(stageTwo,900+mode.dur*.55);
     preTimer=setTimeout(loopStart,900)}}};
  if(ready)go();else pendingFit=go}
-function open(key){mode=V[key];initMap();state='idle';
+function open(key){mode=V[key];liveKey=key;initMap();state='idle';showChooser();
  hud.classList.remove('show');
  $('jEyebrow').textContent=mode.eyebrow;$('jTitle').textContent=mode.title;
  arrName.textContent=mode.venueName;arrAddr.textContent=mode.venueAddr;
@@ -236,7 +236,7 @@ function open(key){mode=V[key];initMap();state='idle';
   else map.jumpTo({center:[mode.start[1],mode.start[0]],zoom:mode.zFollow,pitch:0,bearing:0})};
  if(ready)overview();else pendingFit=overview;
  setTimeout(function(){if(state==='idle')beginBtn.classList.add('show')},450)}
-function close(){cancelAnimationFrame(raf);clearTimeout(preTimer);clearTimeout(stage2Timer);state='idle';
+function close(){cancelAnimationFrame(raf);clearTimeout(preTimer);clearTimeout(stage2Timer);state='idle';hideChooser();
  modal.classList.remove('open');document.documentElement.classList.remove('ks-lock');window.lenis&&window.lenis.start()}
 beginBtn.addEventListener('click',startJourney);
 again.addEventListener('click',startJourney);
@@ -248,4 +248,113 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&modal.class
 var jbs=document.querySelectorAll('[data-journey]');
 for(var i=0;i<jbs.length;i++)(function(b){b.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();open(b.getAttribute('data-journey'))})})(jbs[i]);
 window.addEventListener('resize',function(){if(modal.classList.contains('open'))map.resize()});
+
+/* ---- personalized journey: any guest, their own road ----
+   GPS or a typed hometown -> OSRM plots the real driving route -> the same
+   chase-cam drive runs from THEIR doorstep to the venue. Free rails:
+   OSRM demo router + Photon geocoder (no keys, no billing). */
+var jStart=$('jStart'),jGeo=$('jGeo'),jSearch=$('jSearch'),jSug=$('jSug'),jPlan=$('jPlan'),
+    liveKey='trad',phT=null,sugData=[],sugOn=-1;
+function showChooser(){if(jStart)jStart.classList.add('show');renderRecent()}
+function hideChooser(){if(!jStart)return;jStart.classList.remove('show');jSug.classList.remove('open')}
+function hav(a,b){var R=6371,d=Math.PI/180,dLa=(b[0]-a[0])*d,dLo=(b[1]-a[1])*d,
+ la=a[0]*d,lb=b[0]*d,h=Math.sin(dLa/2)*Math.sin(dLa/2)+Math.cos(la)*Math.cos(lb)*Math.sin(dLo/2)*Math.sin(dLo/2);
+ return 2*R*Math.asin(Math.sqrt(h))*1.25}
+function thin(cs,n){if(cs.length<=n)return cs;var out=[],s=(cs.length-1)/(n-1),i;for(i=0;i<n;i++)out.push(cs[Math.round(i*s)]);return out}
+function fetchRoute(from,to,cb){
+ var ctl=('AbortController' in window)?new AbortController():null,
+     tm=ctl?setTimeout(function(){try{ctl.abort()}catch(e){}},9000):null,
+     url='https://router.project-osrm.org/route/v1/driving/'+from[1]+','+from[0]+';'+to[1]+','+to[0]+'?overview=full&geometries=geojson';
+ fetch(url,ctl?{signal:ctl.signal}:undefined)
+  .then(function(r){return r.json()})
+  .then(function(j){if(tm)clearTimeout(tm);
+   if(j&&j.code==='Ok'&&j.routes&&j.routes[0]&&j.routes[0].geometry&&j.routes[0].geometry.coordinates&&j.routes[0].geometry.coordinates.length>1)cb(null,j.routes[0]);
+   else cb('bad')})
+  .catch(function(){if(tm)clearTimeout(tm);cb('fail')})}
+function goLive(from,label,key){
+ hideChooser();beginBtn.classList.remove('show');arrival.classList.remove('show');
+ hud.classList.remove('show');skip.classList.remove('show');capBox.classList.add('hide');
+ modal.classList.add('open');document.documentElement.classList.add('ks-lock');window.lenis&&window.lenis.stop();
+ mode=V[key];liveKey=key;initMap();requestAnimationFrame(function(){if(map)map.resize()});
+ hud.textContent='Plotting your route\u2026';hud.classList.add('show');
+ try{history.replaceState(null,'','?from='+from[0].toFixed(5)+','+from[1].toFixed(5)+'&w='+key+(label?'&n='+encodeURIComponent(label):'')+'#events')}catch(e){}
+ try{localStorage.setItem('ks26trip',JSON.stringify({lat:from[0],lng:from[1],label:label,w:key}))}catch(e){}
+ fetchRoute(from,V[key].church,function(err,r){
+  var cs,km;
+  if(!err&&r&&r.geometry){cs=r.geometry.coordinates;km=r.distance/1000}
+  else{cs=[[from[1],from[0]],[V[key].church[1],V[key].church[0]]];km=hav(from,V[key].church)}
+  cs=thin(cs,900);
+  var dest=key==='trad'?'Nimo':'Abraka',home=label||'Your location';
+  mode={eyebrow:V[key].eyebrow,
+   title:label?('From '+label+' to '+dest):('Your road to '+dest),
+   venueName:V[key].venueName,venueAddr:V[key].venueAddr,dirLink:V[key].dirLink,mapLink:V[key].mapLink,
+   church:V[key].church,route:cs.map(function(c){return[c[1],c[0]]}),start:[from[0],from[1]],
+   zStart:5.6,zFollow:15.3,zEnd:V[key].zEnd,
+   dur:Math.max(18000,Math.min(50000,14000+km*700)),km:km,
+   hudTail:key==='trad'?'km to Nimo':'km to Abraka',pois:[],
+   stops:[{f:0,t:home,s:'The drive to '+(key==='trad'?'Nwakor compound':'Gospel Stars Church')+' begins.'},
+    {amb:1,f:.45,t:'On the road',s:err?'The map drew you a straight line. The road will forgive.':'Every kilometre is part of the story.'},
+    {f:.92,t:'Almost there',s:key==='trad'?'The compound lights are close now.':'The town slows down for the gate.'},
+    {f:.999,t:V[key].venueName,s:'You have arrived.'}]};
+  $('jEyebrow').textContent=mode.eyebrow;$('jTitle').textContent=mode.title;
+  arrName.textContent=mode.venueName;arrAddr.textContent=mode.venueAddr;
+  dirBtn.href=mode.dirLink;mapBtn.href=mode.mapLink;
+  clearLayers();RT=null;ARC=null;state='idle';
+  startJourney()})}
+function phQuery(q){
+ fetch('https://photon.komoot.io/api/?q='+encodeURIComponent(q)+'&limit=6&lat=5.9&lon=6.4&lang=en')
+  .then(function(r){return r.json()})
+  .then(function(j){sugData=((j&&j.features)||[]).filter(function(f){return f.geometry&&f.geometry.coordinates}).slice(0,6);renderSug()})
+  .catch(function(){sugData=[];jSug.innerHTML='<div class="js-none">Search is taking a nap. Try the city name alone.</div>';jSug.classList.add('open')})}
+function renderSug(){
+ if(!sugData.length){jSug.innerHTML='<div class="js-none">Nothing found. Try a town or city name.</div>';jSug.classList.add('open');return}
+ jSug.innerHTML=sugData.map(function(f,i){
+  var p=f.properties||{},label=p.name||p.city||p.state||'Place',
+      sub=[(p.city&&p.city!==label)?p.city:null,p.state,p.country].filter(Boolean).join(' \u00b7 ');
+  return '<button type="button" data-i="'+i+'">'+label+(sub?'<small>'+sub+'</small>':'')+'</button>'}).join('');
+ sugOn=-1;jSug.classList.add('open')}
+function markSug(){var bs=jSug.querySelectorAll('button');for(var i=0;i<bs.length;i++)bs[i].classList.toggle('on',i===sugOn)}
+function pickSug(i){
+ var f=sugData[i];if(!f)return;
+ var p=f.properties||{},label=p.name||p.city||'Your location';
+ jSearch.blur();jSug.classList.remove('open');
+ goLive([f.geometry.coordinates[1],f.geometry.coordinates[0]],label,liveKey)}
+if(jGeo)jGeo.addEventListener('click',function(){
+ if(!navigator.geolocation){jGeo.textContent='No location on this device - type it instead';
+  setTimeout(function(){jGeo.textContent='\U0001F4CD Use my location'},3200);return}
+ var old=jGeo.textContent;jGeo.textContent='Locating\u2026';
+ navigator.geolocation.getCurrentPosition(function(p){jGeo.textContent=old;
+   goLive([p.coords.latitude,p.coords.longitude],null,liveKey)},
+  function(){jGeo.textContent='Could not read it - type your area instead';
+   setTimeout(function(){jGeo.textContent=old},3200);try{jSearch.focus()}catch(e){}},
+  {enableHighAccuracy:true,timeout:10000,maximumAge:60000})});
+if(jSearch){
+ jSearch.addEventListener('input',function(){var q=jSearch.value.trim();
+  clearTimeout(phT);if(q.length<2){jSug.classList.remove('open');return}
+  phT=setTimeout(function(){phQuery(q)},380)});
+ jSearch.addEventListener('keydown',function(e){
+  if(e.key==='Enter'){e.preventDefault();pickSug(sugOn>-1?sugOn:0)}
+  else if(e.key==='ArrowDown'){e.preventDefault();sugOn=Math.min(sugData.length-1,sugOn+1);markSug()}
+  else if(e.key==='ArrowUp'){e.preventDefault();sugOn=Math.max(-1,sugOn-1);markSug()}
+  else if(e.key==='Escape'){e.stopPropagation();jSug.classList.remove('open')}});
+ jSearch.addEventListener('blur',function(){setTimeout(function(){jSug.classList.remove('open')},220)})}
+if(jSug)jSug.addEventListener('mousedown',function(e){
+ var b=e.target&&e.target.closest?e.target.closest('button'):null;if(b)pickSug(+b.getAttribute('data-i'))});
+if(jPlan)jPlan.addEventListener('click',function(){arrival.classList.remove('show');open(liveKey)});
+function renderRecent(){
+ var r=null;try{r=JSON.parse(localStorage.getItem('ks26trip')||'null')}catch(e){}
+ var box=document.getElementById('jRecent');if(!box)return;
+ if(r&&isFinite(r.lat)&&isFinite(r.lng)&&(r.w==='trad'||r.w==='white')){
+  box.innerHTML='<button type="button" class="js-chip" id="jRecentBtn">\u21ba Again from '+(r.label||'my location')+'</button>';
+  var rb=document.getElementById('jRecentBtn');
+  if(rb)rb.addEventListener('click',function(){goLive([r.lat,r.lng],r.label,r.w)})}
+ else box.innerHTML=''}
+/* shared link boot: ?from=lat,lng&w=trad&n=Warri replays that guest's exact drive */
+(function(){var q=new URLSearchParams(location.search),
+ f=q.get('from'),w=q.get('w'),n=q.get('n');
+ if(f&&/^[-0-9.]+,[-0-9.]+$/.test(f)&&(w==='trad'||w==='white')){
+  var p=f.split(','),la=+p[0],ln=+p[1];
+  if(isFinite(la)&&isFinite(ln)&&Math.abs(la)<=85&&ln>=-180&&ln<=180&&Math.abs(la)+Math.abs(ln)>0.01)
+   setTimeout(function(){goLive([la,ln],n||null,w)},600)}})();
+
 })();

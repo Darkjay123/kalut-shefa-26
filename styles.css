@@ -762,3 +762,25 @@ html.ks-lock{overflow:hidden}
   .cal-btns{gap:8px;margin-top:auto}
   .cal-btns .btn{flex:1 1 100%;justify-content:center;padding:13px 12px;font-size:.7rem;letter-spacing:.16em}
 }
+/* personalized journey: where are you coming from? */
+.j-start{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(104px + env(safe-area-inset-bottom));z-index:10;width:min(400px,90vw);text-align:center;opacity:0;pointer-events:none;transition:opacity .5s}
+.j-start.show{opacity:1;pointer-events:auto}
+.js-q{display:block;font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:#cbb489;margin-bottom:10px}
+.js-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px}
+.js-geo{border-radius:999px;border:1px solid rgba(216,187,138,.55);background:rgba(216,187,138,.12);color:#f0e2c4;font-family:var(--sans);font-weight:600;font-size:.85rem;padding:11px 18px;cursor:pointer;transition:background .3s}
+.js-geo:hover{background:rgba(216,187,138,.22)}
+.js-or{font-size:.78rem;color:#a98f6b}
+.js-search{position:relative}
+.js-search input{width:100%;box-sizing:border-box;border-radius:999px;border:1px solid rgba(216,187,138,.45);background:rgba(11,2,4,.82);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#f5efe0;font-family:var(--sans);font-size:.95rem;padding:13px 20px;outline:none;transition:border-color .3s}
+.js-search input::placeholder{color:#a98f6b}
+.js-search input:focus{border-color:var(--gold)}
+.js-sug{position:absolute;left:0;right:0;top:calc(100% + 8px);background:rgba(11,2,4,.95);border:1px solid rgba(216,187,138,.4);border-radius:16px;overflow:hidden;display:none;text-align:left;max-height:250px;overflow-y:auto;z-index:12}
+.js-sug.open{display:block}
+.js-sug button{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid rgba(216,187,138,.14);color:#f0e2c4;font-family:var(--sans);font-size:.9rem;padding:12px 18px;cursor:pointer}
+.js-sug button:last-child{border-bottom:0}
+.js-sug button:hover,.js-sug button.on{background:rgba(216,187,138,.14)}
+.js-sug small{display:block;color:#a98f6b;font-size:.74rem;margin-top:2px}
+.js-sug .js-none{color:#a98f6b;font-size:.85rem;padding:12px 18px}
+.js-chip{display:inline-block;border-radius:999px;border:1px solid rgba(216,187,138,.45);background:rgba(110,15,31,.55);color:#f0e2c4;font-family:var(--sans);font-size:.8rem;font-weight:600;padding:8px 15px;margin-bottom:10px;cursor:pointer}
+.js-chip:hover{background:rgba(110,15,31,.8)}
+.j-plan{margin-top:6px}

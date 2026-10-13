@@ -485,7 +485,16 @@
   </div>
   <div class="j-hud" id="jHud"></div>
   <div class="j-cap" id="jCap"><b id="jCapT"></b><span id="jCapS"></span></div>
-  <button class="j-begin" id="jBegin">Begin the journey ✦</button>
+  <div class="j-start" id="jStart">
+    <div id="jRecent"></div>
+    <span class="js-q">Where are you coming from?</span>
+    <div class="js-row"><button class="js-geo" id="jGeo" type="button">📍 Use my location</button><span class="js-or">or</span></div>
+    <div class="js-search">
+      <input id="jSearch" type="text" placeholder="Type your area... Warri, Asaba, Lagos" autocomplete="off" enterkeyhint="search">
+      <div class="js-sug" id="jSug"></div>
+    </div>
+  </div>
+  <button class="j-begin" id="jBegin">Drive the classic route ✦</button>
   <div class="j-arrival" id="jArrival">
     <small>You have arrived</small>
     <h5 id="jArrName"></h5>
@@ -495,6 +504,7 @@
       <a class="btn btn-line" id="jMapBtn" target="_blank" rel="noopener">Open in Maps</a>
     </div>
     <button class="j-replay" id="jAgain">↺ Replay the journey</button>
+    <button class="j-replay j-plan" id="jPlan">✦ Plan another trip</button>
   </div>
 </div>
 </body>
