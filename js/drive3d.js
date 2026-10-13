@@ -197,7 +197,7 @@ Drive.prototype.sign=function(x,z,ry,tex,w,h,yBase){
  var face2=face.clone();face2.rotation.y=ry+Math.PI;g.add(face2);
  g.position.set(x,0,z);this.scene.add(g);return g};
 Drive.prototype.buildVenue=function(){
- var self=this,end=this.curve.getPointAt(1),t=this.curve.getTangentAt(1),nx=-t.z,nz=t.x,g=new THREE.Group();
+ var self=this,end=this.curve.getPointAt(.9995),t=this.curve.getTangentAt(.9995),nx=-t.z,nz=t.x,g=new THREE.Group();
  if(this.mode.venue==='gate'){
   [[-5.2],[5.2]].forEach(function(s){
    var pillar=box(1.5,4.6,1.5,WEDDING.cream);pillar.position.set(end.x+nx*s[0],2.3,end.z+nz*s[0]);self.scene.add(pillar);
@@ -288,7 +288,7 @@ Drive.prototype.buildPuffs=function(){
 
 /* ---------- animation ---------- */
 Drive.prototype.capPose=function(){
- var self=this,c=this.curve.getPointAt(1),t=this.curve.getTangentAt(1),nx=-t.z,nz=t.x;
+ var self=this,c=this.curve.getPointAt(.9995),t=this.curve.getTangentAt(.9995),nx=-t.z,nz=t.x;
  return new THREE.Vector3(c.x+nx*16,26,c.z+nz*16)};
 Drive.prototype.attract=function(dt){
  var self=this,t=this.attractT+=dt,a=Math.sin(t*.16)*.5;
