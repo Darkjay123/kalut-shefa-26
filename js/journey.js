@@ -93,6 +93,9 @@ function polish(){
    if(id.indexOf('building')>-1&&l.type==='fill'){
     map.setPaintProperty(l.id,'fill-color',C.building);
     try{map.setPaintProperty(l.id,'fill-outline-color','#3a1220')}catch(e){}return}
+   if(id.indexOf('building')>-1&&l.type==='fill-extrusion'){
+    map.setPaintProperty(l.id,'fill-extrusion-color',C.building);
+    try{map.setPaintProperty(l.id,'fill-extrusion-opacity',.92)}catch(e){}return}
    if((id.indexOf('park')>-1||id.indexOf('landcover')>-1||id.indexOf('landuse')>-1||id.indexOf('forest')>-1||id.indexOf('grass')>-1)&&l.type==='fill'){
     map.setPaintProperty(l.id,'fill-color',C.land);return}
    if(l.type==='line'){
