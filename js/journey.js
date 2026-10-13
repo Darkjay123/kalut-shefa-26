@@ -1,9 +1,7 @@
-/* Kalut-Shefa '26 · the journey — cute cartoon drive edition.
-   The map is gone (Praise's verdict: it blinked and it wasn't cute).
-   js/drive3d.js now paints the whole road: a low-poly world in the wedding
-   palette, a well-dressed car, the real route beats as captions, and the
-   couple's venue at the end. This file keeps the modal, the captions and
-   the arrival card. */
+/* Kalut-Shefa '26 · the journey — cartoon-film drive edition.
+   Tap the card, the drive starts. Skip lands you at the door with directions.
+   js/drive3d.js paints the world: cel-shaded palette world, Kenney assets,
+   drifting clouds, the well-dressed car, the venue at the end of the road. */
 (function(){
 "use strict";
 var REDUCE=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -12,20 +10,15 @@ var modal=$('journeyModal');
 if(!modal||!window.DRIVE3D) return;
 var capT=$('jCapT'),capS=$('jCapS'),capBox=$('jCap'),bar=$('jBar'),beginBtn=$('jBegin'),
     arrival=$('jArrival'),skip=$('jSkip'),dirBtn=$('jDir'),mapBtn=$('jMapBtn'),
-    again=$('jAgain'),arrName=$('jArrName'),arrAddr=$('jArrAddr'),hud=$('jHud'),
-    jStart=$('jStart'),jSearch=$('jSearch'),jPlan=$('jPlan');
+    again=$('jAgain'),arrName=$('jArrName'),arrAddr=$('jArrAddr'),hud=$('jHud'),jPlan=$('jPlan');
 var liveKey='trad',state='idle';
 function setCap(s){capBox.classList.remove('hide');capT.textContent=s.t;capS.textContent=s.s;
  capBox.classList.remove('in');void capBox.offsetWidth;capBox.classList.add('in')}
-function showChooser(){if(jStart)jStart.classList.add('show')}
-function hideChooser(){if(!jStart)return;jStart.classList.remove('show')}
 function beginDrive(){
  if(state==='drive')return;
- hideChooser();beginBtn.classList.remove('show');arrival.classList.remove('show');skip.classList.add('show');
+ beginBtn.classList.remove('show');arrival.classList.remove('show');skip.classList.add('show');
  capBox.classList.add('hide');state='drive';
- var area=(jSearch&&jSearch.value||'').trim();
- var saved=null;try{saved=localStorage.getItem('ks26area')}catch(e){}
- DRIVE3D.begin({key:liveKey,area:area||saved||'',start:true,
+ DRIVE3D.begin({key:liveKey,area:'',start:true,
   setCap:setCap,
   onArrive:function(){
    state='arrived';skip.classList.remove('show');
@@ -48,23 +41,22 @@ function open(key){
  capBox.classList.add('hide');arrival.classList.remove('show');skip.classList.remove('show');
  if(hud)hud.classList.remove('show');
  if(bar)bar.style.width='0%';
- showChooser();beginBtn.textContent='Take the drive \u2728';
  modal.classList.add('open');document.documentElement.classList.add('ks-lock');
  window.lenis&&window.lenis.stop();
  DRIVE3D.begin({key:key,area:'',setCap:setCap,onArrive:null,start:false});
  state='idle';
- setTimeout(function(){if(state==='idle')beginBtn.classList.add('show')},350)}
+ /* straight to the drive: no questions, just the road */
+ setTimeout(function(){if(state==='idle')beginDrive()},750)}
 function close(){
- DRIVE3D.dispose();state='idle';hideChooser();
+ DRIVE3D.dispose();state='idle';
  modal.classList.remove('open');document.documentElement.classList.remove('ks-lock');
  window.lenis&&window.lenis.start()}
 beginBtn.addEventListener('click',beginDrive);
-again.addEventListener('click',function(){arrival.classList.remove('show');beginDrive()});
+again.addEventListener('click',function(){arrival.classList.remove('show');state='idle';beginDrive()});
 skip.addEventListener('click',function(){DRIVE3D.skip()});
 $('jClose').addEventListener('click',close);
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&modal.classList.contains('open'))close()});
 var jbs=document.querySelectorAll('[data-journey]');
 for(var i=0;i<jbs.length;i++)(function(b){b.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();open(b.getAttribute('data-journey'))})})(jbs[i]);
-if(jSearch)jSearch.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();beginDrive()}});
-if(jPlan)jPlan.addEventListener('click',function(){arrival.classList.remove('show');showChooser();beginBtn.classList.add('show')});
+if(jPlan)jPlan.addEventListener('click',function(){arrival.classList.remove('show');state='idle';beginDrive()});
 })();

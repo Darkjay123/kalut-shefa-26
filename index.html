@@ -474,6 +474,8 @@
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js" integrity="sha384-sPwMflxqfAN+Q5mvlkLmHiX3PORGbZSXHiSGPTXT9VHCD/AB+b+r+vJWsqprv+7k" crossorigin="anonymous"></script>
 <script src="https://js.paystack.co/v2/inline.js" async></script>
 <script src="assets/vendor/three.min.js" defer></script>
+<script src="assets/vendor/GLTFLoader.js" defer></script>
+<script src="assets/vendor/OutlineEffect.js" defer></script>
 <script src="js/drive3d.js" defer></script>
 <script src="js/journey.js" defer></script>
 <script src="app.js"></script>
@@ -488,15 +490,6 @@
   </div>
   <div class="j-hud" id="jHud"></div>
   <div class="j-cap" id="jCap"><b id="jCapT"></b><span id="jCapS"></span></div>
-  <div class="j-start" id="jStart">
-    <div id="jRecent"></div>
-    <span class="js-q">Where are you coming from?</span>
-    <span class="js-hint">Type your town for a personalised road sign (optional)</span>
-    <div class="js-search">
-      <input id="jSearch" type="text" placeholder="Type your area... Warri, Asaba, Lagos" autocomplete="off" enterkeyhint="search">
-      <div class="js-sug" id="jSug"></div>
-    </div>
-  </div>
   <button class="j-begin" id="jBegin">Take the drive ✨</button>
   <div class="j-arrival" id="jArrival">
     <small>You have arrived</small>

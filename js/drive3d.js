@@ -53,7 +53,16 @@ function $(id){return document.getElementById(id)}
 var capT=$('jCapT'),capS=$('jCapS'),capBox=$('jCap'),bar=$('jBar'),beginBtn=$('jBegin'),arrival=$('jArrival'),skip=$('jSkip'),dirBtn=$('jDir'),mapBtn=$('jMapBtn'),again=$('jAgain'),arrName=$('jArrName'),arrAddr=$('jArrAddr'),hud=$('jHud');
 var mode=null,liveKey='trad',engine=null,state='idle';
 /* ---------- helpers ---------- */
-function mat(c,opt){return new THREE.MeshLambertMaterial(Object.assign({color:c},opt||{}))}
+var GRAD=(function(){var s=[95,150,210,255],d=new Uint8Array(s.length*4),i;for(i=0;i<s.length;i++){d[i*4]=d[i*4+1]=d[i*4+2]=s[i];d[i*4+3]=255}var t=new THREE.DataTexture(d,s.length,1,THREE.RGBAFormat);t.minFilter=t.magFilter=THREE.NearestFilter;t.needsUpdate=true;return t})();
+function mat(c,opt){opt=opt||{};var m=new THREE.MeshToonMaterial(Object.assign({color:c,gradientMap:GRAD},opt));if(opt.noOutline)m.userData.outlineParameters={visible:false};return m}
+/* CC0 scenery: Kenney kits, loaded once, cloned everywhere */
+var ASSETS={},ASSET_LEFT=0,ASSET_READY=false,ASSET_CBS=[];
+(function(){if(!window.THREE||!THREE.GLTFLoader){ASSET_READY=true;return}
+ var NAMES=['building-type-d','building-type-g','building-type-i','building-type-j','building-type-m','building-type-p','fence','fence-2x2','tree-large','planter','sedan','suv','taxi','truck','delivery-flat','tree_palmTall','tree_palmShort','tree_oak','tree_oak_dark','tree_detailed','tree_detailed_dark','plant_bush','flower_redC','grass','rock_largeA','rock_smallE','crops_cornStageA','crops_cornStageB','fence_simpleLow','stone_tallD','display-fruit','display-bread','shelf-boxes','column','character-employee'];
+ ASSET_LEFT=NAMES.length;var L=new THREE.GLTFLoader();
+ NAMES.forEach(function(nm){L.load('assets/models/'+nm+'.glb',function(g){ASSETS[nm]=g.scene;done()},undefined,function(){done()})});
+ function done(){ASSET_LEFT--;if(ASSET_LEFT<=0&&!ASSET_READY){ASSET_READY=true;var c=ASSET_CBS;ASSET_CBS=[];c.forEach(function(f){f()})}}})();
+function onAssets(f){if(ASSET_READY)f();else ASSET_CBS.push(f)}
 function box(w,h,d,c,round){
  var g=new THREE.BoxGeometry(w,h,d);var m=new THREE.Mesh(g,mat(c));return m}
 function cyn(rt,rb,h,c,seg){return new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg||8),mat(c))}
@@ -84,6 +93,7 @@ Drive.prototype.build=function(){
  this.renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
  this.renderer.outputEncoding=THREE.sRGBEncoding;
  mount.innerHTML='';mount.appendChild(this.renderer.domElement);
+ this.effect=window.THREE.OutlineEffect?new THREE.OutlineEffect(this.renderer,{defaultThicknessRatio:.0028}):null;
  this.scene=new THREE.Scene();
  /* sky: champagne dusk painted as a gradient texture */
  var sc=document.createElement('canvas');sc.width=2;sc.height=256;var sx=sc.getContext('2d');
@@ -101,7 +111,8 @@ Drive.prototype.build=function(){
  this.curve=new THREE.CatmullRomCurve3(pts.map(function(p){return new THREE.Vector3(p[0],0,p[1])}));
  this.len=this.curve.getLength();
  this.ROAD_END=this.len-14; /* car stops short of the gate */
- this.buildRoad();this.buildGround();this.buildScenery();this.buildVenue();this.buildCar();this.buildGoat();this.buildPuffs();
+ this.buildRoad();this.buildGround();this.buildScenery();this.buildVenue();this.buildCar();this.buildGoat();this.buildPuffs();this.buildClouds();
+ var selfA=this;onAssets(function(){if(selfA&&!selfA.destroyed)selfA.dress()});
  this.u=0;this.state='attract';this.attractT=0;this.capFired=[];this.goatDone=false;
  this.camPos=new THREE.Vector3();this.camAim=new THREE.Vector3();
  this.clock=new THREE.Clock();
@@ -115,6 +126,7 @@ Drive.prototype.roadDir=function(d){
  var u=Math.max(0,Math.min(.9995,d/this.len));
  return this.curve.getTangentAt(u)};
 
+Drive.prototype.place=function(nm,x,z,ry,s,y){var src=ASSETS[nm];if(!src)return null;var o=src.clone();o.position.set(x,y||0,z);if(ry!==undefined)o.rotation.y=ry;if(s)o.scale.setScalar(s);this.scene.add(o);return o};
 Drive.prototype.buildRoad=function(){
  var self=this,N=260,w=4.2,pts=[],i;
  for(i=0;i<=N;i++){var u=i/N,c=this.curve.getPointAt(u),t=this.curve.getTangentAt(u);
@@ -184,6 +196,33 @@ Drive.prototype.buildScenery=function(){
    var fl=new THREE.Mesh(new THREE.SphereGeometry(.24,5,4),mat(Math.random()<.5?WEDDING.burgundy:WEDDING.goldHot));
    fl.position.set(pv.x+nvx*(5.6+Math.random()*2)*s[0],.25,pv.z+nvz*(5.6+Math.random()*2)*s[0]);self.scene.add(fl)})}
 };
+Drive.prototype.dress=function(){
+ if(!this.scene||this.destroyed)return;
+ var self=this,d;
+ function pick(a){return a[Math.floor(Math.random()*a.length)]}
+ function R(n){return Math.random()*n}
+ var HS=['building-type-d','building-type-g','building-type-i','building-type-j','building-type-m','building-type-p'],
+     TS=['tree_oak','tree_detailed','tree_detailed_dark','tree_oak_dark'],
+     PS=['tree_palmTall','tree_palmShort'],
+     FL=['plant_bush','grass','flower_redC','rock_largeA','rock_smallE'];
+ for(d=18;d<this.len-44;d+=13){
+  var p=this.roadPoint(d),t=this.roadDir(d),nx=-t.z,nz=t.x,side=(Math.round(d/13)%2?1:-1);
+  var off=8+R(12),x=p.x+nx*off*side,z=p.z+nz*off*side,r=Math.random(),ry=Math.atan2(t.x,t.z)+side*Math.PI/2;
+  if(r<.34){self.place(pick(HS),x,z,ry+(Math.random()-.5)*.4,2.7+R(.8));
+   self.place('fence',p.x+nx*5.1*side-t.x*1.8,p.z+nz*5.1*side-t.z*1.8,Math.atan2(t.x,t.z),2.1);
+   self.place('fence',p.x+nx*5.1*side+t.x*1.8,p.z+nz*5.1*side+t.z*1.8,Math.atan2(t.x,t.z),2.1)}
+  else if(r<.56)self.place(pick(TS),x,z,R(6.28),2.3+R(1.0));
+  else if(r<.74)self.place(pick(PS),x,z,R(6.28),2.2+R(.7));
+  else if(r<.86)self.place(pick(FL),x,z,R(6.28),1.7+R(1.1));
+  else{self.place('crops_cornStageA',x,z,R(6.28),2.3);self.place('crops_cornStageB',x+nx*1.6,z+nz*1.6,R(6.28),2.2)}}
+ var mk=this.roadPoint(this.len*.55),mt=this.roadDir(this.len*.55),mnx=-mt.z,mnz=mt.x,mry=Math.atan2(mt.x,mt.z);
+ self.place('display-fruit',mk.x+mnx*5.6,mk.z+mnz*5.6,mry,2.6);
+ self.place('display-bread',mk.x+mnx*5.6+mt.x*2.7,mk.z+mnz*5.6+mt.z*2.7,mry,2.6);
+ self.place('shelf-boxes',mk.x+mnx*8.6,mk.z+mnz*8.6,mry+.3,2.6);
+ self.place('character-employee',mk.x+mnx*6.9,mk.z+mnz*6.9,mry+Math.PI,2.6);
+ var pk=this.roadPoint(this.len*.8),pt2=this.roadDir(this.len*.8),pnx=-pt2.z,pnz=pt2.x,pkry=Math.atan2(pt2.x,pt2.z);
+ ['taxi','suv','delivery-flat'].forEach(function(cn,k){self.place(cn,pk.x+pnx*(6.5+k*2.7),pk.z+pnz*(6.5+k*2.7),pkry+(Math.random()-.5)*.2,1.25)});
+};
 Drive.prototype.balloonCluster=function(x,y,z,n){
  var g=new THREE.Group(),cols=[WEDDING.burgundy,WEDDING.goldHot,WEDDING.cream,WEDDING.burgundyDeep],i;
  for(i=0;i<n;i++){
@@ -197,6 +236,10 @@ Drive.prototype.sign=function(x,z,ry,tex,w,h,yBase){
  face.position.y=h*.72;if(ry!==0)face.rotation.y=ry;g.add(face);
  var face2=face.clone();face2.rotation.y=ry+Math.PI;g.add(face2);
  g.position.set(x,0,z);this.scene.add(g);return g};
+Drive.prototype.buildClouds=function(){var self=this,i;this.clouds=[];
+ for(i=0;i<7;i++){var cl=new THREE.Group(),j,n=3+Math.floor(Math.random()*3);
+  for(j=0;j<n;j++){var s=new THREE.Mesh(new THREE.SphereGeometry(2.2+Math.random()*2.4,7,6),mat(0xfffaf0,{noOutline:1}));s.scale.y=.6;s.position.set(j*2.7-(n-1)*1.35,Math.random()*.7,(Math.random()-.5)*1.7);cl.add(s)}
+  cl.position.set((Math.random()-.5)*380,54+Math.random()*40,-140+Math.random()*620);this.scene.add(cl);this.clouds.push(cl)}};
 Drive.prototype.buildVenue=function(){
  var self=this,end=this.curve.getPointAt(.9995),t=this.curve.getTangentAt(.9995),nx=-t.z,nz=t.x,g=new THREE.Group();
  if(this.mode.venue==='gate'){
@@ -240,28 +283,32 @@ Drive.prototype.buildVenue=function(){
 };
 Drive.prototype.buildCar=function(){
  var g=new THREE.Group(),self=this;
- var body=box(2.1,.75,4.1,WEDDING.burgundy);body.position.y=.72;g.add(body);
- var hood=box(1.9,.5,.9,WEDDING.burgundyDeep);hood.position.set(0,.95,1.7);g.add(hood);
- var cabin=box(1.75,.72,2.1,WEDDING.white);cabin.position.set(0,1.42,-.25);g.add(cabin);
- var glass=box(1.6,.5,.1,0x2a1a20);glass.position.set(0,1.45,.82);g.add(glass);
- [[.85,1.35],[-.85,1.35],[.85,-1.35],[-.85,-1.35]].forEach(function(w){
-  var wh=cyn(.42,.42,.3,0x241d20,10);wh.rotation.z=Math.PI/2;wh.position.set(w[0],.42,w[1]);g.add(wh);
-  var hub=cyn(.2,.2,.32,WEDDING.goldHot,8);hub.rotation.z=Math.PI/2;hub.position.set(w[0],.42,w[1]);g.add(hub);
-  (self.wheels=self.wheels||[]).push(wh,hub)});
- var bump=box(2.0,.3,.2,WEDDING.goldHot);bump.position.set(0,.5,2.05);g.add(bump);
- var bump2=bump.clone();bump2.position.z=-2.05;g.add(bump2);
- var hl=new THREE.Mesh(new THREE.SphereGeometry(.14,6,6),new THREE.MeshBasicMaterial({color:0xfff2cf}));
- hl.position.set(.7,.85,2.12);g.add(hl);var hl2=hl.clone();hl2.position.x=-.7;g.add(hl2);
- /* the bow on the roof */
+ var sh=new THREE.Mesh(new THREE.CircleGeometry(1.9,16),new THREE.MeshBasicMaterial({color:0x2a0c12,transparent:true,opacity:.26}));
+ sh.rotation.x=-Math.PI/2;sh.position.y=.03;g.add(sh);
  var bow=new THREE.Group(),bm=mat(WEDDING.goldHot);
  var bl=new THREE.Mesh(new THREE.SphereGeometry(.24,6,5),bm);bl.scale.set(1.3,.7,.9);bl.position.x=-.26;bow.add(bl);
  var br=bl.clone();br.position.x=.26;bow.add(br);
  var knot=new THREE.Mesh(new THREE.SphereGeometry(.13,6,5),bm);bow.add(knot);
- bow.position.set(0,1.95,-.25);g.add(bow);
- /* blob shadow */
- var sh=new THREE.Mesh(new THREE.CircleGeometry(1.7,16),new THREE.MeshBasicMaterial({color:0x2a0c12,transparent:true,opacity:.28}));
- sh.rotation.x=-Math.PI/2;sh.position.y=.03;g.add(sh);
- this.scene.add(g);this.car=g};
+ bow.position.set(0,1.62,-.1);g.add(bow);
+ this.wheels=[];this.scene.add(g);this.car=g;
+ onAssets(function(){
+  if(self.destroyed||self.car!==g)return;
+  var sd=ASSETS['sedan'];
+  if(!sd){self.buildCarPrim(g,self);return}
+  var o=sd.clone();o.scale.setScalar(1.15);o.position.y=.02;
+  o.traverse(function(m){if(m.isMesh){var mn=(m.name||'').toLowerCase();
+   m.material=m.material.clone();
+   if(mn.indexOf('glass')>=0||mn.indexOf('window')>=0){m.material.color=new THREE.Color(0x2a1a20);m.material.vertexColors=false}
+   else if(mn.indexOf('wheel')<0){m.material.color=new THREE.Color(WEDDING.burgundy)}
+   if(mn.indexOf('wheel')>=0)self.wheels.push(m)}});
+  g.add(o)})};
+Drive.prototype.buildCarPrim=function(g,self){
+ var body=box(2.1,.75,4.1,WEDDING.burgundy);body.position.y=.72;g.add(body);
+ var hood=box(1.9,.5,.9,WEDDING.burgundyDeep);hood.position.set(0,.95,1.7);g.add(hood);
+ var cabin=box(1.75,.72,2.1,WEDDING.white);cabin.position.set(0,1.42,-.25);g.add(cabin);
+ [[.85,1.35],[-.85,1.35],[.85,-1.35],[-.85,-1.35]].forEach(function(w){
+  var wh=cyn(.42,.42,.3,0x241d20,10);wh.rotation.z=Math.PI/2;wh.position.set(w[0],.42,w[1]);g.add(wh);
+  (self.wheels=self.wheels||[]).push(wh)})};
 Drive.prototype.buildGoat=function(){
  var g=new THREE.Group();
  var body=box(1.05,.55,.5,0xf3ead8);body.position.y=.55;g.add(body);
@@ -301,7 +348,7 @@ Drive.prototype.frame=function(){
  var self=this;
  try{if(!this.paused&&!document.hidden)this.tick(Math.min(this.clock.getDelta(),.1))}
  catch(e){/* one bad frame must never freeze the drive */}
- this.renderer.render(this.scene,this.camera);
+ if(this.effect)this.effect.render(this.scene,this.camera);else this.renderer.render(this.scene,this.camera);
  this.raf=requestAnimationFrame(this.loop)};
 Drive.prototype.tick=function(dt){
  var self=this,dur=this.dur||DUR;
@@ -323,6 +370,7 @@ Drive.prototype.tick=function(dt){
  this.car.position.set(pos.x,.06+Math.sin(this.t/120)*.03,pos.z);
  this.car.rotation.y=heading;this.car.rotation.x=0;this.car.rotation.z=roll;
  var spin=dt*26*(1-p*.35);this.wheels.forEach(function(w){w.rotation.x+=spin});
+ if(this.clouds)for(var ci=0;ci<this.clouds.length;ci++){var cc=this.clouds[ci];cc.position.x+=dt*1.4;if(cc.position.x>240)cc.position.x=-240}
  /* goat: trots across the road just past mid-journey */
  if(!this.goatDone&&d>=GOAT_AT){this.goatDone=true;this.goatT=0}
  if(this.goatDone)this.runGoat(dt,dist);
@@ -387,7 +435,7 @@ Drive.prototype.resize=function(){
  this.camera.aspect=mount.clientWidth/Math.max(1,mount.clientHeight);
  this.camera.updateProjectionMatrix();this.renderer.setSize(mount.clientWidth,mount.clientHeight)};
 Drive.prototype.destroy=function(){
- cancelAnimationFrame(this.raf);window.removeEventListener('resize',this.onR);
+ this.destroyed=true;cancelAnimationFrame(this.raf);window.removeEventListener('resize',this.onR);
  mount.innerHTML='';this.renderer.dispose()};
 /* camera arrival beauty shot: smoothed toward the venue */
 var camAimT=null,camT=null;
