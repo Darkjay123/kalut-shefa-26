@@ -829,4 +829,5 @@ html.ks-lock{overflow:hidden}
 
 /* cute-drive edition: the world is scenery, not a control */
 #jMap canvas{pointer-events:none !important}
-.jm-top{z-index:40}
+.jm-top{z-index:9999 !important}
+#jMap > *{pointer-events:none !important}
