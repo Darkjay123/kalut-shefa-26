@@ -17,7 +17,7 @@ var V={
   church:[6.1606062,6.9934657],
   route:window.KS_ROUTE_TRAD||null,
   start:[6.1335230,6.8002695],
-  zStart:5.6, zFollow:15.3, zEnd:17.2, dur:30000, km:27.0, hudTail:"km to Nimo",
+  zStart:5.6, zFollow:15.3, zEnd:17.2, dur:(typeof SAT!=='undefined'&&SAT)?55000:30000, km:27.0, hudTail:"km to Nimo",
   pois:[{f:0,e:"🚌",n:"Upper Iweka"},{f:.7273,e:"🏘️",n:"Abagana"},{f:.9328,e:"🚦",n:"Enugu-Ukwu"}],
   stops:[
    {f:0,     t:"Upper Iweka, Onitsha", s:"Jump on the Old Road. Abagana first."},
@@ -211,15 +211,16 @@ function warmCorridor(){
   function txy(lat,lng,z){var t=Math.pow(2,z),x=(lng+180)/360*t;
    var r=lat*Math.PI/180,y=(1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*t;
    return[Math.floor(((x%t)+t)%t),Math.max(0,Math.min(t-1,Math.floor(y)))]}
-  var zs=POV?[16,17]:[14,15];
+  var zs=POV?[14,16,17]:[14,15];
   for(var i=0;i<cs.length;i+=Math.max(1,Math.round(cs.length/50))){
    for(var zi=0;zi<zs.length;zi++){var z=zs[zi],xy=txy(cs[i][0],cs[i][1],z);
     for(var dx=-1;dx<=1;dx++)for(var dy=-1;dy<=1;dy++){
      var k=z+':'+(xy[0]+dx)+':'+(xy[1]+dy);
      if(!seen[k]){seen[k]=1;
       urls.push('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/'+z+'/'+(xy[1]+dy)+'/'+(xy[0]+dx))}}}}
-  urls=urls.slice(0,380);
-  for(var u=0;u<urls.length;u++){var im=new Image();im.src=urls[u]}
+  urls=urls.slice(0,420);
+  var q=urls.slice();
+  (function pump(){var n=0;while(n<6&&q.length){var im=new Image();im.onload=im.onerror=function(){setTimeout(pump,30)};im.src=q.shift();n++}})();
  }catch(e){}}
 function loopStart(){if(state!=='prefly')return;state='drive';t0=performance.now();prevD=0;prevT=t0;kmhS=0;wheelAng=0;prevRaw=null;raf=requestAnimationFrame(frame)}
 /* white-wedding flight: dive in flat, THEN tilt into 3D once the ground fills the screen
