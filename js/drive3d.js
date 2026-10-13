@@ -19,7 +19,7 @@ var V={
   stops:[
    {f:0,    t:"Upper Iweka, Onitsha", s:"Jump on the Old Road. Abagana first."},
    {f:.3,   t:"The Old Road",         s:"Windows down, gold light, good music."},
-   {f:.5,   t:"Almost there",         s:"The goat has right of way. We wait."},
+   {f:.5,   t:"Almost there",         s:"A donkey has right of way. We wait."},
    {f:.75,  t:"Enugu-Ukwu junction",  s:"Ezi-Elias ahead. Turn right towards Nimo."},
    {f:.92,  t:"Nimo",                 s:"The compound lights are close now."},
    {f:1,    t:"Nwakor compound",      s:"Behind Assumption Catholic Church. You have arrived."}
@@ -56,11 +56,11 @@ var mode=null,liveKey='trad',engine=null,state='idle';
 var GRAD=(function(){var s=[95,150,210,255],d=new Uint8Array(s.length*4),i;for(i=0;i<s.length;i++){d[i*4]=d[i*4+1]=d[i*4+2]=s[i];d[i*4+3]=255}var t=new THREE.DataTexture(d,s.length,1,THREE.RGBAFormat);t.minFilter=t.magFilter=THREE.NearestFilter;t.needsUpdate=true;return t})();
 function mat(c,opt){opt=Object.assign({},opt||{});var no=opt.noOutline;delete opt.noOutline;var m=new THREE.MeshToonMaterial(Object.assign({color:c,gradientMap:GRAD},opt));if(no)m.userData.outlineParameters={visible:false};return m}
 /* CC0 scenery: Kenney kits, loaded once, cloned everywhere */
-var ASSETS={},ASSET_LEFT=0,ASSET_READY=false,ASSET_CBS=[];
+var ASSETS={},ASSET_ANIMS={},ASSET_LEFT=0,ASSET_READY=false,ASSET_CBS=[];
 (function(){if(!window.THREE||!THREE.GLTFLoader){ASSET_READY=true;return}
- var NAMES=['building-type-d','building-type-g','building-type-i','building-type-j','building-type-m','building-type-p','fence','fence-2x2','tree-large','planter','sedan','suv','taxi','truck','delivery-flat','tree_palmTall','tree_palmShort','tree_oak','tree_oak_dark','tree_detailed','tree_detailed_dark','plant_bush','flower_redC','grass','rock_largeA','rock_smallE','crops_cornStageA','crops_cornStageB','fence_simpleLow','stone_tallD','display-fruit','display-bread','shelf-boxes','column','character-employee'];
+ var NAMES=['donkey','casual_male','casual_female','building-type-d','building-type-g','building-type-i','building-type-j','building-type-m','building-type-p','fence','fence-2x2','tree-large','planter','sedan','suv','taxi','truck','delivery-flat','tree_palmTall','tree_palmShort','tree_oak','tree_oak_dark','tree_detailed','tree_detailed_dark','plant_bush','flower_redC','grass','rock_largeA','rock_smallE','crops_cornStageA','crops_cornStageB','fence_simpleLow','stone_tallD','display-fruit','display-bread','shelf-boxes','column','character-employee'];
  ASSET_LEFT=NAMES.length;var L=new THREE.GLTFLoader();
- NAMES.forEach(function(nm){L.load('assets/models/'+nm+'.glb',function(g){ASSETS[nm]=g.scene;done()},undefined,function(){done()})});
+ NAMES.forEach(function(nm){L.load('assets/models/'+nm+'.glb',function(g){ASSETS[nm]=g.scene;ASSET_ANIMS[nm]=g.animations||[];done()},undefined,function(){done()})});
  function done(){ASSET_LEFT--;if(ASSET_LEFT<=0&&!ASSET_READY){ASSET_READY=true;var c=ASSET_CBS;ASSET_CBS=[];c.forEach(function(f){f()})}}})();
 function onAssets(f){if(ASSET_READY)f();else ASSET_CBS.push(f)}
 function box(w,h,d,c,round){
@@ -111,8 +111,8 @@ Drive.prototype.build=function(){
  this.curve=new THREE.CatmullRomCurve3(pts.map(function(p){return new THREE.Vector3(p[0],0,p[1])}));
  this.len=this.curve.getLength();
  this.ROAD_END=this.len-14; /* car stops short of the gate */
- this.buildRoad();this.buildGround();this.buildScenery();this.buildVenue();this.buildCar();this.buildGoat();this.buildPuffs();this.buildClouds();
- var selfA=this;onAssets(function(){if(selfA&&!selfA.destroyed)selfA.dress()});
+ this.buildRoad();this.buildGround();this.buildScenery();this.buildVenue();this.buildCar();this.buildGoat();this.buildFolks();this.buildButterflies();this.buildPuffs();this.buildClouds();
+ var selfA=this;onAssets(function(){if(selfA&&!selfA.destroyed)selfA.dress()});this.sway=[];this.bflies=[];
  this.u=0;this.state='attract';this.attractT=0;this.capFired=[];this.goatDone=false;
  this.camPos=new THREE.Vector3();this.camAim=new THREE.Vector3();
  this.clock=new THREE.Clock();
@@ -211,8 +211,8 @@ Drive.prototype.dress=function(){
   if(r<.34){self.place(pick(HS),x,z,ry+(Math.random()-.5)*.4,2.7+R(.8));
    self.place('fence',p.x+nx*5.1*side-t.x*1.8,p.z+nz*5.1*side-t.z*1.8,Math.atan2(t.x,t.z),2.1);
    self.place('fence',p.x+nx*5.1*side+t.x*1.8,p.z+nz*5.1*side+t.z*1.8,Math.atan2(t.x,t.z),2.1)}
-  else if(r<.56)self.place(pick(TS),x,z,R(6.28),2.3+R(1.0));
-  else if(r<.74)self.place(pick(PS),x,z,R(6.28),2.2+R(.7));
+  else if(r<.56){var tr=self.place(pick(TS),x,z,R(6.28),2.3+R(1.0));if(tr)self.sway.push({o:tr,ph:Math.random()*6.28})}
+  else if(r<.74){var tr2=self.place(pick(PS),x,z,R(6.28),2.2+R(.7));if(tr2)self.sway.push({o:tr2,ph:Math.random()*6.28})}
   else if(r<.86)self.place(pick(FL),x,z,R(6.28),1.7+R(1.1));
   else{self.place('crops_cornStageA',x,z,R(6.28),2.3);self.place('crops_cornStageB',x+nx*1.6,z+nz*1.6,R(6.28),2.2)}}
  var mk=this.roadPoint(this.len*.55),mt=this.roadDir(this.len*.55),mnx=-mt.z,mnz=mt.x,mry=Math.atan2(mt.x,mt.z);
@@ -236,6 +236,36 @@ Drive.prototype.sign=function(x,z,ry,tex,w,h,yBase){
  face.position.y=h*.72;if(ry!==0)face.rotation.y=ry;g.add(face);
  var face2=face.clone();face2.rotation.y=ry+Math.PI;g.add(face2);
  g.position.set(x,0,z);this.scene.add(g);return g};
+Drive.prototype.buildButterflies=function(){var self=this;
+ var cols=[0xd8bb8a,0x9a1b2e,0xf3ead8];
+ for(var i=0;i<4;i++){
+  var g=new THREE.Group();
+  var wg=new THREE.PlaneGeometry(.22,.16);
+  var mm=new THREE.MeshToonMaterial({color:cols[i%3],side:THREE.DoubleSide,gradientMap:this.grad});
+  var w1=new THREE.Mesh(wg,mm),w2=new THREE.Mesh(wg,mm);
+  w1.position.x=.11;w2.position.x=-.11;
+  g.add(w1);g.add(w2);
+  g.userData={f:.1+i*.22,r:1.6+Math.random()*2.2,sp:.5+Math.random()*.4,ph:Math.random()*6.28,w1:w1,w2:w2};
+  this.scene.add(g);this.bflies.push(g)}
+};
+Drive.prototype.frame_hooks||(Drive.prototype.frame_hooks=[]);
+Drive.prototype.buildFolks=function(){var self=this;
+ onAssets(function(){
+  if(self.destroyed)return;
+  function actor(nm,x,z,ry,sc,clipName){
+   var src=ASSETS[nm];if(!src)return null;
+   src.position.set(x,0,z);src.rotation.y=ry;src.scale.setScalar(sc);
+   self.scene.add(src);
+   var clips=ASSET_ANIMS[nm]||[];
+   for(var i=0;i<clips.length;i++){if(clips[i].name===clipName){
+     var mx=new THREE.AnimationMixer(src);mx.clipAction(clips[i]).play();self.mixers.push(mx);break}}
+   return src}
+  var mk=this.len*.55;
+  if(this.marketPos)actor('casual_female',this.marketPos.x+3.4,this.marketPos.z+1.2,2.6,1.5,'Idle');
+  var end=this.road?this.road.getPointAt(.999):null;
+  if(end)actor('casual_male',end.x+4.5,end.z+2.2,2.4,1.5,'Victory');
+ });
+};
 Drive.prototype.buildClouds=function(){var self=this,i;this.clouds=[];
  for(i=0;i<7;i++){var cl=new THREE.Group(),j,n=3+Math.floor(Math.random()*3);
   for(j=0;j<n;j++){var s=new THREE.Mesh(new THREE.SphereGeometry(2.2+Math.random()*2.4,7,6),mat(0xfffaf0,{noOutline:1}));s.scale.y=.6;s.position.set(j*2.7-(n-1)*1.35,Math.random()*.7,(Math.random()-.5)*1.7);cl.add(s)}
@@ -309,17 +339,20 @@ Drive.prototype.buildCarPrim=function(g,self){
  [[.85,1.35],[-.85,1.35],[.85,-1.35],[-.85,-1.35]].forEach(function(w){
   var wh=cyn(.42,.42,.3,0x241d20,10);wh.rotation.z=Math.PI/2;wh.position.set(w[0],.42,w[1]);g.add(wh);
   (self.wheels=self.wheels||[]).push(wh)})};
-Drive.prototype.buildGoat=function(){
- var g=new THREE.Group();
- var body=box(1.05,.55,.5,0xf3ead8);body.position.y=.55;g.add(body);
- var head=box(.42,.4,.36,0xf3ead8);head.position.set(.68,.78,0);g.add(head);
- var horn=cyn(.03,.05,.3,0xbfa374,5);horn.position.set(.78,1.05,.12);horn.rotation.z=-.5;g.add(horn);
- var horn2=horn.clone();horn2.position.z=-.12;g.add(horn2);
- var leg,i;for(i=0;i<4;i++){leg=box(.1,.42,.1,0xd9cbb2);leg.position.set((i<2?.35:-.35),.21,(i%2?.16:-.16));g.add(leg)}
- var spot=box(.4,.3,.06,WEDDING.burgundyDeep);spot.position.set(0,.62,.27);g.add(spot);
- g.visible=false;this.scene.add(g);this.goat=g;this.goatSide=1};
+Drive.prototype.buildGoat=function(){var self=this;this.mixers=[];
+ onAssets(function(){
+  if(self.destroyed)return;
+  var dk=ASSETS['donkey'];if(!dk)return;
+  dk.scale.setScalar(1.5);dk.visible=false;self.scene.add(dk);
+  self.donkey=dk;
+  var clips=ASSET_ANIMS['donkey']||[];
+  for(var i=0;i<clips.length;i++){if(clips[i].name==='Walk'){
+    var m2=new THREE.AnimationMixer(dk);m2.clipAction(clips[i]).play();self.mixers.push(m2);break}}
+ });
+ this.goatSide=1};
+
 Drive.prototype.runGoat=function(dt,dist){
- if(this.goatT>=1.9){this.goat.visible=false;return}
+ if(!this.donkey)return;if(this.goatT>=1.9){this.donkey.visible=false;return}
  this.goatT+=dt;
  var gdir=this.roadDir(Math.min(this.len-6,dist+60));
  var gp=this.roadPoint(Math.min(this.len-6,dist+60));
@@ -327,7 +360,7 @@ Drive.prototype.runGoat=function(dt,dist){
  this.goat.position.set(gp.x-gdir.z*across*this.goatSide,0,gp.z+gdir.x*across*this.goatSide);
  this.goat.rotation.y=Math.atan2(gdir.x,gdir.z)+(this.goatSide>0?Math.PI/2:-Math.PI/2);
  this.goat.visible=true;
- var hop=(this.goatT*7)%2;this.goat.position.y=hop<1?.05*hop:.05*(2-hop)};
+ this.donkey.visible=true};
 Drive.prototype.buildPuffs=function(){
  var tex=heartTex(),i,self=this;
  this.puffs=[];
@@ -346,11 +379,24 @@ Drive.prototype.attract=function(dt){
  this.camera.lookAt(look.x,2,look.z)};
 Drive.prototype.frame=function(){
  var self=this;
- try{if(!this.paused&&!document.hidden)this.tick(Math.min(this.clock.getDelta(),.1))}
+ try{if(!this.paused&&!document.hidden)this.elapsed=(this.elapsed||0)+Math.min(this.clock.getDelta(),.1);this.tick(Math.min((this.clock2||(this.clock2=new THREE.Clock())).getDelta(),.1))}
  catch(e){/* one bad frame must never freeze the drive */}
  if(this.effect)this.effect.render(this.scene,this.camera);else this.renderer.render(this.scene,this.camera);
  this.raf=requestAnimationFrame(this.loop)};
 Drive.prototype.tick=function(dt){
+ for(var mi=0;mi<this.mixers.length;mi++)this.mixers[mi].update(dt);
+ for(var si=0;si<this.sway.length;si++){var s=this.sway[si];s.o.rotation.z=Math.sin(this.elapsed*1.3+s.ph)*.014}
+ for(var bi=0;bi<this.bflies.length;bi++){
+  var bf=this.bflies[bi],d2=bf.userData;
+  var u=(d2.f+this.elapsed*d2.sp*.004)%1;
+  var pp=this.road.getPointAt(u),tt=this.road.getTangentAt(u);
+  var nx=-tt.z,nz=tt.x,orb=Math.sin(this.elapsed*.9+d2.ph)*d2.r;
+  bf.position.set(pp.x+nx*orb,1.1+Math.sin(this.elapsed*2.2+d2.ph)*.35,pp.z+nz*orb);
+  var fl=Math.sin(this.elapsed*14+d2.ph)*.9;
+  d2.w1.rotation.y=fl;d2.w2.rotation.y=-fl;
+  bf.rotation.y=Math.atan2(tt.x,tt.z)}
+
+
  var self=this,dur=this.dur||DUR;
  if(this.state==='attract'){this.attract(dt);return}
  if(this.state==='arrived'){

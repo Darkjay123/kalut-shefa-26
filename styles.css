@@ -831,3 +831,17 @@ html.ks-lock{overflow:hidden}
 #jMap canvas{pointer-events:none !important}
 .jm-top{z-index:9999 !important}
 #jMap > *{pointer-events:none !important}
+
+/* === film mode: letterbox, title card, vignette === */
+.j-film{position:absolute;inset:0;z-index:40;pointer-events:none}
+.jf-bar{position:absolute;left:0;right:0;height:0;background:#0b0204;transition:height .9s cubic-bezier(.22,1,.36,1)}
+.jf-t{top:0}.jf-b{bottom:0}
+#jModal.film .jf-bar{height:12%}
+#jModal.film-title .jf-bar{height:12%}
+.jf-title{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;color:#f3ead8;opacity:0;transition:opacity .6s ease}
+.jf-title small{display:block;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.42em;text-transform:uppercase;opacity:.75;margin-bottom:10px}
+.jf-title b{font-family:'Playfair Display',serif;font-weight:600;font-style:italic;font-size:clamp(28px,6vw,54px);letter-spacing:.04em}
+#jModal.film-title .jf-title{opacity:1;animation:jfFade 3.2s ease forwards}
+@keyframes jfFade{0%{opacity:0;transform:translateY(-50%) translateY(8px)}18%{opacity:1;transform:translateY(-50%)}78%{opacity:1}100%{opacity:0;transform:translateY(-50%) translateY(-6px)}}
+.jf-vig{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 52%,rgba(11,2,4,.38) 100%)}
+#jModal:not(.film-title) .jf-title{display:none}

@@ -15,13 +15,19 @@ var liveKey='trad',state='idle';
 function setCap(s){capBox.classList.remove('hide');capT.textContent=s.t;capS.textContent=s.s;
  capBox.classList.remove('in');void capBox.offsetWidth;capBox.classList.add('in')}
 function beginDrive(){
+ modal.classList.add('film');
+ var ft=$('jFilmTitle');
+ if(ft)ft.textContent=(liveKey==='trad')?'The road to Nimo':'Into Abraka';
+ clearTimeout(beginDrive._ft);
+ beginDrive._ft=setTimeout(function(){modal.classList.remove('film-title')},3200);
+ modal.classList.add('film-title');
  if(state==='drive')return;
  beginBtn.classList.remove('show');arrival.classList.remove('show');skip.classList.add('show');
  capBox.classList.add('hide');state='drive';
  DRIVE3D.begin({key:liveKey,area:'',start:true,
   setCap:setCap,
   onArrive:function(){
-   state='arrived';skip.classList.remove('show');
+   state='arrived';skip.classList.remove('show');modal.classList.remove('film');modal.classList.remove('film-title');
    setTimeout(function(){
     arrival.classList.add('show');capBox.classList.add('hide');
     if(window.confetti&&!REDUCE)confetti({particleCount:130,spread:90,origin:{y:.55},
@@ -48,6 +54,7 @@ function open(key){
  /* straight to the drive: no questions, just the road */
  setTimeout(function(){if(state==='idle')beginDrive()},750)}
 function close(){
+ modal.classList.remove('film');modal.classList.remove('film-title');
  DRIVE3D.dispose();state='idle';
  modal.classList.remove('open');document.documentElement.classList.remove('ks-lock');
  window.lenis&&window.lenis.start()}
