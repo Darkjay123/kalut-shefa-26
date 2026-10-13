@@ -20,6 +20,7 @@
 <link rel="preload" as="image" href="assets/img/logo.webp">
 <link rel="stylesheet" href="styles.css">
 <script src="js/boot.js"></script>
+  <link rel="stylesheet" href="assets/vendor/leaflet.min.css">
 </head>
 <body class="locked">
 
@@ -118,7 +119,7 @@
         <div class="cd-unit" data-u="s"><svg viewBox="0 0 100 100"><circle class="track-c" cx="50" cy="50" r="46"/><circle class="prog" cx="50" cy="50" r="46"/></svg><div class="cd-face"><span class="cd-num"><span class="n">00</span></span><div class="cd-label">Seconds</div></div></div>
       </div>
     </div>
-    <svg class="cd-heart" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2.3 4.5 6 4.5c2.1 0 3.5 1.2 4.2 2.4h1.6c.7-1.2 2.1-2.4 4.2-2.4 3.7 0 5.6 3.9 4 7.2C19.5 16.4 12 21 12 21z"/></svg>
+    <svg class="cd-heart" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
     <p class="cd-sub">That's <b id="cdHeartbeats">0</b> more heartbeats of waiting.</p>
     <div class="cd-mini reveal">
       <div><small>Traditional</small><b id="miniTrad">–</b></div>
@@ -250,10 +251,10 @@
           <h4>Traditional Wedding</h4>
           <dl>
             <div><dt>Date</dt><dd>Saturday, 21 November 2026</dd></div>
-            <div><dt>Time &amp; venue</dt><dd>To be announced. Check back soon.</dd></div>
+            <div><dt>Venue</dt><dd>Nwakor compound, Uruezebaluchi village, Nimo, Anambra State · behind Assumption Catholic Church (back of Igboka compound)</dd></div><div><dt>Time</dt><dd>To be announced</dd></div>
             <div><dt>Wear the colours</dt><dd><div class="swatches"><i style="background:#6e0f1f"></i><i style="background:#d8bb8a"></i><i style="background:#5f6b34"></i><i style="background:#fff"></i></div></dd></div>
           </dl>
-          <div class="cal-btns"><a class="btn btn-burg" data-cal="trad" href="#">Add to calendar</a></div>
+          <div class="cal-btns"><a class="btn btn-line" data-journey="trad" href="#">Take me there ✦</a><a class="btn btn-burg" data-cal="trad" href="#">Add to calendar</a></div>
         </div>
       </div>
       <div class="ev white reveal" tabindex="0">
@@ -266,10 +267,10 @@
           <h4>White Wedding</h4>
           <dl>
             <div><dt>Date</dt><dd>Saturday, 28 November 2026</dd></div>
-            <div><dt>Time &amp; venue</dt><dd>To be announced. Check back soon.</dd></div>
+            <div><dt>Venue</dt><dd>Gospel Stars Church, No. 9 Gospel Stars Church Street, off Little London Road, Abraka, Delta State</dd></div><div><dt>Time</dt><dd>To be announced</dd></div>
             <div><dt>Wear the colours</dt><dd><div class="swatches"><i style="background:#6e0f1f"></i><i style="background:#d8bb8a"></i><i style="background:#5f6b34"></i><i style="background:#fff"></i></div></dd></div>
           </dl>
-          <div class="cal-btns"><a class="btn btn-burg" data-cal="white" href="#">Add to calendar</a></div>
+          <div class="cal-btns"><a class="btn btn-line" data-journey="white" href="#">Take me there ✦</a><a class="btn btn-burg" data-cal="white" href="#">Add to calendar</a></div>
         </div>
       </div>
     </div>
@@ -305,7 +306,7 @@
     <div class="love-tap reveal">
       <button class="big-heart" id="bigHeart" aria-label="Send a heart to the couple">
         <span class="bh-ring"></span><span class="bh-ring r2"></span>
-        <svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="bhG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b4283b"/><stop offset="1" stop-color="#6e0f1f"/></linearGradient></defs><path fill="url(#bhG)" stroke="#d8bb8a" stroke-width=".5" d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2.3 4.5 6 4.5c2.1 0 3.5 1.2 4.2 2.4h1.6c.7-1.2 2.1-2.4 4.2-2.4 3.7 0 5.6 3.9 4 7.2C19.5 16.4 12 21 12 21z"/></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="bhG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b4283b"/><stop offset="1" stop-color="#6e0f1f"/></linearGradient></defs><path fill="url(#bhG)" stroke="#d8bb8a" stroke-width=".5" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
         <span class="bh-label">Tap me</span>
       </button>
       <div class="love-count"><b id="loveCount">0</b><span>hearts sent to the couple</span></div>
@@ -469,6 +470,30 @@
 <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js" integrity="sha384-B2WBjDzEjJpYvhmi2UyEn7rektqkf5suS6sNoyyrf0EBAwBHdkiXxIlU0V5Ru2ed" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js" integrity="sha384-sPwMflxqfAN+Q5mvlkLmHiX3PORGbZSXHiSGPTXT9VHCD/AB+b+r+vJWsqprv+7k" crossorigin="anonymous"></script>
 <script src="https://js.paystack.co/v2/inline.js" async></script>
+<script src="assets/vendor/leaflet.min.js" defer></script>
+<script src="js/journey.js" defer></script>
 <script src="app.js"></script>
+<!-- ============ JOURNEY ============ -->
+<div class="journey" id="journeyModal" role="dialog" aria-modal="true" aria-label="Journey to the venue">
+  <div id="jMap"></div>
+  <div class="j-bar"><i id="jBar"></i></div>
+  <div class="jm-top">
+    <button class="jm-close" id="jClose" aria-label="Close the map">✕</button>
+    <div class="jm-head"><small id="jEyebrow"></small><b id="jTitle"></b></div>
+    <button class="jm-skip" id="jSkip">Skip to arrival</button>
+  </div>
+  <div class="j-cap" id="jCap"><b id="jCapT"></b><span id="jCapS"></span></div>
+  <button class="j-begin" id="jBegin">Begin the journey ✦</button>
+  <div class="j-arrival" id="jArrival">
+    <small>You have arrived</small>
+    <h5 id="jArrName"></h5>
+    <p id="jArrAddr"></p>
+    <div class="j-arr-btns">
+      <a class="btn btn-burg" id="jDir" target="_blank" rel="noopener">Get directions</a>
+      <a class="btn btn-line" id="jMapBtn" target="_blank" rel="noopener">Open in Maps</a>
+    </div>
+    <button class="j-replay" id="jAgain">↺ Replay the journey</button>
+  </div>
+</div>
 </body>
 </html>

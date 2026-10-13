@@ -217,7 +217,7 @@ $$('.vplayer').forEach(box=>{ const v=box.querySelector('video'), b=box.querySel
 });
 
 /* ---------- event cards + calendar ---------- */
-$$('.ev').forEach(c=>{ c.addEventListener('click',e=>{ if(e.target.closest('[data-cal]')) return; c.classList.toggle('flipped'); }); c.addEventListener('keydown',e=>{if(e.key==='Enter')c.classList.toggle('flipped')}); });
+$$('.ev').forEach(c=>{ c.addEventListener('click',e=>{ if(e.target.closest('[data-cal],[data-journey]')) return; c.classList.toggle('flipped'); }); c.addEventListener('keydown',e=>{if(e.key==='Enter')c.classList.toggle('flipped')}); });
 $$('[data-cal]').forEach(a=>a.addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation(); const k=a.dataset.cal==='trad'?'trad':'white'; const ev=EV[k];
   const d=new Date(ev.date); const ymd=x=>x.toISOString().slice(0,10).replace(/-/g,''); const start=new Date(d.getTime()+3600e3); const end=new Date(start.getTime()+864e5);
   const title=`Elijah & Mary-Ann · ${ev.name}`; const details='Kalut-Shefa \'26 · '+location.href.split('#')[0];
@@ -242,7 +242,8 @@ if(PORTRAITS.length){
   row.innerHTML=PORTRAITS.map((src,i)=>`<figure class="arch real reveal" data-i="${i}"><img src="${src}" alt="Elijah and Mary-Ann, pre-wedding portrait ${i+1}" loading="lazy"></figure>`).join('');
 } else {
   const ph=['ring-red-sm','sun-circle-sm','said-yes-sm'];
-  row.innerHTML=ph.map((p,i)=>`<div class="arch ${i===1?'mid':''} reveal"><div class="ph" style="background-image:url(assets/img/${p}.webp)"></div><div class="soon">${i===1?cam+'<b>Coming soon</b><small>Official portraits</small>':i===0?'<b>21.11</b><small>Traditional</small>':'<b>28.11</b><small>White wedding</small>'}</div></div>`).join('');
+  row.classList.add('solo');
+  row.innerHTML=`<div class="arch mid solo reveal"><div class="ph" style="background-image:url(assets/img/${ph[1]}.webp)"></div><div class="soon">${cam}<b>Coming soon</b><small>Official portraits</small></div></div>`;
 }
 const lb=$('#lightbox'), lbImg=lb.querySelector('img'); let li=0;
 const show=i=>{li=(i+PORTRAITS.length)%PORTRAITS.length; lbImg.src=PORTRAITS[li]; lbImg.style.animation='none'; lbImg.offsetHeight; lbImg.style.animation=''; lb.querySelector('.lb-count').textContent=`${li+1} / ${PORTRAITS.length}`;};
