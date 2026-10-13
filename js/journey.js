@@ -59,8 +59,8 @@ function clearLayers(){wpDots.forEach(function(d){map.removeLayer(d)});wpDots=[]
  if(pin){map.removeLayer(pin);pin=null}}
 function initMap(){if(map)return;
  map=L.map(mapEl,{zoomControl:false,attributionControl:true,zoomSnap:.1,zoomDelta:.5,keyboard:false});
- L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:19,
-  attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>'}).addTo(map);}
+ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,
+  attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors'}).addTo(map);}
 function setCap(s){capBox.classList.remove('hide');capT.textContent=s.t;capS.textContent=s.s;
  capBox.classList.remove('in');void capBox.offsetWidth;capBox.classList.add('in')}
 function dropPin(){pin=L.marker(mode.church,{icon:divIcon('ks-pin','<span class="ks-pin-i">♥</span>',44,48),keyboard:false,zIndexOffset:900}).addTo(map);

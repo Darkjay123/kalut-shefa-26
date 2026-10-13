@@ -698,7 +698,7 @@ html.ks-lock{overflow:hidden}
 .journey.open{display:block}
 #jMap{position:absolute;inset:0}
 .journey .leaflet-container{background:#0b0204;font-family:var(--sans)}
-.journey .leaflet-tile-pane{filter:sepia(.55) hue-rotate(-25deg) saturate(1.6) brightness(.8) contrast(1.07)}
+.journey .leaflet-tile-pane{filter:invert(1) hue-rotate(185deg) sepia(.5) hue-rotate(-30deg) saturate(2.1) brightness(.72) contrast(1.05)}
 .journey .leaflet-control-attribution{background:rgba(11,2,4,.6)!important;color:#b49a6e;font-size:9px;padding:2px 6px}
 .journey .leaflet-control-attribution a{color:#d8bb8a}
 .j-bar{position:absolute;top:0;left:0;right:0;height:3px;z-index:11;background:rgba(216,187,138,.15)}
