@@ -68,10 +68,10 @@ function initMap(){if(map)return;
   attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors'}).addTo(map);}
 function setCap(s){capBox.classList.remove('hide');capT.textContent=s.t;capS.textContent=s.s;
  capBox.classList.remove('in');void capBox.offsetWidth;capBox.classList.add('in')}
-function dropPin(){pin=L.marker(mode.church,{icon:divIcon('ks-pin','<span class="ks-pin-i">♥</span>',44,48),keyboard:false,zIndexOffset:900}).addTo(map);
+function dropPin(){if(pin)return;pin=L.marker(mode.church,{icon:divIcon('ks-pin','<span class="ks-pin-i">♥</span>',44,48),keyboard:false,zIndexOffset:900}).addTo(map);
  var el=pin.getElement();if(el)el.querySelector('.ks-pin').classList.add('drop')}
 function arrive(){state='arrived';cancelAnimationFrame(raf);clearTimeout(preTimer);bar.style.width='100%';
- setCap(mode.stops[mode.stops.length-1]);
+ setCap(mode.stops[mode.stops.length-1]);dropPin();
  if(car)car.setLatLng(mode.church);
  if(REDUCE)map.setView(mode.church,mode.zEnd,{animate:false});
  else{map.stop();map.flyTo(mode.church,mode.zEnd,{duration:1.6,easeLinearity:.25})}

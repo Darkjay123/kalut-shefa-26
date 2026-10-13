@@ -217,7 +217,10 @@ $$('.vplayer').forEach(box=>{ const v=box.querySelector('video'), b=box.querySel
 });
 
 /* ---------- event cards + calendar ---------- */
-$$('.ev').forEach(c=>{ c.addEventListener('click',e=>{ if(e.target.closest('[data-cal],[data-journey]')) return; c.classList.toggle('flipped'); }); c.addEventListener('keydown',e=>{if(e.key==='Enter')c.classList.toggle('flipped')}); });
+$$('.ev').forEach(c=>{ c.addEventListener('click',e=>{ if(e.target.closest('[data-cal],[data-journey]')) return; c.classList.toggle('flipped');
+  if(c.classList.contains('flipped')&&innerWidth<=700){ setTimeout(()=>{ const dock=document.querySelector('.dock'); const dh=dock?dock.offsetHeight+18:88;
+    const r=c.getBoundingClientRect(); const need=r.bottom-(innerHeight-dh);
+    if(need>4){ const top=window.scrollY+need; lenis?lenis.scrollTo(top,{duration:.8}):window.scrollTo({top,behavior:'smooth'}); } },450); } }); c.addEventListener('keydown',e=>{if(e.key==='Enter')c.classList.toggle('flipped')}); });
 $$('[data-cal]').forEach(a=>a.addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation(); const k=a.dataset.cal==='trad'?'trad':'white'; const ev=EV[k];
   const d=new Date(ev.date); const ymd=x=>x.toISOString().slice(0,10).replace(/-/g,''); const start=new Date(d.getTime()+3600e3); const end=new Date(start.getTime()+864e5);
   const title=`Elijah & Mary-Ann · ${ev.name}`; const details='Kalut-Shefa \'26 · '+location.href.split('#')[0];

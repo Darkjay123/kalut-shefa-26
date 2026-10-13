@@ -748,7 +748,7 @@ html.ks-lock{overflow:hidden}
 @media(max-width:700px){.portrait-row.solo{display:flex;justify-content:center;overflow:visible;margin:0}}
 
 @media(max-width:700px){
-  .ev{min-height:660px}
+  .ev{min-height:630px}
   .ev-face{padding:26px 22px;border-radius:22px}
   .ev h4{font-size:1.55rem}
   .ev-back dl{gap:10px;margin:14px 0}
