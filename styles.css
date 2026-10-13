@@ -823,3 +823,6 @@ html.ks-lock{overflow:hidden}
 @media(max-width:700px){.j-dash{bottom:calc(200px + env(safe-area-inset-bottom));gap:12px;padding:10px 14px}.j-gauge{width:74px;height:74px}.j-dash-side b{font-size:1.05rem}}
 
 .j-gauge .g-num{font-size:12px;font-weight:600;fill:#d8bb8a;font-family:'DM Sans',sans-serif;letter-spacing:.04em}
+
+/* cute-drive edition: chooser hint */
+.js-hint{font-size:12px;color:rgba(245,239,224,.55);letter-spacing:.04em;margin-top:6px}
