@@ -109,9 +109,9 @@ function polish(){
 }
 function initMap(){
  if(map)return;
- map=new maplibregl.Map({container:mapEl,style:'https://tiles.openfreemap.org/styles/liberty',
+ map=new maplibregl.Map({container:mapEl,style:SAT?SATSTYLE:'https://tiles.openfreemap.org/styles/liberty',
   center:[mode.start[1],mode.start[0]],zoom:mode.zStart,attributionControl:{compact:false},interactive:false});
- map.on('load',function(){ready=true;polish();if(pendingFit){pendingFit();pendingFit=null}});
+ map.on('load',function(){ready=true;try{map.setFadeDuration(SAT?0:300)}catch(e){};polish();if(pendingFit){pendingFit();pendingFit=null}});
 }
 function clearLayers(){
  poiDots.forEach(function(d){d.remove()});poiDots=[];fired=[];lastBrg=null;lastPitch=0;
@@ -164,8 +164,7 @@ function frame(ts){
   var d=distFrac(p),dOut=posAt(d*ARC.tot),pos=dOut,i=dOut[2];
   if(!isFinite(pos[0])||!isFinite(pos[1])){raf=requestAnimationFrame(frame);return}
   var remS=(1-p)*mode.dur/1000, mm=Math.floor(remS/60), ss=Math.floor(remS%60);
-  if(POV){hud.textContent=Math.round(kmhS)+' km/h · '+(Math.max(0,(1-d)*mode.km)).toFixed(1)+' '+mode.hudTail+' · '+mm+':'+String(ss).padStart(2,'0')+' to the gate'}
-  else hud.textContent=(Math.max(0,(1-d)*mode.km)).toFixed(1)+' '+mode.hudTail+' · '+mm+':'+String(ss).padStart(2,'0')+' to the gate';
+  if(!POV)hud.textContent=(Math.max(0,(1-d)*mode.km)).toFixed(1)+' '+mode.hudTail+' · '+mm+':'+String(ss).padStart(2,'0')+' to the gate';
   hud.classList.add('show');
   var nxt=RT[Math.min(i+1,RT.length-1)],prv=RT[Math.max(i-1,0)];
   var brg=Math.atan2(nxt[0]-prv[0],nxt[1]-prv[1])*180/Math.PI;if(brg<0)brg+=360;
@@ -178,15 +177,21 @@ function frame(ts){
    var dbr=brg-prevRaw;while(dbr>180)dbr-=360;while(dbr<-180)dbr+=360;prevRaw=brg;
    var wt=Math.max(-80,Math.min(80,dbr/dtS*.32));
    wheelAng+=(wt-wheelAng)*.22;
-   var wsvg=jWheelEl&&jWheelEl.querySelector('svg');if(wsvg)wsvg.style.transform='rotate('+wheelAng.toFixed(1)+'deg)'}
+   var wob=Math.sin(ts/280)*Math.min(2.2,kmhS*.045);
+   var wsvg=jWheelEl&&jWheelEl.querySelector('svg');if(wsvg)wsvg.style.transform='rotate('+(wheelAng+wob).toFixed(1)+'deg)';
+   if(gNum){gNum.textContent=Math.round(kmhS);
+    if(gNeedle)gNeedle.style.transform='rotate('+(-120+Math.max(0,Math.min(240,kmhS))/240*240).toFixed(1)+'deg)';
+    gKm.textContent=(Math.max(0,(1-d)*mode.km)).toFixed(1);
+    gEta.textContent=mm+':'+String(ss).padStart(2,'0')}}
   if(POV){
    var lk=posAt(Math.min(ARC.tot,d*ARC.tot+Math.max(ARC.tot*.002,.001)));
-   var dz=16.8+1.5*ease(Math.max(0,Math.min(1,p/.06)));
-   var dp=66*ease(Math.max(0,Math.min(1,p/.05)));
+   var dz=16.8+(SAT?.5:1.5)*ease(Math.max(0,Math.min(1,p/.06)));
+   var dp=(SAT?62:66)*ease(Math.max(0,Math.min(1,p/.05)));
+   dz+=.03*Math.sin(ts/620);dp+=.5*Math.sin(ts/900);
    setDone(i);
    map.jumpTo({center:[lk[0],lk[1]],zoom:dz,bearing:lastBrg,pitch:dp})}
   else{
-   var zoomT=Math.max(0,Math.min(1,(p-.9)/.1)),zoom=mode.zFollow+.9*ease(zoomT);
+   var zoomT=Math.max(0,Math.min(1,(p-.9)/.1)),zoom=mode.zFollow+.9*ease(zoomT);if(SAT)zoom=Math.min(zoom,15.9);
    var pitchT=Math.max(0,Math.min(1,p/.08)),pitchE=p>.92?Math.max(0,Math.min(1,(1-p)/.08)):1;
    var pitch=52*ease(pitchT)*ease(pitchE);lastPitch=pitch;
    var ahead=posAt(Math.min(ARC.tot,d*ARC.tot+ARC.tot*.022));
@@ -211,7 +216,7 @@ function startJourney(){if(state==='prefly'||state==='drive')return;
  var go=function(){
   if(mode.route){
    RT=toGL(mode.route);ARC=arc(RT);routeLayers();
-   if(POV)modal.classList.add('ks-pov');
+   if(POV){modal.classList.add('ks-pov');var gT=$('gKmT');if(gT)gT.textContent=mode.hudTail}
    if(!POV){
     car=new maplibregl.Marker({element:elFor('ride-car','<span class="ride-rot">'+CAR+'</span>'),anchor:'center'})
      .setLngLat(RT[0]).addTo(map);
@@ -374,7 +379,7 @@ function renderRecent(){
 /* ---- cockpit view: first-person dash, live steering wheel, horn ---- */
 var POV=false;
 try{POV=localStorage.getItem('ks26cam')==='pov'}catch(e){}
-var jWheelEl=$('jWheel'),prevD=0,prevT=0,kmhS=0,wheelAng=0,prevRaw=null;
+var jWheelEl=$('jWheel'),gNum=$('gNum'),gNeedle=$('gNeedle'),gKm=$('gKm'),gEta=$('gEta'),prevD=0,prevT=0,kmhS=0,wheelAng=0,prevRaw=null;
 function camLabel(){var b=$('jCam');if(b)b.textContent=POV?'\uD83C\uDFA5 Chase view':'\uD83D\uDEDE Cockpit view'}
 camLabel();
 var cBtn=$('jCam');
@@ -385,7 +390,8 @@ if(cBtn)cBtn.addEventListener('click',function(){
 
 /* ---- view toggle: night vector map <-> real satellite imagery (Esri World Imagery,
    free with attribution, no key; place labels overlaid on top) ---- */
-var SAT=false;
+var SAT=true;
+try{SAT=localStorage.getItem('ks26view')!=='night'}catch(e){}
 var SATSTYLE={version:8,
  sources:{
   sat:{type:'raster',tileSize:256,maxzoom:19,
@@ -394,20 +400,26 @@ var SATSTYLE={version:8,
   ref:{type:'raster',tileSize:256,maxzoom:19,
    tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}'],
    attribution:''}},
- layers:[{id:'sat-img',type:'raster',source:'sat',paint:{'raster-fade-duration':220}},
-         {id:'sat-ref',type:'raster',source:'ref',paint:{'raster-fade-duration':220,'raster-opacity':.9}}]};
+ layers:[{id:'sat-img',type:'raster',source:'sat',paint:{'raster-fade-duration':0}},
+         {id:'sat-ref',type:'raster',source:'ref',paint:{'raster-fade-duration':0,'raster-opacity':.9}}]};
 function toggleSat(){
  if(!map||state!=='idle')return;
  SAT=!SAT;
  jViewBtn();
  if(SAT)map.setStyle(SATSTYLE);
  else{map.setStyle('https://tiles.openfreemap.org/styles/liberty');polished=false}
- map.once('styledata',function(){setTimeout(function(){
-  polish();
-  if(RT&&ARC&&mode&&mode.route){try{map.removeSource('ks-route')}catch(e){};routeLayers()}
- },120)})}
+ afterStyle(function(){
+  try{map.setFadeDuration(SAT?0:300)}catch(e){}
+  if(!SAT)polish();
+  if(RT&&ARC&&mode&&mode.route){['ks-done','ks-done-glow','ks-full'].forEach(function(s){try{map.removeLayer(s)}catch(e){}});try{map.removeSource('ks-route')}catch(e){};routeLayers()}
+ })}
+function afterStyle(cb){var done=false,iv=null;
+ var f=function(){if(done)return;var ok=false;try{ok=map.isStyleLoaded()}catch(e){ok=false}if(!ok)return;
+  done=true;if(iv)clearInterval(iv);cb()};
+ map.once('style.load',f);iv=setInterval(f,250);setTimeout(function(){if(iv)clearInterval(iv)},6000)}
 function jViewBtn(){var b=$('jView');if(b)b.textContent=SAT?'\uD83C\uDF03 Night map':'\U0001F6F0 Satellite view'}
 var vBtn=$('jView');if(vBtn)vBtn.addEventListener('click',toggleSat);
+jViewBtn();
 
 /* shared link boot: ?from=lat,lng&w=trad&n=Warri replays that guest's exact drive */
 (function(){var q=new URLSearchParams(location.search),

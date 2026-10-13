@@ -488,7 +488,23 @@
     <button class="jm-skip" id="jSkip">Skip to arrival</button>
   </div>
   <div class="j-hud" id="jHud"></div>
-  <div class="j-wheel" id="jWheel" title="Tap for the horn">
+  <div class="j-dash" id="jDash" aria-hidden="true">
+    <svg class="j-gauge" viewBox="0 0 100 100">
+      <path class="g-arc" d="M13.63 71 A42 42 0 1 1 86.37 71"/>
+      <g><line class="g-tick" x1="18.82" y1="68.00" x2="14.06" y2="70.75"/><line class="g-tick" x1="15.76" y1="38.88" x2="10.53" y2="37.18"/><line class="g-tick" x1="35.36" y1="17.11" x2="33.12" y2="12.09"/><line class="g-tick" x1="64.64" y1="17.11" x2="66.88" y2="12.09"/><line class="g-tick" x1="84.24" y1="38.88" x2="89.47" y2="37.18"/><line class="g-tick" x1="81.18" y1="68.00" x2="85.94" y2="70.75"/></g>
+      <text class="g-lab" x="26.6" y="67.5">0</text>
+      <text class="g-lab" x="50" y="25">120</text>
+      <text class="g-lab" x="73.4" y="67.5">240</text>
+      <g class="g-needle" id="gNeedle" style="transform:rotate(-120deg)"><line x1="50" y1="56" x2="50" y2="16"/></g>
+      <circle class="g-hub" cx="50" cy="50" r="4"/>
+    </svg>
+    <div class="j-dash-side">
+      <div><b id="gKm">0.0</b><small id="gKmT">km to Nimo</small></div>
+      <div><b id="gEta">0:00</b><small>to the gate</small></div>
+    </div>
+  </div>
+
+  <div class="j-wheel" id="jWheel" title="The road ahead">
     <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <circle cx="100" cy="100" r="86" fill="none" stroke="#1c0b11" stroke-width="26"/>
       <circle cx="100" cy="100" r="86" fill="none" stroke="#d8bb8a" stroke-opacity=".5" stroke-width="2.5"/>
