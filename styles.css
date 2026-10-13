@@ -256,8 +256,11 @@ button{font-family:inherit;cursor:pointer}
 .btn-gold:hover{background-position:right center;transform:translateY(-2px);box-shadow:0 16px 40px rgba(216,187,138,.45)}
 .btn-burg{background:var(--burg);color:var(--ivory)}
 .btn-burg:hover{background:var(--wine)}
-.btn-line{border-color:var(--burg);color:var(--burg);background:transparent}
-.btn-line:hover{background:var(--burg);color:var(--ivory)}
+.btn-line{border-color:var(--gold);color:var(--gold-l);background:transparent}
+.btn-line:hover{background:var(--gold);color:var(--burg-d)}
+/* on the cream card backs the gold outline melts: burgundy there, gold everywhere else */
+.ev-back .btn-line{border-color:var(--burg);color:var(--burg)}
+.ev-back .btn-line:hover{background:var(--burg);color:var(--ivory)}
 .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
 @media(max-width:820px){.event-cards{grid-template-columns:1fr}.ev{min-height:500px}}
 
