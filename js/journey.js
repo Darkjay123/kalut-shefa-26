@@ -110,7 +110,7 @@ function polish(){
 function initMap(){
  if(map)return;
  map=new maplibregl.Map({container:mapEl,style:SAT?SATSTYLE:'https://tiles.openfreemap.org/styles/liberty',
-  center:[mode.start[1],mode.start[0]],zoom:mode.zStart,attributionControl:{compact:false},interactive:false});
+  center:[mode.start[1],mode.start[0]],zoom:mode.zStart,attributionControl:{compact:false},interactive:false,maxTileCacheSize:600});
  map.on('load',function(){ready=true;try{map.setFadeDuration(SAT?0:300)}catch(e){};polish();if(pendingFit){pendingFit();pendingFit=null}});
 }
 function clearLayers(){
@@ -185,8 +185,8 @@ function frame(ts){
     gEta.textContent=mm+':'+String(ss).padStart(2,'0')}}
   if(POV){
    var lk=posAt(Math.min(ARC.tot,d*ARC.tot+Math.max(ARC.tot*.002,.001)));
-   var dz=16.8+(SAT?.5:1.5)*ease(Math.max(0,Math.min(1,p/.06)));
-   var dp=(SAT?62:66)*ease(Math.max(0,Math.min(1,p/.05)));
+   var dz=16.6+(SAT?.6:1.7)*ease(Math.max(0,Math.min(1,p/.06)));
+   var dp=(SAT?58:66)*ease(Math.max(0,Math.min(1,p/.05)));
    dz+=.03*Math.sin(ts/620);dp+=.5*Math.sin(ts/900);
    setDone(i);
    map.jumpTo({center:[lk[0],lk[1]],zoom:dz,bearing:lastBrg,pitch:dp})}
@@ -216,7 +216,10 @@ function startJourney(){if(state==='prefly'||state==='drive')return;
  var go=function(){
   if(mode.route){
    RT=toGL(mode.route);ARC=arc(RT);routeLayers();
-   if(POV){modal.classList.add('ks-pov');var gT=$('gKmT');if(gT)gT.textContent=mode.hudTail}
+   if(POV){modal.classList.add('ks-pov');var gT=$('gKmT');if(gT)gT.textContent=mode.hudTail;
+    var ds=Math.round(mode.dur/1000);
+    if(gKm)gKm.textContent=mode.km.toFixed(1);
+    if(gEta)gEta.textContent=Math.floor(ds/60)+':'+String(ds%60).padStart(2,'0')}
    if(!POV){
     car=new maplibregl.Marker({element:elFor('ride-car','<span class="ride-rot">'+CAR+'</span>'),anchor:'center'})
      .setLngLat(RT[0]).addTo(map);
@@ -315,7 +318,7 @@ function goLive(from,label,key){
    venueName:V[key].venueName,venueAddr:V[key].venueAddr,dirLink:V[key].dirLink,mapLink:V[key].mapLink,
    church:V[key].church,route:cs.map(function(c){return[c[1],c[0]]}),start:[from[0],from[1]],
    zStart:5.6,zFollow:15.3,zEnd:V[key].zEnd,
-   dur:Math.max(18000,Math.min(50000,14000+km*700)),km:km,
+   dur:Math.max(18000,Math.min(SAT?80000:50000,14000+km*700*(SAT?1.6:1))),km:km,
    hudTail:key==='trad'?'km to Nimo':'km to Abraka',pois:[],
    stops:[{f:0,t:home,s:'The drive to '+(key==='trad'?'Nwakor compound':'Gospel Stars Church')+' begins.'},
     {amb:1,f:.45,t:'On the road',s:err?'The map drew you a straight line. The road will forgive.':'Every kilometre is part of the story.'},
@@ -394,10 +397,10 @@ var SAT=true;
 try{SAT=localStorage.getItem('ks26view')!=='night'}catch(e){}
 var SATSTYLE={version:8,
  sources:{
-  sat:{type:'raster',tileSize:256,maxzoom:19,
+  sat:{type:'raster',tileSize:256,maxzoom:17,
    tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
    attribution:'\u00a9 Esri, Maxar, Earthstar Geographics, and the GIS User Community'},
-  ref:{type:'raster',tileSize:256,maxzoom:19,
+  ref:{type:'raster',tileSize:256,maxzoom:17,
    tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}'],
    attribution:''}},
  layers:[{id:'sat-img',type:'raster',source:'sat',paint:{'raster-fade-duration':0}},
