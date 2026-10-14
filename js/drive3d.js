@@ -130,13 +130,14 @@ Drive.prototype.build=function(){
  gg.addColorStop(0,'rgba(255,238,200,.9)');gg.addColorStop(.35,'rgba(255,220,160,.45)');gg.addColorStop(1,'rgba(255,210,150,0)');
  gx.fillStyle=gg;gx.fillRect(0,0,128,128);
  var glow=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(gc),transparent:true,opacity:.55,depthWrite:false,fog:false}));
- var sdir=new THREE.Vector3(-60,80,-40).normalize();
+ var sdir=new THREE.Vector3(-45,62,72).normalize();
  glow.position.copy(sdir).multiplyScalar(360);glow.position.y=Math.max(30,glow.position.y*.55);glow.scale.setScalar(190);
  glow.renderOrder=-9;this.scene.add(glow);
  this.scene.fog=new THREE.Fog(0xf0d6b2,90,340);
  this.camera=new THREE.PerspectiveCamera(55,mount.clientWidth/Math.max(1,mount.clientHeight),.1,600);
  this.scene.add(new THREE.HemisphereLight(0xfff3dd,0x545c2e,.68));
- var sun=new THREE.DirectionalLight(0xffdca6,1.3);sun.position.set(-60,80,-40);
+ var fill=new THREE.DirectionalLight(0xfff3dd,.28);fill.position.set(30,40,-80);this.scene.add(fill);
+ var sun=new THREE.DirectionalLight(0xffd9a0,1.35);sun.position.set(-45,62,72);
  sun.castShadow=true;sun.shadow.mapSize.set(this.SMALL?1024:2048,this.SMALL?1024:2048);
  sun.shadow.camera.left=-85;sun.shadow.camera.right=85;sun.shadow.camera.top=85;sun.shadow.camera.bottom=-85;
  sun.shadow.camera.near=10;sun.shadow.camera.far=280;sun.shadow.bias=-.0004;sun.shadow.normalBias=.4;
@@ -638,7 +639,7 @@ Drive.prototype.tick=function(dt){
  this.car.position.set(pos.x,.06+Math.sin(this.t/120)*.03+Math.sin(this.t/53)*.011,pos.z);
  this.car.rotation.y=heading;this.car.rotation.x=this.pitchSm;this.car.rotation.z=roll;
  /* sun rides with the car so shadows stay crisp; villagers wave as we pass; bunting flutters */
- if(this.sun){this.sun.position.set(this.car.position.x-60,80,this.car.position.z-40);this.sun.target.position.copy(this.car.position);this.sun.target.updateMatrixWorld()}
+ if(this.sun){this.sun.position.set(this.car.position.x-45,62,this.car.position.z+72);this.sun.target.position.copy(this.car.position);this.sun.target.updateMatrixWorld()}
  if(this.wavers)for(var wv=0;wv<this.wavers.length;wv++){var wv2=this.wavers[wv];
   if(wv2.waving){wv2.t-=dt;if(wv2.t<=0){wv2.waving=false;if(wv2.act)wv2.act.fadeOut(.35);wv2.base.reset().fadeIn(.35).play()}}
   else{var wdx=wv2.o.position.x-this.car.position.x,wdz=wv2.o.position.z-this.car.position.z;
