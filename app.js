@@ -402,8 +402,6 @@ document.addEventListener('touchend',e=>{ const t=e.target.closest&&e.target.clo
   if(now-lastTap<320 && lastEl===t){ const p=e.changedTouches[0]; bigLove(p.clientX,p.clientY); lastTap=0; e.preventDefault(); } else { lastTap=now; lastEl=t; } },{passive:false});
 
 
-
-
 /* ---------- for the singles ---------- */
 const SINGLE=["Tissues are on the house 🧻","Hold on, your own Kalut-Shefa is loading… 🔄","It's okay. Elijah waited for his Mary-Ann too. Your turn is coming 🙏","Mary-Ann's friends will be there. Elijah's friends too. Just saying 👀","Dress well on the 28th. Destiny helpers are attending 😌","Breathe. Tap the heart instead. Love is contagious 💛"];
 let si=0; const sb=$('#singleBtn');
@@ -425,24 +423,35 @@ if(sb) sb.addEventListener('click',()=>{ const m=$('#singleMsg'); m.textContent=
     el.hidden=false;
   }).catch(function(){});
 
-/* ---------- the story, as a living timeline ---------- */
+
+})();
+
+/* ---------- the story, as a living timeline (self-contained) ---------- */
 (function(){
-  const note=document.querySelector('.story-note.sn2'); if(!note) return;
-  const fill=note.querySelector('.sn-thread i'); if(!fill) return;
-  const items=Array.from(document.querySelectorAll('.sn2 .sn-item'));
-  if('IntersectionObserver' in window && !reduce){
-    const io=new IntersectionObserver(es=>{es.forEach(en=>{ if(en.isIntersecting){en.target.classList.add('in'); io.unobserve(en.target);} });},{threshold:.3});
-    items.forEach(el=>io.observe(el));
-  } else items.forEach(el=>el.classList.add('in'));
-  let raf=false;
-  const prog=()=>{ raf=false; const r=note.getBoundingClientRect(); const p=Math.min(1,Math.max(0,(innerHeight*.72-r.top)/r.height)); fill.style.height=(p*100)+'%'; };
-  addEventListener('scroll',()=>{ if(!raf){raf=true;requestAnimationFrame(prog);} },{passive:true}); prog();
-  document.querySelectorAll('.sn2 .sn-quote').forEach(q=>{
-    const go=e=>{ q.classList.remove('pulse'); void q.offsetWidth; q.classList.add('pulse'); bigLove(e.clientX||0,e.clientY||0); };
+  var reduceM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var note=document.querySelector('.story-note.sn2'); if(!note) return;
+  var fill=note.querySelector('.sn-thread i'); if(!fill) return;
+  var items=Array.prototype.slice.call(document.querySelectorAll('.sn2 .sn-item'));
+  function burst(x,y){
+    if(reduceM) return;
+    for(var k=0;k<4;k++){
+      var h=document.createElement('span'); h.className='big-love'; h.textContent='♥';
+      h.style.left=(x+(k?((k%2?1:-1)*(8+k*6)):0))+'px';
+      h.style.top=(y-(k?k*10:0))+'px';
+      h.style.animationDelay=(k*.09)+'s';
+      document.body.appendChild(h); setTimeout(function(el){return function(){el.remove()}}(h),1200);
+    }
+  }
+  if('IntersectionObserver' in window && !reduceM){
+    var io=new IntersectionObserver(function(es){es.forEach(function(en){ if(en.isIntersecting){en.target.classList.add('in'); io.unobserve(en.target);} });},{threshold:.25});
+    items.forEach(function(el){io.observe(el)});
+  } else items.forEach(function(el){el.classList.add('in')});
+  var raf=false;
+  function prog(){ raf=false; var r=note.getBoundingClientRect(); var p=Math.min(1,Math.max(0,(innerHeight*.72-r.top)/r.height)); fill.style.height=(p*100)+'%'; }
+  addEventListener('scroll',function(){ if(!raf){raf=true;requestAnimationFrame(prog);} },{passive:true}); prog();
+  document.querySelectorAll('.sn2 .sn-quote').forEach(function(q){
+    function go(e){ q.classList.remove('pulse'); void q.offsetWidth; q.classList.add('pulse'); burst(e.clientX||0,e.clientY||0); }
     q.addEventListener('click',go);
-    q.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go(e); } });
+    q.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go(e); } });
   });
 })();
-})();
-
-
