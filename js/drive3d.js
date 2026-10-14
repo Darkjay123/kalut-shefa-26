@@ -734,7 +734,7 @@ Drive.prototype.attract=function(dt){
 Drive.prototype.frame=function(){
  var self=this;
  try{if(!this.paused&&!document.hidden)this.elapsed=(this.elapsed||0)+Math.min(this.clock.getDelta(),.1);this.tick(Math.min((this.clock2||(this.clock2=new THREE.Clock())).getDelta(),.1))}
- catch(e){/* one bad frame must never freeze the drive */}
+ catch(e){console.error('[drive]',e&&e.message||e,e&&e.stack&&e.stack.split('\n')[1])}
  if(this.effect)this.effect.render(this.scene,this.camera);else this.renderer.render(this.scene,this.camera);
  this.raf=requestAnimationFrame(this.loop)};
 Drive.prototype.tick=function(dt){
@@ -792,7 +792,7 @@ Drive.prototype.tick=function(dt){
    bcn.scale.setScalar(1+.35*Math.abs(Math.sin(this.bt*3+bcn.userData.ph)))}}
  if(this.wavers)for(var wv=0;wv<this.wavers.length;wv++){var wv2=this.wavers[wv];
   if(wv2.waving){wv2.t-=dt;if(wv2.t<=0){wv2.waving=false;if(wv2.act)wv2.act.fadeOut(.35);wv2.base.reset().fadeIn(.35).play()}}
-  else{var wdx=wv2.o.position.x-this.car.position.x,wdz=wv2.o.position.z-this.car.position.z;
+  else if(wv2.o&&wv2.clips&&wv2.base&&wv2.base.mixer){var wdx=wv2.o.position.x-this.car.position.x,wdz=wv2.o.position.z-this.car.position.z;
    if(wdx*wdx+wdz*wdz<1500){var wvc=null;for(var wci=0;wci<wv2.clips.length;wci++)if(wv2.clips[wci].name==='Victory')wvc=wv2.clips[wci];
     if(wvc){wv2.act=wv2.base.mixer.clipAction(wvc);wv2.act.reset().fadeIn(.3).play();wv2.base.fadeOut(.3);wv2.waving=true;wv2.t=1.6}}}}
  if(this.flags)for(var fi=0;fi<this.flags.length;fi++){var fg2=this.flags[fi];
