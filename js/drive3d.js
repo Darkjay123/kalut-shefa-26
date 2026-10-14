@@ -150,7 +150,7 @@ Drive.prototype.build=function(){
  this.curve=new THREE.CatmullRomCurve3(pts.map(function(p){return new THREE.Vector3(p[0],0,p[1])}));
  this.len=this.curve.getLength();
  this.ROAD_END=this.len-14; /* car stops short of the gate */
- this.sway=[];this.bflies=[];this.smokes=[];this.wavers=[];this.flags=[];this.buildRoad();this.buildGround();this.buildPoles();this.buildScenery();this.buildVenue();this.buildCar();if(this.car)this.car.traverse(function(m){if(m.isMesh)m.castShadow=true});this.buildGoat();this.buildFolks();this.buildButterflies();this.buildBirds();this.buildPetals();this.buildOncoming();this.buildPuffs();this.buildDust();this.buildSmoke();this.buildDoves();this.buildClouds();
+ this.sway=[];this.bflies=[];this.smokes=[];this.wavers=[];this.flags=[];this.buildRoad();this.buildGround();this.buildPoles();this.buildLandmarks();this.buildScenery();this.buildVenue();this.buildCar();if(this.car)this.car.traverse(function(m){if(m.isMesh)m.castShadow=true});this.buildGoat();this.buildFolks();this.buildButterflies();this.buildBirds();this.buildPetals();this.buildOncoming();this.buildPuffs();this.buildDust();this.buildSmoke();this.buildDoves();this.buildClouds();
  var selfA=this;onAssets(function(){if(selfA&&!selfA.destroyed)selfA.dress()});this.sway=[];this.bflies=[];
  this.u=0;this.state='attract';this.attractT=0;this.capFired=[];this.goatDone=false;
  this.camPos=new THREE.Vector3();this.camAim=new THREE.Vector3();this.brV=0;this.lastRoll=0;
@@ -341,6 +341,42 @@ Drive.prototype.buildOncoming=function(){var self=this;
    o.traverse(function(m){if(m.isMesh)m.castShadow=true});
    self.scene.add(o);self.onFleet.push({car:o,u:startU[i],sp:sp[i]})}
  });
+};
+Drive.prototype.buildLandmarks=function(){
+ var spots=[[.18,-27,1],[.62,30,1],[.44,11,0],[.58,-10,0],[.8,12,0]],i;
+ for(i=0;i<spots.length;i++){
+  var u=spots[i][0],off=spots[i][1],isMast=spots[i][2];
+  var P=this.curve.getPointAt(u),T=this.curve.getTangentAt(u),nx=-T.z,nz=T.x;
+  var x=P.x+nx*off,z=P.z+nz*off;
+  if(isMast){
+   /* telecom lattice mast: three legs, braces, dish, blinking red beacon */
+   var mg=new THREE.Group(),lm=mat(0xb2ab9c),k;
+   for(k=0;k<3;k++){
+    var ang=k*2.094,leg=new THREE.Mesh(new THREE.CylinderGeometry(.13,.24,23,6),lm);
+    leg.position.set(Math.cos(ang)*2,11.5,Math.sin(ang)*2);
+    leg.castShadow=true;mg.add(leg)}
+   for(k=0;k<3;k++){
+    var ring=new THREE.Mesh(new THREE.TorusGeometry(2.05-k*.55,.09,6,14),lm);
+    ring.rotation.x=Math.PI/2;ring.position.y=6+k*6;mg.add(ring)}
+   var ant=new THREE.Mesh(new THREE.CylinderGeometry(.09,.14,5,6),lm);ant.position.y=24.5;mg.add(ant);
+   var dish=new THREE.Mesh(new THREE.SphereGeometry(.9,10,6,0,6.3,0,1.35),lm);
+   dish.position.set(.75,14.5,0);dish.rotation.z=1.15;mg.add(dish);
+   var bc=new THREE.Mesh(new THREE.SphereGeometry(.42,8,6),mat(0xd8503c,{noOutline:1}));
+   bc.position.y=27.3;bc.userData={ph:i};this.beacons=this.beacons||[];this.beacons.push(bc);mg.add(bc);
+   mg.position.set(x,0,z);mg.rotation.y=Math.atan2(nx,nz);this.scene.add(mg);
+  }else{
+   /* elevated water tank on a stand: the village skyline */
+   var tg=new THREE.Group(),tm=mat(0x8a7a63),q;
+   for(q=0;q<4;q++){
+    var lg=new THREE.Mesh(new THREE.BoxGeometry(.18,4.2,.18),tm);
+    lg.position.set(q%2?-.9:.9,2.1,q<2?-.9:.9);lg.castShadow=true;tg.add(lg)}
+   var plat=new THREE.Mesh(new THREE.BoxGeometry(2.5,.25,2.5),tm);plat.position.y=4.25;plat.castShadow=true;tg.add(plat);
+   var tank=new THREE.Mesh(new THREE.CylinderGeometry(1.15,1.15,1.6,12),mat(0xf2ecdc));
+   tank.position.y=5.2;tank.castShadow=true;tg.add(tank);
+   var cap=new THREE.Mesh(new THREE.SphereGeometry(1.15,12,6,0,6.3,0,1.2),mat(0xf2ecdc));
+   cap.position.y=6;tg.add(cap);
+   tg.position.set(x,0,z);tg.rotation.y=Math.atan2(nx,nz);this.scene.add(tg)}
+ }
 };
 Drive.prototype.buildBirds=function(){var self=this;this.birds=[];
  var mm=new THREE.MeshToonMaterial({color:0x565e3a,side:THREE.DoubleSide,gradientMap:GRAD});
@@ -689,6 +725,9 @@ Drive.prototype.tick=function(dt){
  this.car.rotation.y=heading;this.car.rotation.x=this.pitchSm;this.car.rotation.z=roll;
  /* sun rides with the car so shadows stay crisp; villagers wave as we pass; bunting flutters */
  if(this.sun){this.sun.position.set(this.car.position.x-45,62,this.car.position.z+72);this.sun.target.position.copy(this.car.position);this.sun.target.updateMatrixWorld()}
+ if(this.beacons&&this.beacons.length){this.bt=(this.bt||0)+dt;var bk;
+  for(bk=0;bk<this.beacons.length;bk++){var bcn=this.beacons[bk];
+   bcn.scale.setScalar(1+.35*Math.abs(Math.sin(this.bt*3+bcn.userData.ph)))}}
  if(this.wavers)for(var wv=0;wv<this.wavers.length;wv++){var wv2=this.wavers[wv];
   if(wv2.waving){wv2.t-=dt;if(wv2.t<=0){wv2.waving=false;if(wv2.act)wv2.act.fadeOut(.35);wv2.base.reset().fadeIn(.35).play()}}
   else{var wdx=wv2.o.position.x-this.car.position.x,wdz=wv2.o.position.z-this.car.position.z;
