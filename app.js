@@ -424,7 +424,6 @@ if(sb) sb.addEventListener('click',()=>{ const m=$('#singleMsg'); m.textContent=
     if(c)c.textContent=d.count.toLocaleString('en-US');
     el.hidden=false;
   }).catch(function(){});
-})();
 
 /* ---------- the story, as a living timeline ---------- */
 (function(){
@@ -444,3 +443,6 @@ if(sb) sb.addEventListener('click',()=>{ const m=$('#singleMsg'); m.textContent=
     q.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go(e); } });
   });
 })();
+})();
+
+
