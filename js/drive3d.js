@@ -441,14 +441,12 @@ Drive.prototype.buildFolks=function(){var self=this;
      var mx=new THREE.AnimationMixer(c);var act=mx.clipAction(clips[i]);act.play();self.mixers.push(mx);if(clip!=='Victory')self.wavers.push({o:c,base:act,clips:clips});break}}}
   if(self.marketPos){twin('casual_male',self.marketPos.x+5.1,self.marketPos.z-.6,2.9,'Idle',.04,.02);
    twin('casual_female',self.marketPos.x+1.9,self.marketPos.z+3.3,3.5,'Idle',-.05,.06)}
-  /* gate crowd: well-wishers lining both sides of the entrance, cheering the car in */
-  var gt=self.road?self.road.getTangentAt(.999):null;
-  if(end&&gt){
-   var gnx=-gt.z,gnz=gt.x,face=Math.atan2(-gt.x,-gt.z);
-   var crowd=[['casual_male',6.6,4.2,.04,.02],['casual_female',8.3,2.6,-.05,.06],['casual_male',-8.1,5.2,.08,-.02],['casual_female',-6.5,3.1,-.04,.05],['casual_male',9.4,1.2,-.02,.04],['casual_female',-9.2,1.8,.05,-.03]];
-   for(var ci=0;ci<crowd.length;ci++){
-    var cd=crowd[ci];
-    twin(cd[0],end.x+gnx*cd[1]-gt.x*cd[2],end.z+gnz*cd[1]-gt.z*cd[2],face,'Idle',cd[3],cd[4])}}
+  /* gate crowd: well-wishers lining the last stretch of road, cheering the car in */
+  var gus=[.952,.962,.972,.982,.99,.958,.978,.995],sides=[1,-1,1,-1,1,-1,1,-1],gnm=['casual_male','casual_female'];
+  for(var ci=0;ci<gus.length;ci++){
+   var gu=gus[ci],gp=self.roadPoint(gu*self.len),gd=self.roadDir(gu*self.len);
+   var onx=-gd.z,onz=gd.x,sx=sides[ci]*(5.6+(ci%3)*.8),hue=(ci%2?.05:-.06)+(ci%3)*.03;
+   twin(gnm[ci%2],gp.x+onx*sx,gp.z+onz*sx,Math.atan2(-gd.x,-gd.z)+(ci%2?.35:-.35),'Idle',hue,.02)}
   /* one villager strolls the far shoulder through the wide shot */
   var seg=self.road?self.road.getPointAt(.38):null;
   if(seg){var pc=ASSETS['casual_male'].clone(true);pc.scale.setScalar(1.45);
