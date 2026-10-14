@@ -278,7 +278,7 @@ Drive.prototype.dress=function(){
  var d2,t3,p3,n3x,n3z,side3;
  for(d2=6;d2<this.len-30;d2+=11){
   p3=this.roadPoint(d2);t3=this.roadDir(d2);n3x=-t3.z;n3z=t3.x;
-  var dr1=new THREE.Mesh(new THREE.CircleGeometry(1.5+R(1.5),6),mat(0x9a7f55,{noOutline:1}));
+  var dr1=new THREE.Mesh(new THREE.CircleGeometry(1.5+R(1.5),6),mat(0x6e5537,{noOutline:1}));
   dr1.rotation.x=-Math.PI/2;dr1.position.set(p3.x+n3x*(6.6+R(1.8)),.012,p3.z+n3z*(6.6+R(1.8)));self.scene.add(dr1);
   var dr2=dr1.clone();dr2.position.set(p3.x-n3x*(6.6+R(1.8)),.012,p3.z-n3z*(6.6+R(1.8)));self.scene.add(dr2)}
  var gp3,u3,pp2,tt2;
