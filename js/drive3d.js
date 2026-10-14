@@ -131,7 +131,7 @@ Drive.prototype.build=function(){
  var gg=gx.createRadialGradient(64,64,4,64,64,64);
  gg.addColorStop(0,'rgba(255,238,200,.9)');gg.addColorStop(.35,'rgba(255,220,160,.45)');gg.addColorStop(1,'rgba(255,210,150,0)');
  gx.fillStyle=gg;gx.fillRect(0,0,128,128);
- var glow=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(gc),transparent:true,opacity:.55,depthWrite:false,fog:false}));
+ var glow=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(gc),transparent:true,opacity:.78,depthWrite:false,fog:false}));
  var sdir=new THREE.Vector3(-45,62,72).normalize();
  glow.position.copy(sdir).multiplyScalar(360);glow.position.y=Math.max(30,glow.position.y*.55);glow.scale.setScalar(190);
  glow.renderOrder=-9;this.scene.add(glow);
@@ -150,7 +150,7 @@ Drive.prototype.build=function(){
  this.curve=new THREE.CatmullRomCurve3(pts.map(function(p){return new THREE.Vector3(p[0],0,p[1])}));
  this.len=this.curve.getLength();
  this.ROAD_END=this.len-14; /* car stops short of the gate */
- this.sway=[];this.bflies=[];this.smokes=[];this.wavers=[];this.flags=[];this.buildRoad();this.buildGround();this.buildScenery();this.buildVenue();this.buildCar();if(this.car)this.car.traverse(function(m){if(m.isMesh)m.castShadow=true});this.buildGoat();this.buildFolks();this.buildButterflies();this.buildBirds();this.buildPetals();this.buildOncoming();this.buildPuffs();this.buildDust();this.buildSmoke();this.buildDoves();this.buildClouds();
+ this.sway=[];this.bflies=[];this.smokes=[];this.wavers=[];this.flags=[];this.buildRoad();this.buildGround();this.buildPoles();this.buildScenery();this.buildVenue();this.buildCar();if(this.car)this.car.traverse(function(m){if(m.isMesh)m.castShadow=true});this.buildGoat();this.buildFolks();this.buildButterflies();this.buildBirds();this.buildPetals();this.buildOncoming();this.buildPuffs();this.buildDust();this.buildSmoke();this.buildDoves();this.buildClouds();
  var selfA=this;onAssets(function(){if(selfA&&!selfA.destroyed)selfA.dress()});this.sway=[];this.bflies=[];
  this.u=0;this.state='attract';this.attractT=0;this.capFired=[];this.goatDone=false;
  this.camPos=new THREE.Vector3();this.camAim=new THREE.Vector3();this.brV=0;this.lastRoll=0;
@@ -191,8 +191,8 @@ Drive.prototype.buildRoad=function(){
   var dash=new THREE.Mesh(new THREE.BoxGeometry(.34,.02,2.2),mat(WEDDING.goldHot));
   dash.position.set(p.x,.05,p.z);dash.rotation.y=Math.atan2(t.x,t.z);this.scene.add(dash);
   if(Math.round(dd/step)%3===0){
-   var l=new THREE.Mesh(new THREE.BoxGeometry(.5,.06,1.4),mat(WEDDING.cream));
-   l.position.set(p.x+nx*(w+.35),.04,p.z+nz*(w+.35));l.rotation.y=Math.atan2(t.x,t.z);this.scene.add(l);
+   var l=new THREE.Mesh(new THREE.BoxGeometry(.2,.55,.2),mat(0xe8e2d0));
+   l.position.set(p.x+nx*(w+.9),.27,p.z+nz*(w+.9));this.scene.add(l);
    var r=l.clone();r.position.set(p.x-nx*(w+.35),.04,p.z-nz*(w+.35));this.scene.add(r)}}
 };
 Drive.prototype.buildGround=function(){
@@ -226,6 +226,26 @@ Drive.prototype.house=function(x,z,ry,roofC){
  var win=box(1.1,.9,.1,WEDDING.goldHot);win.position.set(1.4,1.5,1.85);g.add(win);
  var win2=win.clone();win2.position.x=-1.4;g.add(win2);
  g.position.set(x,0,z);g.rotation.y=ry||0;this.scene.add(g);return g};
+Drive.prototype.buildPoles=function(){
+ var pm=new THREE.MeshToonMaterial({color:0x9a948a,gradientMap:GRAD});
+ var wm=new THREE.LineBasicMaterial({color:0x23211c});
+ var prev=null,d;
+ for(d=8;d<this.len-20;d+=26){
+  var p=this.roadPoint(d),t=this.roadDir(d),nx=-t.z,nz=t.x;
+  var x=p.x+nx*7.4,z=p.z+nz*7.4;
+  var pole=new THREE.Mesh(new THREE.CylinderGeometry(.11,.16,7.8,6),pm);
+  pole.position.set(x,3.9,z);pole.castShadow=true;this.scene.add(pole);
+  var arm=new THREE.Mesh(new THREE.BoxGeometry(1.8,.12,.12),pm);
+  arm.position.set(x,7.35,z);arm.rotation.y=Math.atan2(-nz,nx);this.scene.add(arm);
+  if(prev){
+   for(var wi=-1;wi<=1;wi+=2){
+    var a=new THREE.Vector3(prev.x+prev.nx*.6*wi,7.32,prev.z+prev.nz*.6*wi);
+    var b=new THREE.Vector3(x+nx*.6*wi,7.32,z+nz*.6*wi);
+    var mid=new THREE.Vector3().addVectors(a,b).multiplyScalar(.5);mid.y-=.6;
+    var curve=new THREE.QuadraticBezierCurve3(a,mid,b);
+    this.scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(curve.getPoints(12)),wm))}}
+  prev={x:x,z:z,nx:nx,nz:nz}}
+};
 Drive.prototype.buildScenery=function(){
  var self=this,i,d,STEP=11;
  for(d=10;d<this.len-30;d+=STEP){
@@ -446,6 +466,19 @@ Drive.prototype.buildCar=function(){
  var br=bl.clone();br.position.x=.26;bow.add(br);
  var knot=new THREE.Mesh(new THREE.SphereGeometry(.13,6,5),bm);bow.add(knot);
  bow.position.set(0,1.62,-.1);g.add(bow);
+ var hgc=document.createElement('canvas');hgc.width=hgc.height=64;var hgx=hgc.getContext('2d');
+ var hgr=hgx.createRadialGradient(32,32,2,32,32,32);
+ hgr.addColorStop(0,'rgba(255,246,218,.95)');hgr.addColorStop(.4,'rgba(255,232,185,.4)');hgr.addColorStop(1,'rgba(255,224,170,0)');
+ hgx.fillStyle=hgr;hgx.fillRect(0,0,64,64);
+ var hTex=new THREE.CanvasTexture(hgc);
+ var hl1=new THREE.Sprite(new THREE.SpriteMaterial({map:hTex,transparent:true,opacity:.9,depthWrite:false}));
+ hl1.scale.setScalar(1.4);hl1.position.set(-.55,.72,1.5);g.add(hl1);
+ var hr1=hl1.clone();hr1.position.x=.55;g.add(hr1);
+ var tl1=new THREE.Sprite(new THREE.SpriteMaterial({map:hTex,color:0xff5040,transparent:true,opacity:.6,depthWrite:false}));
+ tl1.scale.setScalar(.85);tl1.position.set(-.5,.85,-1.55);g.add(tl1);
+ var tr1=tl1.clone();tr1.position.x=.5;g.add(tr1);
+ var beam=new THREE.SpotLight(0xffe9c0,.5,26,.55,.5,1.1);beam.position.set(0,1.05,1.3);g.add(beam);
+ beam.target.position.set(0,0,16);g.add(beam.target);
  this.wheels=[];this.scene.add(g);this.car=g;this.blob=this.makeBlob(1.7,2.9,.17);
  onAssets(function(){
   if(self.destroyed||self.car!==g)return;
