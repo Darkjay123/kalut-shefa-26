@@ -345,10 +345,37 @@ let notesKey=null;
 function renderNotes(notes){ const w=$('#notesWall'); if(!w) return; const key=notes.map(n=>n.id).join(); if(key===notesKey) return; notesKey=key;
   const tones=['','olive','blush'];
   const card=(n,i)=>`<div class="paper ${tones[i%3]}" style="--rot:${(i*37)%7-3}deg"><p>“${escH(n.note)}”</p><b>${escH(n.name||'A guest')}</b></div>`;
+  const list=notes.slice(0,12);
   if(!notes.length){ w.className='notes-wall static'; w.innerHTML=`<div class="lane"><div class="paper empty"><p>The jar is waiting for its first note. Will it be yours?</p><b>Kalut-Shefa '26</b></div></div>`; return; }
-  if(notes.length<4 || reduce){ w.className='notes-wall static'; w.innerHTML=`<div class="lane">${notes.slice(0,12).map(card).join('')}</div>`; return; }
-  w.className='notes-wall'; const lanes=notes.length>=8?[notes.filter((_,i)=>i%2===0),notes.filter((_,i)=>i%2===1)]:[notes];
-  w.innerHTML=lanes.map((l,li)=>{ const c=l.map((n,i)=>card(n,i+li)).join(''); return `<div class="lane ${li?'rev':''}" style="--t:${Math.max(30,l.length*9)}s">${c}${c}</div>`; }).join('');
+  w.className='notes-wall deck';
+  w.innerHTML=`<div class="deck-stage" role="group" aria-label="Love notes from guests, swipe or use the arrows"><div class="deck-cards">${list.map(card).join('')}</div></div><div class="deck-foot"><div class="deck-nav"><button type="button" class="deck-prev" aria-label="Previous note">‹</button><button type="button" class="deck-next" aria-label="Next note">›</button></div><div class="deck-dots">${list.map(()=>'<i></i>').join('')}</div><small class="deck-hint">Swipe the notes <b>⇄</b></small></div>`;
+  initDeck(w,list);
+}
+function initDeck(w,list){
+  const cards=[...w.querySelectorAll('.deck-cards .paper')],stage=w.querySelector('.deck-stage'),dots=[...w.querySelectorAll('.deck-dots i')];
+  if(!cards.length)return;
+  let order=cards.map((_,i)=>i),busy=false,active=-1,sx=0,dx=0;
+  const paint=()=>{order.forEach((ci,slot)=>{const c=cards[ci];c.classList.remove('s0','s1','s2','s3','sb','fly-l','fly-r','drag');c.classList.add(slot>3?'sb':'s'+slot)});
+    dots.forEach((d,i)=>d.classList.toggle('on',order[0]===i));};
+  const step=dir=>{ if(busy||order.length<2)return; busy=true; w.classList.add('touched');
+    const ci=dir>0?order[0]:order[order.length-1],c=cards[ci];
+    c.classList.add(dir>0?'fly-l':'fly-r');
+    setTimeout(()=>{ if(dir>0){order.push(order.shift())}else{order.unshift(order.pop())} paint(); busy=false; },430); };
+  w.querySelector('.deck-next').addEventListener('click',()=>step(1));
+  w.querySelector('.deck-prev').addEventListener('click',()=>step(-1));
+  const down=e=>{ if(busy||active>=0)return; active=order[0]; sx=e.clientX; dx=0; w.classList.add('touched'); cards[active].classList.add('drag'); };
+  const move=e=>{ if(active<0)return; dx=e.clientX-sx;
+    cards[active].style.transform=`translateX(${dx}px) rotate(${dx*.05}deg)`;
+    if(Math.abs(dx)>10&&e.cancelable)e.preventDefault(); };
+  const up=()=>{ if(active<0)return; const c=cards[active]; c.classList.remove('drag'); c.style.transform='';
+    if(Math.abs(dx)>60&&order.length>1){ busy=true; c.classList.add(dx<0?'fly-l':'fly-r');
+      setTimeout(()=>{ order.push(order.shift()); paint(); busy=false; },430); }
+    active=-1; dx=0; };
+  stage.addEventListener('pointerdown',e=>{down(e); try{stage.setPointerCapture(e.pointerId)}catch(err){}});
+  stage.addEventListener('pointermove',move);
+  stage.addEventListener('pointerup',up);
+  stage.addEventListener('pointercancel',up);
+  paint();
 }
 async function loadLove(){ try{ const r=await fetch('/api/love',{cache:'no-store'}); const d=await r.json(); if(!d.ok) return;
   LOVE.total=Math.max(LOVE.total,(d.hearts||0)+LOVE.pending); showTotal(); renderNotes(d.notes||[]); }catch(e){ renderNotes([]); } }
