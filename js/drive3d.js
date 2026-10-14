@@ -145,6 +145,7 @@ Drive.prototype.build=function(){
  var selfA=this;onAssets(function(){if(selfA&&!selfA.destroyed)selfA.dress()});this.sway=[];this.bflies=[];
  this.u=0;this.state='attract';this.attractT=0;this.capFired=[];this.goatDone=false;
  this.camPos=new THREE.Vector3();this.camAim=new THREE.Vector3();this.brV=0;this.lastRoll=0;
+ this.camSet=false;this.cutFade=1;this.fovCur=55;this.prevVel=null;this.prevD2=null;this.pitchSm=0;
  this.clock=new THREE.Clock();
  var self2=this;this.raf=null;
  this.loop=function(ts){self2.frame()};this.raf=requestAnimationFrame(this.loop);
@@ -663,12 +664,13 @@ Drive.prototype.tick=function(dt){
   aimT=new THREE.Vector3(aim.x,1.6,aim.z);
  }
  if(cut){this.cutFade=0;this.brV=-.22}
- if(this.camSet==null){this.camPos.copy(desired);this.camAim.copy(aimT);this.fovCur=(shot&&shot.fov)||55;this.camSet=true;this.cutFade=1}
+ if(!this.camSet){this.camPos.copy(desired);this.camAim.copy(aimT);this.fovCur=(shot&&shot.fov)||55;this.camSet=true;this.cutFade=1}
  else{this.cutFade=Math.min(1,this.cutFade+dt/.8);
   var hot=Math.pow(1-this.cutFade,2);
   var kf=1-Math.exp(-((this.dampP||3.4)+13*hot)*dt),ka=1-Math.exp(-((this.dampA||5)+15*hot)*dt);
   this.camPos.lerp(desired,kf);this.camAim.lerp(aimT,ka);
   var fovT=(shot&&shot.fov)||55;
+  if(!isFinite(this.fovCur))this.fovCur=fovT;
   this.fovCur+=(fovT-this.fovCur)*(1-Math.exp(-4.5*dt));
   this.camera.fov=this.fovCur;this.camera.updateProjectionMatrix()}
  /* springy follow: velocity keeps a little life after hard cuts */
