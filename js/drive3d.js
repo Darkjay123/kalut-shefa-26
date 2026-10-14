@@ -472,10 +472,10 @@ Drive.prototype.buildCar=function(){
  hgx.fillStyle=hgr;hgx.fillRect(0,0,64,64);
  var hTex=new THREE.CanvasTexture(hgc);
  var hl1=new THREE.Sprite(new THREE.SpriteMaterial({map:hTex,transparent:true,opacity:.9,depthWrite:false}));
- hl1.scale.setScalar(1.4);hl1.position.set(-.55,.72,1.5);g.add(hl1);
+ hl1.scale.setScalar(1.25);hl1.position.set(-.55,.72,1.5);g.add(hl1);
  var hr1=hl1.clone();hr1.position.x=.55;g.add(hr1);
- var tl1=new THREE.Sprite(new THREE.SpriteMaterial({map:hTex,color:0xff5040,transparent:true,opacity:.6,depthWrite:false}));
- tl1.scale.setScalar(.85);tl1.position.set(-.5,.85,-1.55);g.add(tl1);
+ var tl1=new THREE.Sprite(new THREE.SpriteMaterial({map:hTex,color:0xff5040,transparent:true,opacity:.42,depthWrite:false}));
+ tl1.scale.setScalar(.62);tl1.position.set(-.5,.85,-1.55);g.add(tl1);
  var tr1=tl1.clone();tr1.position.x=.5;g.add(tr1);
  var beam=new THREE.SpotLight(0xffe9c0,.5,26,.55,.5,1.1);beam.position.set(0,1.05,1.3);g.add(beam);
  beam.target.position.set(0,0,16);g.add(beam.target);
