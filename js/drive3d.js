@@ -122,7 +122,7 @@ Drive.prototype.build=function(){
  /* sky dome: the gradient wraps the world instead of painting a flat wall behind it */
  var dome=new THREE.Mesh(new THREE.SphereGeometry(420,24,14),
   new THREE.MeshBasicMaterial({map:skyT,side:THREE.BackSide,fog:false,depthWrite:false}));
- dome.renderOrder=-10;dome.userData.outlineParameters={visible:false};this.scene.add(dome);this.skyDome=dome;
+ dome.renderOrder=-10;dome.material.userData.outlineParameters={visible:false};dome.userData.outlineParameters={visible:false};this.scene.add(dome);this.skyDome=dome;
  /* low sun glow near the horizon, same side as the light */
  var gc=document.createElement('canvas');gc.width=gc.height=128;var gx=gc.getContext('2d');
  var gg=gx.createRadialGradient(64,64,4,64,64,64);
