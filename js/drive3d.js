@@ -141,7 +141,7 @@ Drive.prototype.build=function(){
  this.curve=new THREE.CatmullRomCurve3(pts.map(function(p){return new THREE.Vector3(p[0],0,p[1])}));
  this.len=this.curve.getLength();
  this.ROAD_END=this.len-14; /* car stops short of the gate */
- this.sway=[];this.bflies=[];this.buildRoad();this.buildGround();this.buildScenery();this.buildVenue();this.buildCar();this.buildGoat();this.buildFolks();this.buildButterflies();this.buildBirds();this.buildPetals();this.buildOncoming();this.buildPuffs();this.buildDust();this.buildClouds();
+ this.sway=[];this.bflies=[];this.smokes=[];this.buildRoad();this.buildGround();this.buildScenery();this.buildVenue();this.buildCar();this.buildGoat();this.buildFolks();this.buildButterflies();this.buildBirds();this.buildPetals();this.buildOncoming();this.buildPuffs();this.buildDust();this.buildSmoke();this.buildDoves();this.buildClouds();
  var selfA=this;onAssets(function(){if(selfA&&!selfA.destroyed)selfA.dress()});this.sway=[];this.bflies=[];
  this.u=0;this.state='attract';this.attractT=0;this.capFired=[];this.goatDone=false;
  this.camPos=new THREE.Vector3();this.camAim=new THREE.Vector3();this.brV=0;this.lastRoll=0;
@@ -242,7 +242,8 @@ Drive.prototype.dress=function(){
   var off=8+R(12),x=p.x+nx*off*side,z=p.z+nz*off*side,r=Math.random(),ry=Math.atan2(t.x,t.z)+side*Math.PI/2;
   if(r<.34){self.place(pick(HS),x,z,ry+(Math.random()-.5)*.4,2.7+R(.8));
    self.place('fence',p.x+nx*5.1*side-t.x*1.8,p.z+nz*5.1*side-t.z*1.8,Math.atan2(t.x,t.z),2.1);
-   self.place('fence',p.x+nx*5.1*side+t.x*1.8,p.z+nz*5.1*side+t.z*1.8,Math.atan2(t.x,t.z),2.1)}
+   self.place('fence',p.x+nx*5.1*side+t.x*1.8,p.z+nz*5.1*side+t.z*1.8,Math.atan2(t.x,t.z),2.1);
+   if(Math.random()<.5)self.smokes.push({x:x,y:6.2,z:z})}
   else if(r<.56){var tr=self.place(pick(TS),x,z,R(6.28),2.3+R(1.0));if(tr)self.sway.push({o:tr,ph:Math.random()*6.28})}
   else if(r<.74){var tr2=self.place(pick(PS),x,z,R(6.28),2.2+R(.7));if(tr2)self.sway.push({o:tr2,ph:Math.random()*6.28})}
   else if(r<.86)self.place(pick(FL),x,z,R(6.28),1.7+R(1.1));
@@ -254,6 +255,11 @@ Drive.prototype.dress=function(){
  self.place('character-employee',mk.x+mnx*6.9,mk.z+mnz*6.9,mry+Math.PI,2.6);
  var pk=this.roadPoint(this.len*.8),pt2=this.roadDir(this.len*.8),pnx=-pt2.z,pnz=pt2.x,pkry=Math.atan2(pt2.x,pt2.z);
  ['taxi','suv','delivery-flat'].forEach(function(cn,k){self.place(cn,pk.x+pnx*(6.5+k*2.7),pk.z+pnz*(6.5+k*2.7),pkry+(Math.random()-.5)*.2,1.25)});
+ /* guest cars line the final stretch of the approach */
+ var gv=['sedan','suv','hatchback-sports','sedan','suv'],gi;
+ for(gi=0;gi<gv.length;gi++){var gdd=this.len-70+gi*9;
+  var gp=this.roadPoint(gdd),gt=this.roadDir(gdd),gnx=-gt.z,gnz=gt.x,gs=(gi%2?1:-1);
+  self.place(gv[gi],gp.x+gnx*5.9*gs,gp.z+gnz*5.9*gs,Math.atan2(gt.x,gt.z)+Math.PI/2+(Math.random()-.5)*.2,1.2)}
 };
 Drive.prototype.balloonCluster=function(x,y,z,n){
  var g=new THREE.Group(),cols=[WEDDING.burgundy,WEDDING.goldHot,WEDDING.cream,WEDDING.burgundyDeep],i;
@@ -363,6 +369,7 @@ Drive.prototype.buildVenue=function(){
   var ban=new THREE.Mesh(new THREE.PlaneGeometry(9.4,.8),new THREE.MeshBasicMaterial({map:textTex([this.mode.banner],{size:52,fg:'#6e0f1f',bg:'#f5efe0'})}));
   ban.position.set(end.x,5.35,end.z);ban.rotation.y=Math.atan2(nx,nz);this.scene.add(ban);
   var ban2=ban.clone();ban2.rotation.y=Math.atan2(nx,nz)+Math.PI;this.scene.add(ban2);
+  this.bunting(end.x-nx*5,4.9,end.z-nz*5,end.x+nx*5,4.9,end.z+nz*5,13);
   /* red carpet through the gate */
   var carp=this.roadPoint(this.len-9),carpT=this.roadDir(this.len-9);
   var carpet=new THREE.Mesh(new THREE.PlaneGeometry(6,9),mat(WEDDING.burgundy));
@@ -386,6 +393,7 @@ Drive.prototype.buildVenue=function(){
   this.balloonCluster(end.x+nx*6.5,1.2,end.z+nz*6.5,8);this.balloonCluster(end.x-nx*6.5,1.2,end.z-nz*6.5,8);
   var bb=new THREE.Mesh(new THREE.PlaneGeometry(7.6,.8),new THREE.MeshBasicMaterial({map:textTex([this.mode.banner],{size:46,fg:'#f5efe0',bg:'#6e0f1f'})}));
   bb.position.set(end.x+nx*8.5,2.6,end.z+nz*8.5);bb.rotation.y=Math.atan2(nx,nz)-Math.PI/2;this.scene.add(bb);
+  this.bunting(end.x-nx*6.5,2.6,end.z-nz*6.5,end.x+nx*6.5,2.6,end.z+nz*6.5,15);
   this.tree(end.x+nx*16,end.z+nz*16,1.1,false);this.tree(end.x-nx*16,end.z-nz*16,1.1,false)}
  /* guest's home-town sign near the start */
  var sp=this.roadPoint(26),st=this.roadDir(26),snx=-st.z,snz=st.x;
@@ -459,6 +467,72 @@ Drive.prototype.buildDust=function(){
  var tex=this.dustTex();this.dusts=[];
  for(var i=0;i<9;i++){var s=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,opacity:0,depthWrite:false}));
   s.scale.setScalar(.4);this.scene.add(s);this.dusts.push({s:s,t:-1})}};
+Drive.prototype.bunting=function(ax,ay,az,bx,by,bz,n){
+ var cols=[WEDDING.burgundy,WEDDING.goldHot,WEDDING.cream,WEDDING.olive];
+ for(var i=0;i<n;i++){var f=n>1?i/(n-1):0;
+  var fg=new THREE.Mesh(new THREE.ConeGeometry(.2,.5,3),mat(cols[i%4]));
+  fg.rotation.x=Math.PI;
+  fg.position.set(ax+(bx-ax)*f,ay+(by-ay)*f-Math.sin(f*Math.PI)*.42,az+(bz-az)*f);
+  this.scene.add(fg)}};
+Drive.prototype.buildDoves=function(){var self=this;this.doves=[];
+ var mm=new THREE.MeshToonMaterial({color:0xfdfaf3,side:THREE.DoubleSide,gradientMap:GRAD});
+ for(var i=0;i<7;i++){
+  var g=new THREE.Group();
+  var wg=new THREE.PlaneGeometry(1.1,.34);
+  var w1=new THREE.Mesh(wg,mm),w2=new THREE.Mesh(wg,mm);
+  w1.position.x=.55;w2.position.x=-.55;g.add(w1);g.add(w2);
+  g.userData={w1:w1,w2:w2,f:13+i*1.7,vx:0,vy:0,vz:0,t:0};
+  g.visible=false;this.scene.add(g);this.doves.push(g)}};
+Drive.prototype.releaseDoves=function(){
+ if(!this.doves)return;
+ var end=this.curve.getPointAt(.9995),t=this.curve.getTangentAt(.9995),nx=-t.z,nz=t.x;
+ for(var i=0;i<this.doves.length;i++){var dv=this.doves[i],ud=dv.userData;
+  dv.position.set(end.x+nx*(Math.random()*8-4),1.2+Math.random()*1.6,end.z+nz*(Math.random()*8-4));
+  ud.vx=(Math.random()-.5)*1.2;ud.vy=2.2+Math.random()*1.4;ud.vz=(Math.random()-.5)*1.2;ud.t=0;
+  dv.visible=true}};
+Drive.prototype.tickDoves=function(dt){
+ if(!this.doves)return;
+ for(var i=0;i<this.doves.length;i++){var dv=this.doves[i],ud=dv.userData;
+  if(!dv.visible)continue;
+  ud.t+=dt;dv.position.x+=ud.vx*dt;dv.position.y+=ud.vy*dt;dv.position.z+=ud.vz*dt;
+  ud.vy*=1-dt*.3;
+  var fl=Math.sin(ud.t*ud.f)*.75;ud.w1.rotation.z=fl;ud.w2.rotation.z=-fl;
+  if(ud.t>7)dv.visible=false}};
+Drive.prototype.buildSmoke=function(){
+ var c=document.createElement('canvas');c.width=c.height=64;var x=c.getContext('2d');
+ var g=x.createRadialGradient(32,32,2,32,32,32);
+ g.addColorStop(0,'rgba(216,208,198,.5)');g.addColorStop(1,'rgba(210,200,190,0)');
+ x.fillStyle=g;x.fillRect(0,0,64,64);
+ var tex=new THREE.CanvasTexture(c);this.smokesP=[];
+ for(var i=0;i<14;i++){var s=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,opacity:0,depthWrite:false}));
+  s.scale.setScalar(.6);this.scene.add(s);this.smokesP.push({s:s,t:-1})}};
+Drive.prototype.tickSmoke=function(dt){
+ if(!this.smokesP)return;
+ for(var pi=0;pi<this.smokesP.length;pi++){var sp=this.smokesP[pi];
+  if(sp.t>=0){sp.t+=dt/2.4;sp.s.position.y+=dt*.8;sp.s.scale.setScalar(.6+sp.t*1.6);
+   sp.s.material.opacity=Math.max(0,.24*(1-sp.t));
+   if(sp.t>=1)sp.t=-1}}
+ for(var si=0;si<this.smokes.length;si++){var sk=this.smokes[si];
+  if(Math.random()<dt*1.4){for(var pj=0;pj<this.smokesP.length;pj++){var sp2=this.smokesP[pj];
+   if(sp2.t<0){sp2.t=0;sp2.s.position.set(sk.x+(Math.random()-.5)*.5,sk.y,sk.z+(Math.random()-.5)*.5);break}}}}};
+Drive.prototype.initAudio=function(){
+ if(this.audio)return;
+ try{var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+  var ctx=new AC();var osc=ctx.createOscillator();osc.type='sawtooth';osc.frequency.value=58;
+  var lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=170;lp.Q.value=.8;
+  var g=ctx.createGain();g.gain.value=0;
+  var lfo=ctx.createOscillator();lfo.frequency.value=7.3;var lg=ctx.createGain();lg.gain.value=6;
+  lfo.connect(lg);lg.connect(osc.frequency);
+  osc.connect(lp);lp.connect(g);g.connect(ctx.destination);
+  osc.start();lfo.start();
+  this.audio={ctx:ctx,g:g,osc:osc,lp:lp}}catch(e){this.audio=null}};
+Drive.prototype.audioSpeed=function(p){
+ if(!this.audio)return;
+ try{this.audio.osc.frequency.setTargetAtTime(52+p*70+Math.sin(this.t/300)*2,this.audio.ctx.currentTime,.12);
+  this.audio.lp.frequency.setTargetAtTime(150+p*260,this.audio.ctx.currentTime,.2)}catch(e){}};
+Drive.prototype.audioOn=function(v){
+ if(!this.audio)return;
+ try{this.audio.g.gain.setTargetAtTime(v,this.audio.ctx.currentTime,.35)}catch(e){}};
 Drive.prototype.makeBlob=function(rx,rz,op){
  var sh=new THREE.Mesh(new THREE.CircleGeometry(1,18),new THREE.MeshBasicMaterial({color:0x2a2416,transparent:true,opacity:op||.16,depthWrite:false}));
  sh.rotation.x=-Math.PI/2;sh.scale.set(rx||1.6,rz||2.6,1);sh.renderOrder=2;this.scene.add(sh);return sh};
@@ -508,6 +582,7 @@ Drive.prototype.tick=function(dt){
    if(pt.m.position.y<.05){pt.m.position.y=6+Math.random()*6;
     pt.m.position.x=pt.end.x+(Math.random()*2-1)*22;
     pt.m.position.z=pt.end.z+(Math.random()*2-1)*22}}
+  this.tickDoves(dt);this.tickSmoke(dt);
   return}
  if(this.state!=='drive')return;
  this.t+=dt*1000;
@@ -523,6 +598,7 @@ Drive.prototype.tick=function(dt){
  this.car.rotation.y=heading;this.car.rotation.x=0;this.car.rotation.z=roll;
  if(this.blob){this.blob.position.set(pos.x,.02,pos.z);this.blob.rotation.z=-heading;
   var bs=1+Math.sin(this.t/120)*.015;this.blob.scale.set(1.7*bs,2.9*bs,1)}
+ this.audioSpeed(p);this.tickSmoke(dt);
  var spin=dt*26*(1-p*.35);
  var steer=THREE.MathUtils.clamp(roll*2.2,-.38,.38);
  for(var wi=0;wi<this.wheels.length;wi++){var w=this.wheels[wi];w.rotation.x+=spin;w.rotation.y=steer}
@@ -625,10 +701,14 @@ Drive.prototype.begin=function(area){
  if(area&&this.areaSign){
   var tex=textTex([area.toUpperCase()+" \u279c "+this.mode.dest.toUpperCase()],{size:44,fg:'#f5efe0',bg:'#6e0f1f',border:'#d8bb8a',bw:10});
   this.areaSign.children[1].material.map=tex;this.areaSign.children[2].material.map=tex}
- this.clock.getDelta()};
+ this.clock.getDelta();
+ this.initAudio();if(this.audio){try{this.audio.ctx.resume()}catch(e){}}
+ if(this.doves)for(var di2=0;di2<this.doves.length;di2++)this.doves[di2].visible=false;
+ this.audioOn(.035)};
 Drive.prototype.skip=function(){if(this.state!=='drive'){if(this.state==='attract')this.begin();else return}
  this.t=(this.dur||DUR)+1};
-Drive.prototype.restart=function(){this.state='drive';this.t=0;this.capFired=[];this.goatDone=false;this.goatT=0;this.clock.getDelta()};
+Drive.prototype.restart=function(){this.state='drive';this.t=0;this.capFired=[];this.goatDone=false;this.goatT=0;this.clock.getDelta();
+ if(this.doves)for(var di3=0;di3<this.doves.length;di3++)this.doves[di3].visible=false;this.audioOn(.035)};
 Drive.prototype.arrive=function(){
  var self=this;
  if(this.state==='arrived')return;this.state='arrived';
@@ -644,6 +724,7 @@ Drive.prototype.arrive=function(){
  this.restPos=new THREE.Vector3(end.x-t.x*14,7.5,end.z-t.z*14);
  this.restAim=new THREE.Vector3(end.x+t.x*5,2.5,end.z+t.z*5);
  if(this.goat)this.goat.visible=false;
+ this.releaseDoves();this.audioOn(0);
  if(onArrive)onArrive()};
 Drive.prototype.resize=function(){
  if(!this.camera)return;
@@ -651,7 +732,7 @@ Drive.prototype.resize=function(){
  this.camera.updateProjectionMatrix();this.renderer.setSize(mount.clientWidth,mount.clientHeight)};
 Drive.prototype.destroy=function(){
  this.destroyed=true;cancelAnimationFrame(this.raf);window.removeEventListener('resize',this.onR);
- mount.innerHTML='';this.renderer.dispose()};
+ mount.innerHTML='';this.renderer.dispose();if(this.audio){try{this.audio.ctx.close()}catch(e){}}};
 /* camera arrival beauty shot: smoothed toward the venue */
 var camAimT=null,camT=null;
 Drive.prototype.arriveRest=function(dt){
