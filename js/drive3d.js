@@ -43,8 +43,8 @@ var V={
 };
 var DUR=18000, GOAT_AT=.42;
 /* speed profile: accelerate, cruise, decelerate -> distance fraction over time */
-var SP=(function(){var n=300,A=.07,D=.12,dt=1/n,ys=[],sum=0,prev=0,i,p,v;
- for(i=1;i<=n;i++){p=i*dt;v=p<A?p/A:(p>1-D?(1-p)/D:1);sum+=(v+prev)/2*dt;prev=v;ys.push(sum)}
+var SP=(function(){var n=300,A=.07,D=.12,dt=1/n,ys=[],sum=0,prev=0,i,p,v,a,dec;
+ for(i=1;i<=n;i++){p=i*dt;a=p<A?p/A:1;dec=p>1-D?(1-p)/D:1;a=a*a*(3-2*a);dec=dec*dec*(3-2*dec);v=Math.min(a,dec);sum+=(v+prev)/2*dt;prev=v;ys.push(sum)}
  var last=ys[n-1];for(i=0;i<n;i++)ys[i]/=last;return ys})();
 function distFrac(p){var i=Math.max(0,Math.min(SP.length-1,Math.floor(p*SP.length)));return SP[i]}
 var modal=document.getElementById('journeyModal'), mount=document.getElementById('jMap');
@@ -594,8 +594,13 @@ Drive.prototype.tick=function(dt){
  this.lastRoll+=(roll-this.lastRoll)*(1-Math.exp(-4*dt));roll=this.lastRoll;
  this.prevDir=dir.clone();
  var heading=Math.atan2(dir.x,dir.z);
- this.car.position.set(pos.x,.06+Math.sin(this.t/120)*.03,pos.z);
- this.car.rotation.y=heading;this.car.rotation.x=0;this.car.rotation.z=roll;
+ /* suspension: nose lift under throttle, brake dive on the slow-down, layered body bob */
+ var vel=dt>0?(d-(this.prevD2==null?d:this.prevD2))/dt:0;
+ var acc=(this.prevVel==null?0:(vel-this.prevVel))/Math.max(.001,dt);this.prevVel=vel;this.prevD2=d;
+ var pitchT=THREE.MathUtils.clamp(-acc*.7,-.05,.05);
+ this.pitchSm+=(pitchT-(this.pitchSm||0))*(1-Math.exp(-4.5*dt));
+ this.car.position.set(pos.x,.06+Math.sin(this.t/120)*.03+Math.sin(this.t/53)*.011,pos.z);
+ this.car.rotation.y=heading;this.car.rotation.x=this.pitchSm;this.car.rotation.z=roll;
  if(this.blob){this.blob.position.set(pos.x,.02,pos.z);this.blob.rotation.z=-heading;
   var bs=1+Math.sin(this.t/120)*.015;this.blob.scale.set(1.7*bs,2.9*bs,1)}
  this.audioSpeed(p);this.tickSmoke(dt);
@@ -657,10 +662,15 @@ Drive.prototype.tick=function(dt){
   var aim=this.roadPoint(Math.min(this.len,dist+26));
   aimT=new THREE.Vector3(aim.x,1.6,aim.z);
  }
- if(cut){this.camPos.copy(desired);this.camAim.copy(aimT);this.brV=-.5;
-  this.camera.fov=(shot&&shot.fov)||55;this.camera.updateProjectionMatrix()}
- else{var kf=1-Math.exp(-(this.dampP||3.4)*dt),ka=1-Math.exp(-(this.dampA||5)*dt);
-  this.camPos.lerp(desired,kf);this.camAim.lerp(aimT,ka)}
+ if(cut){this.cutFade=0;this.brV=-.22}
+ if(this.camSet==null){this.camPos.copy(desired);this.camAim.copy(aimT);this.fovCur=(shot&&shot.fov)||55;this.camSet=true;this.cutFade=1}
+ else{this.cutFade=Math.min(1,this.cutFade+dt/.8);
+  var hot=Math.pow(1-this.cutFade,2);
+  var kf=1-Math.exp(-((this.dampP||3.4)+13*hot)*dt),ka=1-Math.exp(-((this.dampA||5)+15*hot)*dt);
+  this.camPos.lerp(desired,kf);this.camAim.lerp(aimT,ka);
+  var fovT=(shot&&shot.fov)||55;
+  this.fovCur+=(fovT-this.fovCur)*(1-Math.exp(-4.5*dt));
+  this.camera.fov=this.fovCur;this.camera.updateProjectionMatrix()}
  /* springy follow: velocity keeps a little life after hard cuts */
  var br=Math.sin(this.t/460)*.14+this.brV*(1-Math.exp(-6*dt));
  this.brV*=(1-Math.exp(-3*dt));
@@ -697,6 +707,7 @@ Drive.prototype.begin=function(area){
  if(this.state==='drive')return;
  if(area)try{localStorage.setItem('ks26area',area)}catch(e){}
  this.dur=DUR;this.t=0;this.state='drive';this.capFired=[];this.goatDone=false;this.goatT=0;this.shotIdx=-1;
+ this.camSet=false;this.cutFade=1;this.prevVel=null;this.prevD2=null;this.pitchSm=0;
  /* sign carries the guest's town */
  if(area&&this.areaSign){
   var tex=textTex([area.toUpperCase()+" \u279c "+this.mode.dest.toUpperCase()],{size:44,fg:'#f5efe0',bg:'#6e0f1f',border:'#d8bb8a',bw:10});
@@ -708,6 +719,7 @@ Drive.prototype.begin=function(area){
 Drive.prototype.skip=function(){if(this.state!=='drive'){if(this.state==='attract')this.begin();else return}
  this.t=(this.dur||DUR)+1};
 Drive.prototype.restart=function(){this.state='drive';this.t=0;this.capFired=[];this.goatDone=false;this.goatT=0;this.clock.getDelta();
+ this.camSet=false;this.cutFade=1;this.prevVel=null;this.prevD2=null;this.pitchSm=0;
  if(this.doves)for(var di3=0;di3<this.doves.length;di3++)this.doves[di3].visible=false;this.audioOn(.035)};
 Drive.prototype.arrive=function(){
  var self=this;
@@ -717,7 +729,7 @@ Drive.prototype.arrive=function(){
  if(setCap)setCap(this.mode.stops[this.mode.stops.length-1]);
  /* the car glides the last stretch and rests at the gate */
  var rest=this.roadPoint(this.ROAD_END),rt=this.roadDir(this.ROAD_END);
- this.car.position.set(rest.x,.06,rest.z);this.car.rotation.y=Math.atan2(rt.x,rt.z);if(this.blob)this.blob.position.set(rest.x,.02,rest.z);
+ this.car.position.set(rest.x,.06,rest.z);this.car.rotation.y=Math.atan2(rt.x,rt.z);this.car.rotation.x=0;if(this.blob)this.blob.position.set(rest.x,.02,rest.z);
  /* camera: rise into a beauty shot of the venue */
  var end=this.curve.getPointAt(.9995),t=this.curve.getTangentAt(.9995),nx=-t.z,nz=t.x;
  /* rest targets: camera parks behind the venue, aimed at the gate */
