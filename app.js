@@ -394,7 +394,7 @@ if(nf){ nn.addEventListener('input',()=>$('#nCount').textContent=nn.value.length
     btn.disabled=false; btn.textContent='Drop it in the jar ✦'; }); }
 
 /* ---------- double-tap a photo to love it ---------- */
-const lovable='.chapter .frame, .reply-card .scratch-wrap, .colour';
+const lovable='.chapter .frame, .reply-card .scratch-wrap, .colour, .sn-quote';
 function bigLove(x,y){ if(!reduce){ const h=document.createElement('span'); h.className='big-love'; h.textContent='♥'; h.style.left=x+'px'; h.style.top=y+'px'; document.body.appendChild(h); setTimeout(()=>h.remove(),1100); flyHearts(x,y,4); } sendHearts(1); }
 if(!isTouch) document.addEventListener('dblclick',e=>{ if(e.target.closest&&e.target.closest(lovable)){ e.preventDefault(); getSelection&&getSelection().removeAllRanges(); bigLove(e.clientX,e.clientY); } });
 let lastTap=0, lastEl=null;
@@ -424,4 +424,23 @@ if(sb) sb.addEventListener('click',()=>{ const m=$('#singleMsg'); m.textContent=
     if(c)c.textContent=d.count.toLocaleString('en-US');
     el.hidden=false;
   }).catch(function(){});
+})();
+
+/* ---------- the story, as a living timeline ---------- */
+(function(){
+  const note=document.querySelector('.story-note.sn2'); if(!note) return;
+  const fill=note.querySelector('.sn-thread i'); if(!fill) return;
+  const items=Array.from(document.querySelectorAll('.sn2 .sn-item'));
+  if('IntersectionObserver' in window && !reduce){
+    const io=new IntersectionObserver(es=>{es.forEach(en=>{ if(en.isIntersecting){en.target.classList.add('in'); io.unobserve(en.target);} });},{threshold:.3});
+    items.forEach(el=>io.observe(el));
+  } else items.forEach(el=>el.classList.add('in'));
+  let raf=false;
+  const prog=()=>{ raf=false; const r=note.getBoundingClientRect(); const p=Math.min(1,Math.max(0,(innerHeight*.72-r.top)/r.height)); fill.style.height=(p*100)+'%'; };
+  addEventListener('scroll',()=>{ if(!raf){raf=true;requestAnimationFrame(prog);} },{passive:true}); prog();
+  document.querySelectorAll('.sn2 .sn-quote').forEach(q=>{
+    const go=e=>{ q.classList.remove('pulse'); void q.offsetWidth; q.classList.add('pulse'); bigLove(e.clientX||0,e.clientY||0); };
+    q.addEventListener('click',go);
+    q.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go(e); } });
+  });
 })();
