@@ -53,7 +53,7 @@ function $(id){return document.getElementById(id)}
 var capT=$('jCapT'),capS=$('jCapS'),capBox=$('jCap'),bar=$('jBar'),beginBtn=$('jBegin'),arrival=$('jArrival'),skip=$('jSkip'),dirBtn=$('jDir'),mapBtn=$('jMapBtn'),again=$('jAgain'),arrName=$('jArrName'),arrAddr=$('jArrAddr'),hud=$('jHud');
 var mode=null,liveKey='trad',engine=null,state='idle';
 /* ---------- helpers ---------- */
-var GRAD=(function(){var s=[95,150,210,255],d=new Uint8Array(s.length*4),i;for(i=0;i<s.length;i++){d[i*4]=d[i*4+1]=d[i*4+2]=s[i];d[i*4+3]=255}var t=new THREE.DataTexture(d,s.length,1,THREE.RGBAFormat);t.minFilter=t.magFilter=THREE.NearestFilter;t.needsUpdate=true;return t})();
+var GRAD=(function(){var s=[78,140,205,255],d=new Uint8Array(s.length*4),i;for(i=0;i<s.length;i++){d[i*4]=d[i*4+1]=d[i*4+2]=s[i];d[i*4+3]=255}var t=new THREE.DataTexture(d,s.length,1,THREE.RGBAFormat);t.minFilter=t.magFilter=THREE.NearestFilter;t.needsUpdate=true;return t})();
 function mat(c,opt){opt=Object.assign({},opt||{});var no=opt.noOutline;delete opt.noOutline;var m=new THREE.MeshToonMaterial(Object.assign({color:c,gradientMap:GRAD},opt));if(no)m.userData.outlineParameters={visible:false};return m}
 /* CC0 scenery: Kenney kits, loaded once, cloned everywhere */
 var ASSETS={},ASSET_ANIMS={},ASSET_LEFT=0,ASSET_READY=false,ASSET_CBS=[];
@@ -116,7 +116,7 @@ Drive.prototype.build=function(){
  /* sky: champagne dusk painted as a gradient texture */
  var sc=document.createElement('canvas');sc.width=2;sc.height=256;var sx=sc.getContext('2d');
  var gr=sx.createLinearGradient(0,0,0,256);
- gr.addColorStop(0,'#f7e8d2');gr.addColorStop(.45,'#f3d9b8');gr.addColorStop(.8,'#efd0ac');gr.addColorStop(1,'#e7c39a');
+ gr.addColorStop(0,'#f6e0c2');gr.addColorStop(.42,'#f2cd9e');gr.addColorStop(.78,'#edbd8b');gr.addColorStop(1,'#e0a972');
  sx.fillStyle=gr;sx.fillRect(0,0,2,256);
  var skyT=new THREE.CanvasTexture(sc);
  this.scene.background=skyT;
@@ -135,11 +135,11 @@ Drive.prototype.build=function(){
  glow.renderOrder=-9;this.scene.add(glow);
  this.scene.fog=new THREE.Fog(0xf0d6b2,90,340);
  this.camera=new THREE.PerspectiveCamera(55,mount.clientWidth/Math.max(1,mount.clientHeight),.1,600);
- this.scene.add(new THREE.HemisphereLight(0xfff3dd,0x545c2e,.95));
- var sun=new THREE.DirectionalLight(0xffe1b0,.85);sun.position.set(-60,80,-40);
+ this.scene.add(new THREE.HemisphereLight(0xfff3dd,0x545c2e,.68));
+ var sun=new THREE.DirectionalLight(0xffdca6,1.3);sun.position.set(-60,80,-40);
  sun.castShadow=true;sun.shadow.mapSize.set(this.SMALL?1024:2048,this.SMALL?1024:2048);
  sun.shadow.camera.left=-85;sun.shadow.camera.right=85;sun.shadow.camera.top=85;sun.shadow.camera.bottom=-85;
- sun.shadow.camera.near=10;sun.shadow.camera.far=280;sun.shadow.bias=-.0004;sun.shadow.normalBias=.6;
+ sun.shadow.camera.near=10;sun.shadow.camera.far=280;sun.shadow.bias=-.0004;sun.shadow.normalBias=.4;
  sun.shadow.camera.updateProjectionMatrix();
  this.scene.add(sun);this.scene.add(sun.target);this.sun=sun;
  /* the road: an S-curve the car never leaves */
@@ -163,7 +163,11 @@ Drive.prototype.roadDir=function(d){
  var u=Math.max(0,Math.min(.9995,d/this.len));
  return this.curve.getTangentAt(u)};
 
-Drive.prototype.place=function(nm,x,z,ry,s,y){var src=ASSETS[nm];if(!src)return null;var o=src.clone();o.position.set(x,y||0,z);if(ry!==undefined)o.rotation.y=ry;if(s)o.scale.setScalar(s);o.traverse(function(m){if(m.isMesh)m.castShadow=true});this.scene.add(o);return o};
+Drive.prototype.place=function(nm,x,z,ry,s,y){var src=ASSETS[nm];if(!src)return null;var o=src.clone();o.position.set(x,y||0,z);if(ry!==undefined)o.rotation.y=ry;if(s)o.scale.setScalar(s);var varied=/^(building-type-|tree_|plant_|fence)/.test(nm);
+ o.traverse(function(m){if(m.isMesh){m.castShadow=true;
+  if(varied&&m.material&&m.material.color){m.material=m.material.clone();
+   m.material.color.offsetHSL((Math.random()-.5)*.05,Math.random()*.2-.08,(Math.random()-.4)*.09)}}});
+ this.scene.add(o);return o};
 Drive.prototype.buildRoad=function(){
  var self=this,N=260,w=4.2,pts=[],i;
  for(i=0;i<=N;i++){var u=i/N,c=this.curve.getPointAt(u),t=this.curve.getTangentAt(u);
@@ -271,15 +275,19 @@ Drive.prototype.dress=function(){
  var d2,t3,p3,n3x,n3z,side3;
  for(d2=6;d2<this.len-30;d2+=11){
   p3=this.roadPoint(d2);t3=this.roadDir(d2);n3x=-t3.z;n3z=t3.x;
-  var dr1=new THREE.Mesh(new THREE.CircleGeometry(1.5+R(1.5),6),mat(0xb59a6a,{noOutline:1}));
+  var dr1=new THREE.Mesh(new THREE.CircleGeometry(1.5+R(1.5),6),mat(0x9a7f55,{noOutline:1}));
   dr1.rotation.x=-Math.PI/2;dr1.position.set(p3.x+n3x*(6.6+R(1.8)),.012,p3.z+n3z*(6.6+R(1.8)));self.scene.add(dr1);
   var dr2=dr1.clone();dr2.position.set(p3.x-n3x*(6.6+R(1.8)),.012,p3.z-n3z*(6.6+R(1.8)));self.scene.add(dr2)}
  var gp3,u3,pp2,tt2;
  for(gp3=0;gp3<26;gp3++){
   u3=Math.random()*.94;pp2=this.roadPoint(u3*this.len);tt2=this.roadDir(u3*this.len);
   side3=Math.random()<.5?1:-1;var off3=15+R(45);
-  var patch=new THREE.Mesh(new THREE.CircleGeometry(3+R(5),7),mat(Math.random()<.5?WEDDING.oliveDeep:0x8a9455,{noOutline:1}));
+  var patch=new THREE.Mesh(new THREE.CircleGeometry(2.5+R(4),7),mat(Math.random()<.5?0x5d6b33:0x4f5c2a,{noOutline:1}));
   patch.rotation.x=-Math.PI/2;patch.position.set(pp2.x+n3x*side3*off3,.01,pp2.z+n3z*side3*off3);self.scene.add(patch)}
+ /* foreground bushes hugging the roadside */
+ for(d2=10;d2<this.len-40;d2+=17){
+  p3=this.roadPoint(d2);t3=this.roadDir(d2);n3x=-t3.z;n3z=t3.x;side3=Math.random()<.5?1:-1;
+  self.place(Math.random()<.5?'plant_bush':'grass',p3.x+n3x*side3*(5.7+R(1.5)),p3.z+n3z*side3*(5.7+R(1.5)),R(6.28),1.2+R(.7))}
  /* hazy ridge line on the horizon for depth */
  for(d2=40;d2<this.len;d2+=95){
   p3=this.roadPoint(d2);t3=this.roadDir(d2);n3x=-t3.z;n3z=t3.x;side3=(Math.floor(d2/95)%2)?1:-1;
