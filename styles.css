@@ -404,6 +404,11 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9997;op
 
 /* portraits */
 .portraits{background:radial-gradient(ellipse at 50% 30%,#3a0812,var(--burg-dd) 65%)}
+.story-note{max-width:660px;margin:30px auto 34px;text-align:center;font-family:var(--serif);font-size:clamp(1.02rem,2.6vw,1.18rem);line-height:1.85;color:#f0e6d6}
+.story-note p{margin:0 0 16px}
+.story-note em{color:var(--gold-l);font-style:italic}
+.story-note .sn-final{margin:26px 0 0;font-size:1.2em;letter-spacing:.03em;color:var(--gold-l)}
+.story-note .sn-final em{color:var(--gold-l);font-style:italic;font-weight:700}
 .portrait-row{display:grid;grid-template-columns:1fr 1.25fr 1fr;gap:clamp(14px,2.5vw,30px);align-items:end}
 .arch{position:relative;aspect-ratio:3/4.3;border-radius:400px 400px 22px 22px;overflow:hidden;box-shadow:0 40px 90px rgba(0,0,0,.55),0 0 0 1px rgba(216,187,138,.35)}
 .arch.mid{aspect-ratio:3/4.6}
