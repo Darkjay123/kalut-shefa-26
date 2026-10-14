@@ -845,3 +845,16 @@ html.ks-lock{overflow:hidden}
 @keyframes jfFade{0%{opacity:0;transform:translateY(-50%) translateY(8px)}18%{opacity:1;transform:translateY(-50%)}78%{opacity:1}100%{opacity:0;transform:translateY(-50%) translateY(-6px)}}
 .jf-vig{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 52%,rgba(11,2,4,.38) 100%)}
 #jModal:not(.film-title) .jf-title{display:none}
+
+/* Card backs on phones: the long venue lines pushed the action buttons past the
+   card's bottom edge where overflow:hidden clipped them, so "Take me there"
+   vanished underneath. Compact the back-face type and let it scroll as a net. */
+@media(max-width:700px){
+  .ev-back h4{font-size:1.5rem}
+  .ev-back dl{gap:9px;margin:12px 0 14px}
+  .ev-back dt{font-size:.58rem}
+  .ev-back dd{font-size:1rem;line-height:1.35}
+  .ev-back{overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .ev-back .cal-btns{margin-top:auto}
+  .ev-back .cal-btns a{padding:12px 14px;font-size:.78rem}
+}
