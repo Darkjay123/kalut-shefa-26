@@ -616,7 +616,7 @@ Drive.prototype.buildGoat=function(){var self=this;this.mixers=[];
   if(self.destroyed)return;
   var dk=ASSETS['donkey'];if(!dk)return;
   dk.scale.setScalar(1.5);dk.visible=false;self.scene.add(dk);
-  self.donkey=dk;self.goatBlob=self.makeBlob(1.4,2.2,.13);
+  self.donkey=dk;self.goat=dk;self.goatBlob=self.makeBlob(1.4,2.2,.13);
   var clips=ASSET_ANIMS['donkey']||[];
   for(var i=0;i<clips.length;i++){if(clips[i].name==='Walk'){
     var m2=new THREE.AnimationMixer(dk);m2.clipAction(clips[i]).play();self.mixers.push(m2);break}}
@@ -625,6 +625,7 @@ Drive.prototype.buildGoat=function(){var self=this;this.mixers=[];
 
 Drive.prototype.runGoat=function(dt,dist){
  if(!this.donkey)return;if(this.goatT>=1.9){this.donkey.visible=false;return}
+ if(!this.goat)this.goat=this.donkey;
  this.goatT+=dt;
  var gdir=this.roadDir(Math.min(this.len-6,dist+60));
  var gp=this.roadPoint(Math.min(this.len-6,dist+60));
