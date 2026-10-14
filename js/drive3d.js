@@ -135,9 +135,9 @@ Drive.prototype.build=function(){
  glow.renderOrder=-9;this.scene.add(glow);
  this.scene.fog=new THREE.Fog(0xf0d6b2,90,340);
  this.camera=new THREE.PerspectiveCamera(55,mount.clientWidth/Math.max(1,mount.clientHeight),.1,600);
- this.scene.add(new THREE.HemisphereLight(0xfff3dd,0x545c2e,.68));
- var fill=new THREE.DirectionalLight(0xfff3dd,.28);fill.position.set(30,40,-80);this.scene.add(fill);
- var sun=new THREE.DirectionalLight(0xffd9a0,1.35);sun.position.set(-45,62,72);
+ this.scene.add(new THREE.HemisphereLight(0xfff3dd,0x545c2e,.45));
+ var fill=new THREE.DirectionalLight(0xfff3dd,.15);fill.position.set(30,40,-80);this.scene.add(fill);
+ var sun=new THREE.DirectionalLight(0xffd9a0,1.0);sun.position.set(-45,62,72);
  sun.castShadow=true;sun.shadow.mapSize.set(this.SMALL?1024:2048,this.SMALL?1024:2048);
  sun.shadow.camera.left=-85;sun.shadow.camera.right=85;sun.shadow.camera.top=85;sun.shadow.camera.bottom=-85;
  sun.shadow.camera.near=10;sun.shadow.camera.far=280;sun.shadow.bias=-.0004;sun.shadow.normalBias=.4;
@@ -389,8 +389,8 @@ Drive.prototype.buildFolks=function(){var self=this;
  });
 };
 Drive.prototype.buildClouds=function(){var self=this,i;this.clouds=[];
- for(i=0;i<7;i++){var cl=new THREE.Group(),j,n=3+Math.floor(Math.random()*3);
-  for(j=0;j<n;j++){var s=new THREE.Mesh(new THREE.SphereGeometry(2.2+Math.random()*2.4,7,6),mat(0xfffaf0,{noOutline:1}));s.scale.y=.6;s.position.set(j*2.7-(n-1)*1.35,Math.random()*.7,(Math.random()-.5)*1.7);cl.add(s)}
+ for(i=0;i<7;i++){var cl=new THREE.Group(),j,n=4+Math.floor(Math.random()*3);
+  for(j=0;j<n;j++){var s=new THREE.Mesh(new THREE.SphereGeometry(2.2+Math.random()*2.4,7,6),mat(0xfffaf0,{noOutline:1}));s.scale.y=.78;s.position.set(j*2.2-(n-1)*1.1,Math.random()*.8,(Math.random()-.5)*1.6);cl.add(s)}
   cl.position.set((Math.random()-.5)*380,54+Math.random()*40,-140+Math.random()*620);this.scene.add(cl);this.clouds.push(cl)}};
 Drive.prototype.buildVenue=function(){
  var self=this,end=this.curve.getPointAt(.9995),t=this.curve.getTangentAt(.9995),nx=-t.z,nz=t.x,g=new THREE.Group();
