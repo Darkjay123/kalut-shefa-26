@@ -333,8 +333,14 @@ Drive.prototype.sign=function(x,z,ry,tex,w,h,yBase){
 Drive.prototype.buildOncoming=function(){var self=this;
  onAssets(function(){
   if(self.destroyed)return;
-  var src=ASSETS['hatchback-sports'];if(!src)return;
-  src.scale.setScalar(1.05);src.traverse(function(m){if(m.isMesh)m.castShadow=true});self.scene.add(src);self.onCar=src;self.onU=.74});
+  var names=['hatchback-sports','truck','taxi','delivery-flat'],startU=[.74,.5,.3,.88],sp=[.0125,.0105,.0135,.0115];
+  self.onFleet=[];
+  for(var i=0;i<names.length;i++){
+   var src=ASSETS[names[i]];if(!src)continue;
+   var o=src.clone();o.scale.setScalar(names[i]==='truck'?1.15:1.05);
+   o.traverse(function(m){if(m.isMesh)m.castShadow=true});
+   self.scene.add(o);self.onFleet.push({car:o,u:startU[i],sp:sp[i]})}
+ });
 };
 Drive.prototype.buildBirds=function(){var self=this;this.birds=[];
  var mm=new THREE.MeshToonMaterial({color:0x565e3a,side:THREE.DoubleSide,gradientMap:GRAD});
@@ -399,6 +405,14 @@ Drive.prototype.buildFolks=function(){var self=this;
      var mx=new THREE.AnimationMixer(c);var act=mx.clipAction(clips[i]);act.play();self.mixers.push(mx);if(clip!=='Victory')self.wavers.push({o:c,base:act,clips:clips});break}}}
   if(self.marketPos){twin('casual_male',self.marketPos.x+5.1,self.marketPos.z-.6,2.9,'Idle',.04,.02);
    twin('casual_female',self.marketPos.x+1.9,self.marketPos.z+3.3,3.5,'Idle',-.05,.06)}
+  /* gate crowd: well-wishers lining both sides of the entrance, cheering the car in */
+  var gt=self.road?self.road.getTangentAt(.999):null;
+  if(end&&gt){
+   var gnx=-gt.z,gnz=gt.x,face=Math.atan2(-gt.x,-gt.z);
+   var crowd=[['casual_male',6.6,4.2,.04,.02],['casual_female',8.3,2.6,-.05,.06],['casual_male',-8.1,5.2,.08,-.02],['casual_female',-6.5,3.1,-.04,.05],['casual_male',9.4,1.2,-.02,.04],['casual_female',-9.2,1.8,.05,-.03]];
+   for(var ci=0;ci<crowd.length;ci++){
+    var cd=crowd[ci];
+    twin(cd[0],end.x+gnx*cd[1]-gt.x*cd[2],end.z+gnz*cd[1]-gt.z*cd[2],face,'Idle',cd[3],cd[4])}}
   /* one villager strolls the far shoulder through the wide shot */
   var seg=self.road?self.road.getPointAt(.38):null;
   if(seg){var pc=ASSETS['casual_male'].clone(true);pc.scale.setScalar(1.45);
@@ -696,13 +710,13 @@ Drive.prototype.tick=function(dt){
   var pt=this.roadDir(Math.min(this.len-8,this.pedBase+pu));
   this.ped.position.set(pp.x-pt.z*3.6,0,pp.z+pt.x*3.6);
   this.ped.rotation.y=Math.atan2(pt.x,pt.z)}
- /* oncoming taxi: passes the couple around the wide-chase shot */
- if(this.onCar&&this.onU!==undefined){
-  this.onU-=dt*.0125;
-  if(this.onU<.04)this.onU=.76;
-  var oP=this.roadPoint(this.onU*this.len),oD=this.roadDir(this.onU*this.len);
-  this.onCar.position.set(oP.x,.05,oP.z);
-  this.onCar.rotation.y=Math.atan2(-oD.x,-oD.z)}
+ /* oncoming traffic: taxi, truck, hatch and delivery van working the far lane */
+ if(this.onFleet)for(var of2=0;of2<this.onFleet.length;of2++){
+  var oc=this.onFleet[of2];oc.u-=dt*oc.sp;
+  if(oc.u<.045)oc.u=.92+Math.random()*.06;
+  var oP=this.roadPoint(oc.u*this.len),oD=this.roadDir(oc.u*this.len);
+  oc.car.position.set(oP.x+oD.z*1.25,.05,oP.z-oD.x*1.25);
+  oc.car.rotation.y=Math.atan2(-oD.x,-oD.z)}
  /* birds: a small flock crossing high above */
  for(var wi=0;wi<this.birds.length;wi++){
   var bd=this.birds[bi=wi],du=bd.userData;
