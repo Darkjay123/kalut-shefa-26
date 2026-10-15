@@ -11,7 +11,7 @@ if(!modal||!window.DRIVE3D) return;
 var capT=$('jCapT'),capS=$('jCapS'),capBox=$('jCap'),bar=$('jBar'),beginBtn=$('jBegin'),
     arrival=$('jArrival'),skip=$('jSkip'),dirBtn=$('jDir'),mapBtn=$('jMapBtn'),
     again=$('jAgain'),arrName=$('jArrName'),arrAddr=$('jArrAddr'),hud=$('jHud'),jPlan=$('jPlan');
-var liveKey='trad',state='idle';
+var liveKey='trad',state='idle',jSnd=$('jSound');
 function setCap(s){capBox.classList.remove('hide');capT.textContent=s.t;capS.textContent=s.s;
  capBox.classList.remove('in');void capBox.offsetWidth;capBox.classList.add('in')}
 function beginDrive(){
@@ -27,11 +27,14 @@ function beginDrive(){
  DRIVE3D.begin({key:liveKey,area:'',start:true,
   setCap:setCap,
   onArrive:function(){
-   state='arrived';skip.classList.remove('show');modal.classList.remove('film');modal.classList.remove('film-title');
+   state='arrived';skip.classList.remove('show');modal.classList.remove('film');
+   var ft=$('jFilmTitle');
+   if(ft){ft.textContent='You have arrived';modal.classList.add('film-title');
+    clearTimeout(beginDrive._at);beginDrive._at=setTimeout(function(){modal.classList.remove('film-title')},3200)}
    setTimeout(function(){
     arrival.classList.add('show');capBox.classList.add('hide');
     if(window.confetti&&!REDUCE)confetti({particleCount:130,spread:90,origin:{y:.55},
-     colors:['#6e0f1f','#d8bb8a','#f5efe0','#5f6b34'],scalar:1.05,zIndex:270})},1400)}})}
+     colors:['#6e0f1f','#d8bb8a','#f5efe0','#5f6b34'],scalar:1.05,zIndex:270})},900)}})}
 function open(key){
  liveKey=key;state='idle';
  $('jEyebrow').textContent=key==='trad'?'Traditional wedding \u00b7 Sat 21 Nov':'White wedding \u00b7 Sat 28 Nov';
@@ -49,6 +52,8 @@ function open(key){
  if(bar)bar.style.width='0%';
  modal.classList.add('open');document.documentElement.classList.add('ks-lock');
  window.lenis&&window.lenis.stop();
+ var sndOn=true;try{sndOn=localStorage.getItem('ks26sound')!=='0'}catch(e){}
+ if(jSnd)jSnd.classList.toggle('off',!sndOn);
  DRIVE3D.begin({key:key,area:'',setCap:setCap,onArrive:null,start:false});
  state='idle';
  /* straight to the drive: no questions, just the road */
@@ -61,6 +66,10 @@ function close(){
 beginBtn.addEventListener('click',beginDrive);
 again.addEventListener('click',function(){arrival.classList.remove('show');state='idle';beginDrive()});
 skip.addEventListener('click',function(){DRIVE3D.skip()});
+if(jSnd)jSnd.addEventListener('click',function(){
+ var on=!jSnd.classList.toggle('off');
+ try{localStorage.setItem('ks26sound',on?'1':'0')}catch(e){}
+ DRIVE3D.setSound(on)});
 $('jClose').addEventListener('click',close);
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&modal.classList.contains('open'))close()});
 var jbs=document.querySelectorAll('[data-journey]');

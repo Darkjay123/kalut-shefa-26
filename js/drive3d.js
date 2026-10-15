@@ -120,7 +120,7 @@ Drive.prototype.build=function(){
  var gr=sx.createLinearGradient(0,0,0,256);
  gr.addColorStop(0,'#e8d0ac');gr.addColorStop(.4,'#eec291');gr.addColorStop(.74,'#f0b276');gr.addColorStop(1,'#dd9254');
  sx.fillStyle=gr;sx.fillRect(0,0,2,256);
- var skyT=new THREE.CanvasTexture(sc);
+ var skyT=new THREE.CanvasTexture(sc);this.skyTex=skyT;this.skyCv=sc;this.skyCtx=sx;
  this.scene.background=skyT;
  /* sky dome: the gradient wraps the world instead of painting a flat wall behind it */
  var dome=new THREE.Mesh(new THREE.SphereGeometry(420,24,14),
@@ -135,26 +135,32 @@ Drive.prototype.build=function(){
  var sdir=new THREE.Vector3(-45,62,72).normalize();
  glow.position.copy(sdir).multiplyScalar(360);glow.position.y=Math.max(30,glow.position.y*.55);glow.scale.setScalar(190);
  glow.renderOrder=-9;this.scene.add(glow);
- this.scene.fog=new THREE.Fog(0xead2a6,90,340);
+ this.scene.fog=new THREE.Fog(0xead2a6,90,340);this.fog=this.scene.fog;
  this.camera=new THREE.PerspectiveCamera(55,mount.clientWidth/Math.max(1,mount.clientHeight),.1,600);
- this.scene.add(new THREE.HemisphereLight(0xfff3dd,0x545c2e,.45));
+ this.hemi=new THREE.HemisphereLight(0xfff3dd,0x545c2e,.45);this.scene.add(this.hemi);
  var fill=new THREE.DirectionalLight(0xfff3dd,.15);fill.position.set(30,40,-80);this.scene.add(fill);
  var sun=new THREE.DirectionalLight(0xffd9a0,1.0);sun.position.set(-45,62,72);
  sun.castShadow=true;sun.shadow.mapSize.set(this.SMALL?1024:2048,this.SMALL?1024:2048);
  sun.shadow.camera.left=-85;sun.shadow.camera.right=85;sun.shadow.camera.top=85;sun.shadow.camera.bottom=-85;
  sun.shadow.camera.near=10;sun.shadow.camera.far=280;sun.shadow.bias=-.0004;sun.shadow.normalBias=.4;
  sun.shadow.camera.updateProjectionMatrix();
- this.scene.add(sun);this.scene.add(sun.target);this.sun=sun;
+ this.scene.add(sun);this.scene.add(sun.target);this.sun=sun;this.tickColour(0);
  /* the road: an S-curve the car never leaves */
  var pts=[[0,0],[4,55],[-8,125],[6,205],[-6,285],[8,360],[-2,435],[0,495],[0,540]];
  this.curve=new THREE.CatmullRomCurve3(pts.map(function(p){return new THREE.Vector3(p[0],0,p[1])}));
  this.len=this.curve.getLength();
  this.ROAD_END=this.len-14; /* car stops short of the gate */
- this.sway=[];this.bflies=[];this.smokes=[];this.wavers=[];this.flags=[];this.buildRoad();this.buildGround();this.buildPoles();this.buildLandmarks();this.buildRoadLife();this.buildScenery();this.buildVenue();this.buildCar();if(this.car)this.car.traverse(function(m){if(m.isMesh)m.castShadow=true});this.buildGoat();this.buildFolks();this.buildButterflies();this.buildBirds();this.buildPetals();this.buildOncoming();this.buildPuffs();this.buildDust();this.buildSmoke();this.buildDoves();this.buildClouds();
+ this.sway=[];this.bflies=[];this.smokes=[];this.wavers=[];this.flags=[];this.buildRoad();this.buildGround();this.buildPoles();this.buildLandmarks();this.buildRoadLife();this.buildScenery();this.buildVenue();this.buildCar();if(this.car)this.car.traverse(function(m){if(m.isMesh)m.castShadow=true});this.buildGoat();this.buildFolks();this.buildButterflies();this.buildBirds();this.buildPetals();this.buildOncoming();this.buildPuffs();this.buildDust();this.buildSmoke();this.buildDoves();this.buildClouds();this.buildConfetti();this.buildTaps();
  var selfA=this;onAssets(function(){if(selfA&&!selfA.destroyed)selfA.dress()});this.sway=[];this.bflies=[];
  this.u=0;this.state='attract';this.attractT=0;this.capFired=[];this.goatDone=false;
  this.camPos=new THREE.Vector3();this.camAim=new THREE.Vector3();this.brV=0;this.lastRoll=0;
  this.camSet=false;this.cutFade=1;this.fovCur=55;this.prevVel=null;this.prevD2=null;this.pitchSm=0;
+ this.bumpT=0;this.prevDist=null;this.bumpDs=[this.len-30,this.len-22];
+ var selfT=this;mount.addEventListener('pointerdown',this.onTap=function(ev){
+  if(!selfT||selfT.destroyed)return;
+  if(selfT.state!=='drive'&&selfT.state!=='arriving'&&selfT.state!=='arrived')return;
+  var rc=mount.getBoundingClientRect();
+  selfT.tapHearts(((ev.clientX-rc.left)/Math.max(1,rc.width))*2-1,-(((ev.clientY-rc.top)/Math.max(1,rc.height))*2-1))});
  this.clock=new THREE.Clock();
  var self2=this;this.raf=null;
  this.loop=function(ts){self2.frame()};this.raf=requestAnimationFrame(this.loop);
@@ -196,7 +202,7 @@ Drive.prototype.buildRoad=function(){
    var r=l.clone();r.position.set(p.x-nx*(w+.35),.04,p.z-nz*(w+.35));this.scene.add(r)}}
 };
 Drive.prototype.buildGround=function(){
- var g=new THREE.Mesh(new THREE.CircleGeometry(420,40),mat(WEDDING.olive,{map:groundTex()}));
+ var g=new THREE.Mesh(new THREE.CircleGeometry(420,40),mat(WEDDING.olive,{map:groundTex()}));this.ground=g;
  g.rotation.x=-Math.PI/2;g.position.y=-.06;g.scene=this.scene;g.receiveShadow=true;this.scene.add(g);
  var far=new THREE.Mesh(new THREE.CircleGeometry(560,40),mat(WEDDING.oliveDeep));
  far.rotation.x=-Math.PI/2;far.position.y=-.14;this.scene.add(far);
@@ -324,6 +330,22 @@ Drive.prototype.dress=function(){
   p3=this.roadPoint(d2);t3=this.roadDir(d2);n3x=-t3.z;n3z=t3.x;side3=(Math.floor(d2/95)%2)?1:-1;
   var mnt=new THREE.Mesh(new THREE.ConeGeometry(55+R(35),34+R(30),5),mat(0xcdbd9b,{noOutline:1}));
   mnt.position.set(p3.x+n3x*side3*235,-4,p3.z+n3z*side3*235);self.scene.add(mnt)}
+ /* venue accent: the traditional road runs drier and palmier; the church road is hedged and flowered */
+ if(this.ground)this.ground.material.color.setHex(this.mode.venue==='gate'?0xd2c8a2:0xffffff);
+ var vd,vp,vt,vnx,vnz;
+ if(this.mode.venue==='gate'){
+  for(vd=this.len*.3;vd<this.len*.9;vd+=24){
+   vp=this.roadPoint(vd);vt=this.roadDir(vd);vnx=-vt.z;vnz=vt.x;
+   self.tree(vp.x+vnx*(11+Math.random()*9)*(Math.random()<.5?1:-1),vp.z+vnz*(11+Math.random()*9),1.15+Math.random()*.5,true)}
+ }else{
+  var hdn=0;
+  for(vd=this.len-72;vd<this.len-8;vd+=3.6){
+   vp=this.roadPoint(vd);vt=this.roadDir(vd);vnx=-vt.z;vnz=vt.x;hdn++;
+   [[1],[-1]].forEach(function(hs){
+    var hb=new THREE.Mesh(new THREE.SphereGeometry(.85,6,5),mat(WEDDING.oliveDeep));
+    hb.position.set(vp.x+vnx*5.3*hs[0],.5,vp.z+vnz*5.3*hs[0]);hb.scale.y=1.25;hb.castShadow=true;self.scene.add(hb)});
+   if(hdn%2===0){var flw=new THREE.Mesh(new THREE.SphereGeometry(.2,5,4),mat(hdn%4===0?WEDDING.goldHot:WEDDING.burgundy));
+    flw.position.set(vp.x+vnx*4.6,.3,vp.z+vnz*4.6);self.scene.add(flw)}}}
 };
 Drive.prototype.balloonCluster=function(x,y,z,n){
  var g=new THREE.Group(),cols=[WEDDING.burgundy,WEDDING.goldHot,WEDDING.cream,WEDDING.burgundyDeep],i;
@@ -703,14 +725,125 @@ Drive.prototype.tickSmoke=function(dt){
 Drive.prototype.initAudio=function(){
  if(this.audio)return;
  try{var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
-  var ctx=new AC();var osc=ctx.createOscillator();osc.type='sawtooth';osc.frequency.value=58;
+  var ctx=new AC();
+  var g=ctx.createGain();g.gain.value=0;g.connect(ctx.destination);
+  var osc=ctx.createOscillator();osc.type='sawtooth';osc.frequency.value=58;
   var lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=170;lp.Q.value=.8;
-  var g=ctx.createGain();g.gain.value=0;
+  var eg=ctx.createGain();eg.gain.value=.24;
   var lfo=ctx.createOscillator();lfo.frequency.value=7.3;var lg=ctx.createGain();lg.gain.value=6;
   lfo.connect(lg);lg.connect(osc.frequency);
-  osc.connect(lp);lp.connect(g);g.connect(ctx.destination);
+  osc.connect(lp);lp.connect(eg);eg.connect(g);
   osc.start();lfo.start();
-  this.audio={ctx:ctx,g:g,osc:osc,lp:lp}}catch(e){this.audio=null}};
+  var mg=ctx.createGain();mg.gain.value=.85;mg.connect(g);
+  var nb=ctx.createBuffer(1,Math.floor(ctx.sampleRate*.6),ctx.sampleRate);var nd=nb.getChannelData(0);
+  for(var i=0;i<nd.length;i++)nd[i]=Math.random()*2-1;
+  this.audio={ctx:ctx,g:g,osc:osc,lp:lp,eg:eg,mg:mg,noise:nb,nextNote:0}}catch(e){this.audio=null}};
+/* a soft kalimba-style motif: pentatonic plucks that hurry gently as the venue nears */
+Drive.prototype.pluck=function(f,when,vol,dec){
+ var a=this.audio;if(!a)return;
+ try{var o=a.ctx.createOscillator();o.type='triangle';o.frequency.value=f;
+  var lp2=a.ctx.createBiquadFilter();lp2.type='lowpass';lp2.frequency.value=1500;
+  var gn=a.ctx.createGain();gn.gain.setValueAtTime(0,when);
+  gn.gain.linearRampToValueAtTime(vol,when+.012);
+  gn.gain.exponentialRampToValueAtTime(.0001,when+dec);
+  o.connect(lp2);lp2.connect(gn);gn.connect(a.mg);o.start(when);o.stop(when+dec+.05)}catch(e){}};
+Drive.prototype.musicTick=function(p,dt){
+ var a=this.audio;if(!a||a.ctx.state!=='running')return;
+ try{var now=a.ctx.currentTime;
+  if(now>=a.nextNote){
+   if(a.nextNote<now-.5)a.nextNote=now;
+   var SC=[261.6,293.7,329.6,392,440,523.3,587.3];
+   a.nextNote=Math.max(now,a.nextNote)+(1-p*.5)*(.8+Math.random()*.5);
+   var n=SC[Math.floor(Math.random()*SC.length)];
+   this.pluck(n,now+.02,.16+p*.1,1.1+p*.6);
+   if(Math.random()<.3)this.pluck(n*2,now+.02,.05,1)}}catch(e){}};
+Drive.prototype.whoosh=function(){
+ var a=this.audio;if(!a||a.ctx.state!=='running')return;
+ try{var src=a.ctx.createBufferSource();src.buffer=a.noise;
+  var bp=a.ctx.createBiquadFilter();bp.type='bandpass';bp.Q.value=1.1;
+  var w=a.ctx.currentTime;
+  bp.frequency.setValueAtTime(320,w);bp.frequency.exponentialRampToValueAtTime(2600,w+.18);
+  bp.frequency.exponentialRampToValueAtTime(260,w+.5);
+  var wg2=a.ctx.createGain();wg2.gain.setValueAtTime(0,w);
+  wg2.gain.linearRampToValueAtTime(.11,w+.1);wg2.gain.exponentialRampToValueAtTime(.0001,w+.5);
+  src.connect(bp);bp.connect(wg2);wg2.connect(a.mg);src.start(w);src.stop(w+.55)}catch(e){}};
+Drive.prototype.chord=function(){
+ var a=this.audio;if(!a||a.ctx.state!=='running')return;
+ try{var now=a.ctx.currentTime,root=[261.6,329.6,392,523.3];
+  for(var i=0;i<root.length;i++){
+   var o=a.ctx.createOscillator();o.type='triangle';o.frequency.value=root[i];
+   var gn=a.ctx.createGain();gn.gain.setValueAtTime(0,now+i*.07);
+   gn.gain.linearRampToValueAtTime(.12,now+i*.07+.03);
+   gn.gain.exponentialRampToValueAtTime(.0001,now+2.6);
+   o.connect(gn);gn.connect(a.ctx.destination);o.start(now+i*.07);o.stop(now+2.8)}}catch(e){}};
+/* colour script: late afternoon warms into golden hour, then glows at the gate */
+Drive.prototype.tickColour=function(p){
+ var q=Math.max(0,Math.min(1,p));
+ if(this.cpLast!==undefined&&Math.abs(q-this.cpLast)<.004)return;
+ this.cpLast=q;
+ var K=this.CKEYS||(this.CKEYS=(function(){
+  function C(h){return new THREE.Color(h)}
+  return[
+   {sky:['#c9d6de','#e6ddc6','#edcb9e','#dfae72'],fog:C(0xead2a6),sun:C(0xffd9a0),si:1.0,glow:.6,hemi:.48},
+   {sky:['#e2cfa9','#efc28d','#f1b475','#dd9752'],fog:C(0xe9c896),sun:C(0xffcf8a),si:1.08,glow:.8,hemi:.45},
+   {sky:['#e9cb97','#f2bf7c','#efa75c','#d68a45'],fog:C(0xe4b77c),sun:C(0xffbd6c),si:1.16,glow:.95,hemi:.42}]})());
+ var a,b,f2;
+ if(q<.55){a=K[0];b=K[1];f2=q/.55}else{a=K[1];b=K[2];f2=(q-.55)/.45}
+ f2=f2*f2*(3-2*f2);
+ var tmp=(this.cpTmp||(this.cpTmp=new THREE.Color())),c2t,gr2=this.skyCtx.createLinearGradient(0,0,0,256),i;
+ for(i=0;i<4;i++){c2t=new THREE.Color(b.sky[i]);tmp.set(a.sky[i]);tmp.lerp(c2t,f2);
+  gr2.addColorStop(i===0?0:(i===1?.4:(i===2?.74:1)),'#'+tmp.getHexString())}
+ this.skyCtx.fillStyle=gr2;this.skyCtx.fillRect(0,0,2,256);this.skyTex.needsUpdate=true;
+ this.fog.color.copy(a.fog).lerp(b.fog,f2);
+ this.sun.color.copy(a.sun).lerp(b.sun,f2);
+ this.sun.intensity=a.si+(b.si-a.si)*f2;
+ this.glow.material.opacity=a.glow+(b.glow-a.glow)*f2;
+ this.hemi.intensity=a.hemi+(b.hemi-a.hemi)*f2};
+/* 3D confetti burst at the gate */
+Drive.prototype.buildConfetti=function(){
+ var cols=[WEDDING.burgundy,WEDDING.goldHot,WEDDING.cream,WEDDING.olive,WEDDING.burgundyDeep];this.confetti=[];
+ for(var i=0;i<64;i++){
+  var m=new THREE.Mesh(new THREE.PlaneGeometry(.16,.1),new THREE.MeshBasicMaterial({color:cols[i%5],side:THREE.DoubleSide,transparent:true,opacity:0}));
+  m.visible=false;m.userData.outlineParameters={visible:false};this.scene.add(m);
+  this.confetti.push({m:m,vx:0,vy:0,vz:0,rx:0,rz:0,t:-1})}};
+Drive.prototype.burstConfetti=function(){
+ if(!this.confetti)this.buildConfetti();
+ var end=this.curve.getPointAt(.9995),t=this.curve.getTangentAt(.9995),nx=-t.z,nz=t.x;
+ for(var i=0;i<this.confetti.length;i++){
+  var c=this.confetti[i];
+  c.m.position.set(end.x+(Math.random()-.5)*10,1.2+Math.random()*4,end.z+(Math.random()-.5)*7);
+  c.vx=(Math.random()-.5)*3.4;c.vy=2.4+Math.random()*3.4;c.vz=(Math.random()-.5)*2.6;
+  c.rx=(Math.random()-.5)*9;c.rz=(Math.random()-.5)*9;c.t=0;
+  c.m.material.opacity=1;c.m.visible=true}};
+Drive.prototype.tickConfetti=function(dt){
+ if(!this.confetti)return;
+ for(var i=0;i<this.confetti.length;i++){var c=this.confetti[i];
+  if(c.t<0)continue;c.t+=dt;
+  c.vy-=dt*4.2;c.m.position.x+=c.vx*dt;c.m.position.y+=c.vy*dt;c.m.position.z+=c.vz*dt;
+  c.m.rotation.x+=c.rx*dt;c.m.rotation.z+=c.rz*dt;
+  c.m.material.opacity=Math.max(0,1-Math.max(0,(c.t-2.6)/1.4));
+  if(c.m.position.y<.04){c.vy=0;c.vx*=.6;c.vz*=.6;c.m.position.y=.04}
+  if(c.t>4.2){c.t=-1;c.m.visible=false;c.m.material.opacity=0}}};
+/* tap anywhere in the drive: a little shower of hearts */
+Drive.prototype.buildTaps=function(){
+ var tex=heartTex();this.taps=[];
+ for(var i=0;i<12;i++){var s=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,opacity:0,depthWrite:false}));s.scale.setScalar(.5);this.scene.add(s);this.taps.push({s:s,t:-1,vx:0,vy:0,vz:0})}};
+Drive.prototype.tapHearts=function(cx,cy){
+ if(!this.taps)this.buildTaps();
+ var v=new THREE.Vector3(cx,cy,.5).unproject(this.camera);
+ var dirC=v.sub(this.camera.position).normalize();
+ var base=this.camera.position.clone().add(dirC.multiplyScalar(7.5));
+ for(var k=0;k<5;k++){for(var i=0;i<this.taps.length;i++){var tp=this.taps[i];
+  if(tp.t<0){tp.t=0;tp.s.position.set(base.x+(Math.random()-.5)*1.4,base.y+(Math.random()-.5)*1.2,base.z+(Math.random()-.5)*1.4);
+   tp.vx=(Math.random()-.5)*.8;tp.vy=1.2+Math.random()*1.1;tp.vz=(Math.random()-.5)*.8;
+   tp.s.material.opacity=.95;tp.s.scale.setScalar(.35+Math.random()*.3);break}}}};
+Drive.prototype.tickTaps=function(dt){
+ if(!this.taps)return;
+ for(var i=0;i<this.taps.length;i++){var tp=this.taps[i];
+  if(tp.t<0)continue;tp.t+=dt;
+  tp.s.position.x+=tp.vx*dt;tp.s.position.y+=tp.vy*dt;tp.s.position.z+=tp.vz*dt;
+  tp.vy+=dt*.55;tp.s.material.opacity=Math.max(0,.95*(1-tp.t/1.15));
+  if(tp.t>=1.15){tp.t=-1;tp.s.material.opacity=0}}};
 Drive.prototype.audioSpeed=function(p){
  if(!this.audio)return;
  try{this.audio.osc.frequency.setTargetAtTime(52+p*70+Math.sin(this.t/300)*2,this.audio.ctx.currentTime,.12);
@@ -759,7 +892,7 @@ Drive.prototype.tick=function(dt){
    var kf2=1-Math.exp(-2.6*dt),ka2=1-Math.exp(-3*dt);this.camPos.lerp(this.restPos,kf2);this.camAim.lerp(this.restAim,ka2);
    this.camera.position.copy(this.camPos);this.camera.lookAt(this.camAim)}
   /* petals rain down on the couple */
-  for(var pi=0;pi<this.petals.length;pi++){
+  if(this.petalOn)for(var pi=0;pi<this.petals.length;pi++){
    var pt=this.petals[pi];pt.m.visible=true;
    pt.m.position.y-=dt*pt.vy;
    pt.m.position.x=pt.end.x+(pt.m.position.x-pt.end.x)+Math.sin(this.elapsed*1.4+pt.ph)*.012;
@@ -767,7 +900,24 @@ Drive.prototype.tick=function(dt){
    if(pt.m.position.y<.05){pt.m.position.y=6+Math.random()*6;
     pt.m.position.x=pt.end.x+(Math.random()*2-1)*22;
     pt.m.position.z=pt.end.z+(Math.random()*2-1)*22}}
-  this.tickDoves(dt);this.tickSmoke(dt);
+  this.tickDoves(dt);this.tickConfetti(dt);this.tickTaps(dt);this.tickSmoke(dt);
+  return}
+ if(this.state==='arriving'){
+  this.arrT+=dt;var at2=Math.min(1,this.arrT/this.arrDur),ae=1-Math.pow(1-at2,3);
+  var dN=this.arrD0+(this.ROAD_END-this.arrD0)*ae;
+  var pA=this.roadPoint(dN),dirA=this.roadDir(dN);
+  this.car.position.set(pA.x,.06+Math.sin(this.t/120)*.03*(1-ae),pA.z);
+  this.car.rotation.y=Math.atan2(dirA.x,dirA.z);
+  this.car.rotation.x=this.pitchSm*(1-ae);this.car.rotation.z=this.lastRoll*(1-ae);
+  if(this.blob)this.blob.position.set(pA.x,.02,pA.z);
+  var spinA=dt*26*(1-ae);
+  for(var aw2=0;aw2<this.wheels.length;aw2++)this.wheels[aw2].rotation.x+=spinA;
+  if(this.audio){this.audioSpeed(1-ae);this.musicTick(1,dt)}
+  var kf3=1-Math.exp(-2.4*dt),ka3=1-Math.exp(-2.8*dt);
+  this.camPos.lerp(this.restPos,kf3);this.camAim.lerp(this.restAim,ka3);
+  this.camera.position.copy(this.camPos);this.camera.lookAt(this.camAim);
+  this.tickConfetti(dt);this.tickTaps(dt);this.tickDoves(dt);this.tickSmoke(dt);
+  if(at2>=1)this.arriveBeat();
   return}
  if(this.state!=='drive')return;
  this.t+=dt*1000;
@@ -784,7 +934,11 @@ Drive.prototype.tick=function(dt){
  var acc=(this.prevVel==null?0:(vel-this.prevVel))/Math.max(.001,dt);this.prevVel=vel;this.prevD2=d;
  var pitchT=THREE.MathUtils.clamp(-acc*.7,-.05,.05);
  this.pitchSm+=(pitchT-(this.pitchSm||0))*(1-Math.exp(-4.5*dt));
- this.car.position.set(pos.x,.06+Math.sin(this.t/120)*.03+Math.sin(this.t/53)*.011,pos.z);
+ if(this.prevDist!=null){for(var bk2=0;bk2<this.bumpDs.length;bk2++){var bD=this.bumpDs[bk2];
+  if((this.prevDist<bD&&dist>=bD)||(this.prevDist>=bD&&dist<bD))this.bumpT=.34}}
+ this.prevDist=dist;
+ var hump=0;if(this.bumpT>0){this.bumpT-=dt;hump=.11*Math.sin((1-this.bumpT/.34)*Math.PI)}
+ this.car.position.set(pos.x,.06+Math.sin(this.t/120)*.03+Math.sin(this.t/53)*.011+hump,pos.z);
  this.car.rotation.y=heading;this.car.rotation.x=this.pitchSm;this.car.rotation.z=roll;
  /* sun rides with the car so shadows stay crisp; villagers wave as we pass; bunting flutters */
  if(this.sun){this.sun.position.set(this.car.position.x-45,62,this.car.position.z+72);this.sun.target.position.copy(this.car.position);this.sun.target.updateMatrixWorld()}
@@ -800,7 +954,7 @@ Drive.prototype.tick=function(dt){
   fg2.rotation.y=Math.sin(this.elapsed*2.2+fi*1.7)*.28;fg2.rotation.x=Math.PI+Math.sin(this.elapsed*2.8+fi*.9)*.15}
  if(this.blob){this.blob.position.set(pos.x,.02,pos.z);this.blob.rotation.z=-heading;
   var bs=1+Math.sin(this.t/120)*.015;this.blob.scale.set(1.7*bs,2.9*bs,1)}
- this.audioSpeed(p);this.tickSmoke(dt);
+ this.audioSpeed(p);this.musicTick(p,dt);this.tickColour(d);this.tickSmoke(dt);
  var spin=dt*26*(1-p*.35);
  var steer=THREE.MathUtils.clamp(roll*2.2,-.38,.38);
  for(var wi=0;wi<this.wheels.length;wi++){var w=this.wheels[wi];w.rotation.x+=spin;w.rotation.y=steer}
@@ -838,7 +992,8 @@ Drive.prototype.tick=function(dt){
   {u0:.24, u1:.34, kind:'side', fov:50},
   {u0:.34, u1:.56, kind:'chase', back:12.5, height:5.7, fov:48},
   {u0:.56, u1:.645,kind:'hero', fov:44},
-  {u0:.645,u1:1.02,kind:'chase', back:9.5, height:4.6, fov:55}]);
+  {u0:.645,u1:.88,kind:'chase', back:9.5, height:4.6, fov:55},
+  {u0:.88,u1:1.02,kind:'front',fov:46}]);
  if(this.shotIdx===undefined)this.shotIdx=-1;if(this.petals)for(var pi=0;pi<this.petals.length;pi++)this.petals[pi].m.visible=false;
  var shot=null,shotI=SHOTS.length-1;
  for(var si=0;si<SHOTS.length;si++){if(d>=SHOTS[si].u0&&d<SHOTS[si].u1){shot=SHOTS[si];shotI=si;break}}
@@ -849,6 +1004,10 @@ Drive.prototype.tick=function(dt){
   var off=5.4+Math.sin(this.t/1400)*.7;
   desired=new THREE.Vector3(sAt.x+nx*off,2.0,sAt.z+nz*off);
   aimT=new THREE.Vector3(pos.x,1.2,pos.z);
+ }else if(shot&&shot.kind==='front'){
+  var fAt=this.roadPoint(Math.min(this.len,dist+13));
+  desired=new THREE.Vector3(fAt.x+dir.x*4.6+nx*3.2,1.55,fAt.z+dir.z*4.6+nz*3.2);
+  aimT=new THREE.Vector3(pos.x,1.25,pos.z);
  }else if(shot&&shot.kind==='hero'){
   var hAt=this.roadPoint(Math.min(this.len,dist+15));
   desired=new THREE.Vector3(hAt.x-dir.x*2.2+nx*3.4,1.6,hAt.z-dir.z*2.2+nz*3.4);
@@ -860,7 +1019,7 @@ Drive.prototype.tick=function(dt){
   var aim=this.roadPoint(Math.min(this.len,dist+26));
   aimT=new THREE.Vector3(aim.x,1.6,aim.z);
  }
- if(cut){this.cutFade=0;this.brV=-.22}
+ if(cut){this.cutFade=0;this.brV=-.22;this.whoosh()}
  if(!this.camSet){this.camPos.copy(desired);this.camAim.copy(aimT);this.fovCur=(shot&&shot.fov)||55;this.camSet=true;this.cutFade=1}
  else{this.cutFade=Math.min(1,this.cutFade+dt/.8);
   var hot=Math.pow(1-this.cutFade,2);
@@ -881,6 +1040,7 @@ Drive.prototype.tick=function(dt){
  /* heart puffs from the exhaust */
  if(Math.random()<.12){for(var qi=0;qi<this.puffs.length;qi++){var q=this.puffs[qi];
   if(q.t<0){q.t=0;q.s.position.set(pos.x-dir.x*1.3+ (Math.random()-.5)*.4,.45,pos.z-dir.z*1.3);break}}}
+ this.tickTaps(dt);
  for(var pi=0;pi<this.puffs.length;pi++){var pp2=this.puffs[pi];
   if(pp2.t>=0){pp2.t+=dt;var f2=pp2.t/1.6;
    pp2.s.position.y+=dt*1.1;pp2.s.position.x+=dt*.5*(pp2.s.position.x>pos.x?1:-1)*.3;
@@ -906,7 +1066,7 @@ Drive.prototype.begin=function(area){
  if(this.state==='drive')return;
  if(area)try{localStorage.setItem('ks26area',area)}catch(e){}
  this.dur=DUR;this.t=0;this.state='drive';this.capFired=[];this.goatDone=false;this.goatT=0;this.shotIdx=-1;
- this.camSet=false;this.cutFade=1;this.prevVel=null;this.prevD2=null;this.pitchSm=0;
+ this.camSet=false;this.cutFade=1;this.prevVel=null;this.prevD2=null;this.pitchSm=0;this.bumpT=0;this.prevDist=null;this.petalOn=false;
  /* sign carries the guest's town */
  if(area&&this.areaSign){
   var tex=textTex([area.toUpperCase()+" \u279c "+this.mode.dest.toUpperCase()],{size:44,fg:'#f5efe0',bg:'#6e0f1f',border:'#d8bb8a',bw:10});
@@ -914,28 +1074,35 @@ Drive.prototype.begin=function(area){
  this.clock.getDelta();
  this.initAudio();if(this.audio){try{this.audio.ctx.resume()}catch(e){}}
  if(this.doves)for(var di2=0;di2<this.doves.length;di2++)this.doves[di2].visible=false;
- this.audioOn(.035)};
+ this.audioOn(this.sndOn===false?0:.16)};
 Drive.prototype.skip=function(){if(this.state!=='drive'){if(this.state==='attract')this.begin();else return}
  this.t=(this.dur||DUR)+1};
 Drive.prototype.restart=function(){this.state='drive';this.t=0;this.capFired=[];this.goatDone=false;this.goatT=0;this.clock.getDelta();
- this.camSet=false;this.cutFade=1;this.prevVel=null;this.prevD2=null;this.pitchSm=0;
- if(this.doves)for(var di3=0;di3<this.doves.length;di3++)this.doves[di3].visible=false;this.audioOn(.035)};
+ this.camSet=false;this.cutFade=1;this.prevVel=null;this.prevD2=null;this.pitchSm=0;this.bumpT=0;this.prevDist=null;this.petalOn=false;
+ if(this.doves)for(var di3=0;di3<this.doves.length;di3++)this.doves[di3].visible=false;this.audioOn(this.sndOn===false?0:.16)};
 Drive.prototype.arrive=function(){
  var self=this;
- if(this.state==='arrived')return;this.state='arrived';
+ if(this.state==='arrived'||this.state==='arriving')return;
+ this.state='arriving';this.arrT=0;this.arrFast=this.t>(this.dur||DUR)+100;
  if(hud)hud.classList.remove('show');
  if(bar)bar.style.width='100%';
  if(setCap)setCap(this.mode.stops[this.mode.stops.length-1]);
- /* the car glides the last stretch and rests at the gate */
- var rest=this.roadPoint(this.ROAD_END),rt=this.roadDir(this.ROAD_END);
- this.car.position.set(rest.x,.06,rest.z);this.car.rotation.y=Math.atan2(rt.x,rt.z);this.car.rotation.x=0;if(this.blob)this.blob.position.set(rest.x,.02,rest.z);
- /* camera: rise into a beauty shot of the venue */
+ /* the car glides the last stretch under its own easing; nothing snaps */
+ this.arrD0=Math.min(this.ROAD_END,this.prevDist!=null?this.prevDist:this.ROAD_END*.99);
+ this.arrDur=this.arrFast?.75:2.4;
  var end=this.curve.getPointAt(.9995),t=this.curve.getTangentAt(.9995),nx=-t.z,nz=t.x;
  /* rest targets: camera parks behind the venue, aimed at the gate */
  this.restPos=new THREE.Vector3(end.x-t.x*14,7.5,end.z-t.z*14);
  this.restAim=new THREE.Vector3(end.x+t.x*5,2.5,end.z+t.z*5);
  if(this.goat)this.goat.visible=false;
- this.releaseDoves();this.audioOn(0);
+ if(this.ped)this.ped.visible=false};
+Drive.prototype.arriveBeat=function(){
+ var self=this;this.state='arrived';this.petalOn=true;
+ this.releaseDoves();
+ if(!REDUCE)this.burstConfetti();
+ if(this.audio){try{this.audio.eg.gain.setTargetAtTime(0,this.audio.ctx.currentTime,.3)}catch(e){}}
+ this.audioOn(0);
+ if(this.audio)this.chord();
  if(onArrive)onArrive()};
 Drive.prototype.resize=function(){
  if(!this.camera)return;
@@ -943,6 +1110,7 @@ Drive.prototype.resize=function(){
  this.camera.updateProjectionMatrix();this.renderer.setSize(mount.clientWidth,mount.clientHeight)};
 Drive.prototype.destroy=function(){
  this.destroyed=true;cancelAnimationFrame(this.raf);window.removeEventListener('resize',this.onR);
+ if(this.onTap)mount.removeEventListener('pointerdown',this.onTap);
  mount.innerHTML='';this.renderer.dispose();if(this.audio){try{this.audio.ctx.close()}catch(e){}}};
 /* camera arrival beauty shot: smoothed toward the venue */
 var camAimT=null,camT=null;
@@ -960,6 +1128,7 @@ window.DRIVE3D={
   engine.resize()},
  skip:function(){if(engine)engine.skip()},
  restart:function(){if(engine)engine.restart()},
+ setSound:function(on){if(engine){engine.sndOn=!!on;if(engine.audio)engine.audioOn(on?.16:0)}},
  dispose:function(){if(engine){engine.destroy();engine=null}},
  active:function(){return !!engine}
 };
