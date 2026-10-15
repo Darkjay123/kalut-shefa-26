@@ -134,7 +134,7 @@ Drive.prototype.build=function(){
  var glow=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(gc),transparent:true,opacity:.78,depthWrite:false,fog:false}));
  var sdir=new THREE.Vector3(-45,62,72).normalize();
  glow.position.copy(sdir).multiplyScalar(360);glow.position.y=Math.max(30,glow.position.y*.55);glow.scale.setScalar(190);
- glow.renderOrder=-9;this.scene.add(glow);
+ glow.renderOrder=-9;this.scene.add(glow);this.glow=glow;
  this.scene.fog=new THREE.Fog(0xead2a6,90,340);this.fog=this.scene.fog;
  this.camera=new THREE.PerspectiveCamera(55,mount.clientWidth/Math.max(1,mount.clientHeight),.1,600);
  this.hemi=new THREE.HemisphereLight(0xfff3dd,0x545c2e,.45);this.scene.add(this.hemi);
