@@ -22,7 +22,21 @@ module.exports=async(req,res)=>{
       return send(res,200,{ok:true,visits:parse(v),rsvps:parse(r),gifts:parse(g),notes:parse(n),pending:parse(p),hearts:+h||0});
     }
     if(req.method==='POST'){
-      const b=body(req); if(!b.id) return send(res,400,{ok:false});
+      const b=body(req);
+      if(b.action==='reset'){
+        const targets=Array.isArray(b.targets)?b.targets:['visits','hearts'];
+        const cmds=[]; if(targets.includes('visits')) cmds.push(['LLEN','ks26:visits']); else cmds.push(null);
+        if(targets.includes('hearts')) cmds.push(['GET','ks26:hearts']); else cmds.push(null);
+        const old=await pipe(cmds.filter(Boolean));
+        const pre={}; let oi=0;
+        if(targets.includes('visits')) pre.visits=+(old[oi++]||0)||0;
+        if(targets.includes('hearts')) pre.hearts=+(old[oi++]||0)||0;
+        const del=[]; if(targets.includes('visits')) del.push(['DEL','ks26:visits']);
+        if(targets.includes('hearts')) del.push(['SET','ks26:hearts','0']);
+        await pipe(del);
+        return send(res,200,{ok:true,reset:pre});
+      }
+      if(!b.id) return send(res,400,{ok:false});
       if(b.action==='approve'){ const hit=await find(K.pending,b.id); if(hit) await pipe([['LREM',K.pending,'1',hit],['LPUSH',K.notes,hit]]); return send(res,200,{ok:true,approved:!!hit}); }
       if(b.action==='delete'){ const key=K[b.kind]||K.rsvps; const hit=await find(key,b.id); if(hit) await pipe([['LREM',key,'1',hit]]); return send(res,200,{ok:true,deleted:!!hit}); }
       return send(res,400,{ok:false});
